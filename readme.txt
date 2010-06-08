@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r05 - 2010-06-09 - 00:32
+- added vector versions of the final logo and symbol designs.
+
 r04 - 2010-05-19 - 14:40
 - added a bunch of new symbols, additional enclosures and color variations for these.
 
