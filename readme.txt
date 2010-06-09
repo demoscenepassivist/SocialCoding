@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r07 - 2010-06-09 - 16:30
+- added the last missing jogamp logo.
+
 r06 - 2010-06-09 - 03:28
 - added "ich kann so nicht arbeiten" webpage color impressions.
 
