@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r06 - 2010-06-09 - 03:28
+- added "ich kann so nicht arbeiten" webpage color impressions.
+
 r05 - 2010-06-09 - 00:32
 - added vector versions of the final logo and symbol designs.
 
