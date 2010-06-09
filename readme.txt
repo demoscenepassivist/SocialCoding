@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r08 - 2010-06-09 - 22:08
+- added 2 simple wallpaper designs. 
+
 r07 - 2010-06-09 - 16:30
 - added the last missing jogamp logo.
 
