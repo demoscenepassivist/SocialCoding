@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r09 - 2010-06-10 - 10:24
+- added another simple wallpaper design.
+
 r08 - 2010-06-09 - 22:08
 - added 2 simple wallpaper designs. 
 
