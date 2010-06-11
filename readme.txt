@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r10 - 2010-06-11 - 22:56
+- added another batch of website color impressions.
+
 r09 - 2010-06-10 - 10:24
 - added another simple wallpaper design.
 
