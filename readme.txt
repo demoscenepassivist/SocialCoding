@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r11 - 2010-06-11 - 23:37
+- added some pastell colored jogamp rasterizations.
+
 r10 - 2010-06-11 - 22:56
 - added another batch of website color impressions.
 
