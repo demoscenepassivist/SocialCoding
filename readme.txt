@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r12 - 2010-06-14 - 01:48
+- reactivated my old photoshop book and added another 2 wallpapers.
+
 r11 - 2010-06-11 - 23:37
 - added some pastell colored jogamp rasterizations.
 
