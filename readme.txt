@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r13 - 2010-06-15 - 21:50
+- added 2 new photo-manipulation wallpapers.
+
 r13 - 2010-06-15 - 17:19
 - added the final website logos with slogans and 4 new wallpapers.
 
