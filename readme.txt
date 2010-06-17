@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r14 - 2010-06-17 - 18:16
+- added the jogamp wave symbol as favicon.
+
 r13 - 2010-06-15 - 21:50
 - added 2 new photo-manipulation wallpapers.
 
