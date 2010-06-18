@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r15 - 2010-06-18 - 11:18
+- added the jogamp wave symbol for the wiki and 3 new website slogans.
+
 r14 - 2010-06-17 - 18:16
 - added the jogamp wave symbol as favicon.
 
