@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r17 - 2010-06-22 - 01:18
+- finally added vectorized jogamp banner as svg.
+
 r16 - 2010-06-21 - 22:55
 - added a poster size jogamp banner in 200x40,5cm-300dpi.
 
