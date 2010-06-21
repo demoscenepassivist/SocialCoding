@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r16 - 2010-06-21 - 22:55
+- added a poster size jogamp banner in 200x40,5cm-300dpi.
+
 r15 - 2010-06-18 - 11:18
 - added the jogamp wave symbol for the wiki and 3 new website slogans.
 
