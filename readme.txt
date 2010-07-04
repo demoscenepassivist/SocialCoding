@@ -1,5 +1,8 @@
 Art, code and miscellaneous experiments related in some way to JOGL.
 
+r18 - 2010-07-05 - 01:51
+- added a magenta colored jocl website logo.
+
 r17 - 2010-06-22 - 01:18
 - finally added vectorized jogamp banner as svg.
 
