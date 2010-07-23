@@ -1,0 +1,6 @@
+//copy primary color
+
+void main(void) {
+    //copy the primary color
+    gl_FragColor = gl_Color;
+}
