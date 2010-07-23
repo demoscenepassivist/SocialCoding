@@ -10,5 +10,3 @@
   \/____.                                                                             .____\/     
              
              Art, code and miscellaneous experiments related in some way to JOGL.
-
-
