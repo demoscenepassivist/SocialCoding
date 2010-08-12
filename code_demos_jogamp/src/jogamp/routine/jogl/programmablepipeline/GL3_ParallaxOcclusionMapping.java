@@ -39,51 +39,48 @@ public class GL3_ParallaxOcclusionMapping extends BaseRoutineAdapter implements 
 	private Texture mTexture_Normal;
 	private Texture mTexture_Height;
 	
-	public void initRoutine(GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
-		mVertexShader = ShaderUtils.loadVertexShaderFromFile(tGL2,"/shaders/textureshaders/parallaxocclusionmapping.vs");
-		mFragmentShader = ShaderUtils.loadFragmentShaderFromFile(tGL2,"/shaders/textureshaders/parallaxocclusionmapping.fs");
-		mLinkedShader = ShaderUtils.generateSimple_1xVS_1xFS_ShaderProgramm(tGL2,mVertexShader,mFragmentShader);
+	public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+		mVertexShader = ShaderUtils.loadVertexShaderFromFile(inGL,"/shaders/textureshaders/parallaxocclusionmapping.vs");
+		mFragmentShader = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/textureshaders/parallaxocclusionmapping.fs");
+		mLinkedShader = ShaderUtils.generateSimple_1xVS_1xFS_ShaderProgramm(inGL,mVertexShader,mFragmentShader);
 		mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,360,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
 		mTexture_Diffuse = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Diffuse.png");
 		mTexture_Specular = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Specular.png");
 		mTexture_Normal = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Normals_TangentSpace.png");
 		mTexture_Height = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Displacement.png");
-		mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(tGL2,"/binaries/geometry/Cube.wobj");
-		tGL2.glValidateProgram(mLinkedShader);	
-		tGL2.glUseProgram(mLinkedShader);
-		ShaderUtils.setSampler2DUniformOnTextureUnit(tGL2,mLinkedShader,"sampler0_diffuse",mTexture_Diffuse,GL_TEXTURE0,0,true);
-		ShaderUtils.setSampler2DUniformOnTextureUnit(tGL2,mLinkedShader,"sampler1_gloss",mTexture_Specular,GL_TEXTURE1,1,true);
-		ShaderUtils.setSampler2DUniformOnTextureUnit(tGL2,mLinkedShader,"sampler2_normal",mTexture_Normal,GL_TEXTURE2,2,false);
-		ShaderUtils.setSampler2DUniformOnTextureUnit(tGL2,mLinkedShader,"sampler3_height",mTexture_Height,GL_TEXTURE3,3,true);
-		ShaderUtils.setUniform4fv(tGL2,mLinkedShader,"lightPos",DirectBufferUtils.createDirectFloatBuffer(new float[]{-100.0f,100.0f,50.0f,1.0f}));	
-		tGL2.glUseProgram(0);
-		//reset active texture unit ... 
+		mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/Cube.wobj");
+		inGL.glValidateProgram(mLinkedShader);	
+		inGL.glUseProgram(mLinkedShader);
+		ShaderUtils.setSampler2DUniformOnTextureUnit(inGL,mLinkedShader,"sampler0_diffuse",mTexture_Diffuse,GL_TEXTURE0,0,true);
+		ShaderUtils.setSampler2DUniformOnTextureUnit(inGL,mLinkedShader,"sampler1_gloss",mTexture_Specular,GL_TEXTURE1,1,true);
+		ShaderUtils.setSampler2DUniformOnTextureUnit(inGL,mLinkedShader,"sampler2_normal",mTexture_Normal,GL_TEXTURE2,2,false);
+		ShaderUtils.setSampler2DUniformOnTextureUnit(inGL,mLinkedShader,"sampler3_height",mTexture_Height,GL_TEXTURE3,3,true);
+		ShaderUtils.setUniform4fv(inGL,mLinkedShader,"lightPos",DirectBufferUtils.createDirectFloatBuffer(new float[]{-100.0f,100.0f,50.0f,1.0f}));	
+		inGL.glUseProgram(0);
+		//reset active texture unit ... workaround for: ATI Catalyst 10.6 - 8.692.1 on Mobility Radeon HD 4570
 		inGL.glActiveTexture(GL_TEXTURE0);
-	    tGL2.glEnable(GL_CULL_FACE);
-	    tGL2.glEnable(GL_DEPTH_TEST);
+	    inGL.glEnable(GL_CULL_FACE);
+	    inGL.glEnable(GL_DEPTH_TEST);
 	}
 	
-	public void mainLoop(int inFrameNumber,GL inGL,GLU inGLU,GLUT inGLUT) {	
-		GL2 tGL2 = inGL.getGL2();
+	public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
 	    float tYRotation = mOffsetSinTable[(inFrameNumber)%OFFSETSINTABLE_SIZE];
 	    float tXRotation = mOffsetSinTable[(int)(inFrameNumber*1.5f)%OFFSETSINTABLE_SIZE];
-	    tGL2.glUseProgram(mLinkedShader);
-		tGL2.glPushMatrix();
-			tGL2.glLoadIdentity();
-			tGL2.glTranslatef(0.0f, 0.0f, -3.5f);
-			tGL2.glRotatef(tYRotation, 0.25f, 1.0f, 0.5f);
-			tGL2.glRotatef(tXRotation, 0.75f, 0.3f, 0.1f);
-			tGL2.glCallList(mDisplayListID);
-	    tGL2.glPopMatrix();
-	    tGL2.glUseProgram(0);		
+	    inGL.glUseProgram(mLinkedShader);
+		inGL.glPushMatrix();
+			inGL.glLoadIdentity();
+			inGL.glTranslatef(0.0f, 0.0f, -3.5f);
+			inGL.glRotatef(tYRotation, 0.25f, 1.0f, 0.5f);
+			inGL.glRotatef(tXRotation, 0.75f, 0.3f, 0.1f);
+			inGL.glCallList(mDisplayListID);
+	    inGL.glPopMatrix();
+	    inGL.glUseProgram(0);		
 	}
 	
-	public void cleanupRoutine(GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
-		tGL2.glDeleteShader(mVertexShader);
-		tGL2.glDeleteShader(mFragmentShader);
-		tGL2.glDeleteLists(mDisplayListID,1);
+	public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+		inGL.glDeleteShader(mVertexShader);
+		inGL.glDeleteShader(mFragmentShader);
+		inGL.glDeleteLists(mDisplayListID,1);
 		mTexture_Diffuse.destroy(inGL);
 		mTexture_Specular.destroy(inGL);
 		mTexture_Normal.destroy(inGL);

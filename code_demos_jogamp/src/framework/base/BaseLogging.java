@@ -44,6 +44,17 @@ public final class BaseLogging {
 	private BaseLogging() {
 		try {
 			System.out.println("INITIALIZING BASELOGGING ...");
+			System.out.println("");                                                                                               
+			System.out.println("   __ __|_  ___________________________________________________________________________  ___|__ __");
+			System.out.println("  //    /\\                                           _                                  /\\    \\\\  ");
+			System.out.println(" //____/  \\__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \\____\\\\ ");
+			System.out.println("  \\    \\  / /  __|  |     |   __|  _  |     |  _  | | |  __|  |     |   __|  |      /\\ \\  /    /  ");
+			System.out.println("   \\____\\/_/  |  |  |  |  |  |  |     | | | |   __| | | |  |  |  |  |  |  |  |__   \"  \\_\\/____/   ");
+			System.out.println("  /\\    \\     |_____|_____|_____|__|__|_|_|_|__|    | | |_____|_____|_____|_____|  _  /    /\\     ");
+			System.out.println(" /  \\____\\                       http://jogamp.org  |_|                              /____/  \\    ");
+			System.out.println(" \\  /   \"' _________________________________________________________________________ `\"   \\  /    ");
+			System.out.println("  \\/____.                                                                             .____\\/     ");
+			System.out.println("");
 			if (LOGGINGOUTPUT_FILE) {
 				System.out.println("BASELOGGING TO FILE ENABLED ... INITIALIZING ...");
 				mLogFile = new File(cLOGGING_OUTPUTFILENAME_PREFIX+"_"+mFileTimeStampFormatter.format(Calendar.getInstance().getTime())+cLOGGING_OUTPUTFILENAME_SUFFIX);

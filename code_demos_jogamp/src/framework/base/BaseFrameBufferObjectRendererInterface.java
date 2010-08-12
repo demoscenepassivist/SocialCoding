@@ -23,8 +23,8 @@ import com.jogamp.opengl.util.gl2.*;
 
 public interface BaseFrameBufferObjectRendererInterface {
 
-	public void init_FBORenderer(GL inGL,GLU inGLU,GLUT inGLUT);
-	public void mainLoop_FBORenderer(int inFrameNumber,GL inGL,GLU inGLU,GLUT inGLUT);
-	public void cleanup_FBORenderer(GL inGL,GLU inGLU,GLUT inGLUT);
+	public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT);
+	public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT);
+	public void cleanup_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT);
 	
 }

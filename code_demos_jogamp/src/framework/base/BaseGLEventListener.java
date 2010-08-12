@@ -35,7 +35,7 @@ public class BaseGLEventListener implements GLEventListener {
     }
             
     public void init(GLAutoDrawable inDrawable) {
-        GL tGL = inDrawable.getGL();
+        GL2 tGL = inDrawable.getGL().getGL2();
         if (BaseGlobalEnvironment.getInstance().wantsVSync()) {
         	//enable vertical sync ... :*
         	tGL.setSwapInterval(1);
@@ -44,7 +44,7 @@ public class BaseGLEventListener implements GLEventListener {
     }
     
     public void display(GLAutoDrawable inDrawable) {        
-    	GL tGL = inDrawable.getGL();
+    	GL2 tGL = inDrawable.getGL().getGL2();
     	mBaseRoutineRuntime.mainLoopRuntime(tGL,mGLU,mGLUT);
     }
     
@@ -58,7 +58,7 @@ public class BaseGLEventListener implements GLEventListener {
     
     public void dispose(GLAutoDrawable inDrawable) {
     	BaseLogging.getInstance().warning("DISPOSE CALLED ON GLAUTODRAWALBE!");
-    	GL tGL = inDrawable.getGL();
+    	GL2 tGL = inDrawable.getGL().getGL2();
     	mBaseRoutineRuntime.cleanupRuntime(tGL,mGLU,mGLUT);
     }
 

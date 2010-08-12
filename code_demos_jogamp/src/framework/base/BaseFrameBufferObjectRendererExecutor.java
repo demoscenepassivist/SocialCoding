@@ -18,21 +18,11 @@ package framework.base;
  **
  **/
 
-
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.jogamp.common.nio.*;
 import com.jogamp.opengl.util.gl2.*;
-
-import static javax.media.opengl.GL.GL_CCW;
-import static javax.media.opengl.GL.GL_CULL_FACE;
-import static javax.media.opengl.GL.GL_DEPTH_TEST;
-import static javax.media.opengl.GL.GL_TEXTURE0;
 import static javax.media.opengl.GL2.*;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_LIGHTING;
-import static javax.media.opengl.fixedfunc.GLLightingFunc.GL_SMOOTH;
-import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_MODELVIEW;
-import static javax.media.opengl.fixedfunc.GLMatrixFunc.GL_PROJECTION;
 
 public class BaseFrameBufferObjectRendererExecutor {
 
@@ -49,111 +39,111 @@ public class BaseFrameBufferObjectRendererExecutor {
     	mBaseFrameBufferObjectRendererInterface = inBaseFrameBufferObjectRendererInterface;
     }
 
-    public void init(GL2 inGL2,GLU inGLU,GLUT inGLUT) {
+    public void init(GL2 inGL,GLU inGLU,GLUT inGLUT) {
     	//allocate the framebuffer object ...
         int[] result = new int[1];
-        inGL2.glGenFramebuffers(1, result, 0);
+        inGL.glGenFramebuffers(1, result, 0);
         mFrameBufferObjectID = result[0];
-        inGL2.glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferObjectID);
+        inGL.glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferObjectID);
         //allocate the colour texture ...
-        inGL2.glGenTextures(1, result, 0);
+        inGL.glGenTextures(1, result, 0);
         mColourTextureID = result[0];
-        inGL2.glBindTexture(GL_TEXTURE_2D, mColourTextureID);
-        inGL2.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-        inGL2.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-        inGL2.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
-        inGL2.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
-        inGL2.glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,mTextureWidth,mTextureHeight,0,GL_RGBA,GL_UNSIGNED_BYTE,null);
+        inGL.glBindTexture(GL_TEXTURE_2D, mColourTextureID);
+        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+        inGL.glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA8,mTextureWidth,mTextureHeight,0,GL_RGBA,GL_UNSIGNED_BYTE,null);
         //allocate the depth texture ...
-        inGL2.glGenTextures(1, result, 0);
+        inGL.glGenTextures(1, result, 0);
         mDepthTextureID = result[0];
-        inGL2.glBindTexture(GL_TEXTURE_2D, mDepthTextureID);
-        inGL2.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-        inGL2.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-        inGL2.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
-        inGL2.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
-        inGL2.glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT32,mTextureWidth,mTextureHeight,0,GL_DEPTH_COMPONENT,GL_UNSIGNED_INT,null);
+        inGL.glBindTexture(GL_TEXTURE_2D, mDepthTextureID);
+        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
+        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
+        inGL.glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT32,mTextureWidth,mTextureHeight,0,GL_DEPTH_COMPONENT,GL_UNSIGNED_INT,null);
         //attach the textures to the framebuffer
-        inGL2.glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,mColourTextureID,0);
-        inGL2.glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D,mDepthTextureID,0);
-        inGL2.glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        inGL.glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,mColourTextureID,0);
+        inGL.glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D,mDepthTextureID,0);
+        inGL.glBindFramebuffer(GL_FRAMEBUFFER, 0);
         //check if fbo is set up correctly ...
-        checkFrameBufferObjectCompleteness(inGL2);
+        checkFrameBufferObjectCompleteness(inGL);
         //initialize the assigned fbo renderer ...
-        mBaseFrameBufferObjectRendererInterface.init_FBORenderer(inGL2,inGLU,inGLUT);
+        mBaseFrameBufferObjectRendererInterface.init_FBORenderer(inGL,inGLU,inGLUT);
     }
 
-    public void renderToFrameBuffer(int inFrameNumber,GL2 inGL2,GLU inGLU,GLUT inGLUT) {
-    	inGL2.glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
+    public void renderToFrameBuffer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
+    	inGL.glPushAttrib(GL_TRANSFORM_BIT | GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT);
     		//bind the framebuffer ...
-    		inGL2.glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferObjectID);
-    		inGL2.glPushAttrib(GL_VIEWPORT_BIT);
-    			inGL2.glViewport(0,0,mTextureWidth,mTextureHeight);
-    			mBaseFrameBufferObjectRendererInterface.mainLoop_FBORenderer(inFrameNumber,inGL2,inGLU,inGLUT);
-    		inGL2.glPopAttrib();
+    		inGL.glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferObjectID);
+    		inGL.glPushAttrib(GL_VIEWPORT_BIT);
+    			inGL.glViewport(0,0,mTextureWidth,mTextureHeight);
+    			mBaseFrameBufferObjectRendererInterface.mainLoop_FBORenderer(inFrameNumber,inGL,inGLU,inGLUT);
+    		inGL.glPopAttrib();
     		//unbind the framebuffer ...
-    		inGL2.glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        inGL2.glPopAttrib();
+    		inGL.glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        inGL.glPopAttrib();
     }
 
-    public void prepareForColouredRendering(GL2 inGL2, int inTextureUnitID) {
-    	inGL2.glPushAttrib(GL_TEXTURE_BIT);
-    	inGL2.glActiveTexture(inTextureUnitID);
-    	inGL2.glBindTexture(GL_TEXTURE_2D, mColourTextureID);
+    public void prepareForColouredRendering(GL2 inGL, int inTextureUnitID) {
+    	inGL.glPushAttrib(GL_TEXTURE_BIT);
+    	inGL.glActiveTexture(inTextureUnitID);
+    	inGL.glBindTexture(GL_TEXTURE_2D, mColourTextureID);
         //set the texture up to be used for painting a surface ...
         int textureTarget = GL_TEXTURE_2D;
-        inGL2.glEnable(textureTarget);
-        inGL2.glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
-        inGL2.glTexParameteri(textureTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-        inGL2.glTexParameteri(textureTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        inGL2.glTexParameteri(textureTarget,GL_TEXTURE_WRAP_S,GL_REPEAT);
-        inGL2.glTexParameteri(textureTarget,GL_TEXTURE_WRAP_T,GL_REPEAT);
+        inGL.glEnable(textureTarget);
+        inGL.glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
+        inGL.glTexParameteri(textureTarget,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        inGL.glTexParameteri(textureTarget,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        inGL.glTexParameteri(textureTarget,GL_TEXTURE_WRAP_S,GL_REPEAT);
+        inGL.glTexParameteri(textureTarget,GL_TEXTURE_WRAP_T,GL_REPEAT);
     }
 
-    public void stopColouredRendering(GL2 inGL2) {
-    	inGL2.glBindTexture(GL_TEXTURE_2D, 0);
+    public void stopColouredRendering(GL2 inGL) {
+    	inGL.glBindTexture(GL_TEXTURE_2D, 0);
         //restore the active texture ...
-        inGL2.glPopAttrib();
+        inGL.glPopAttrib();
     }
     
-    public void renderFBOAsFullscreenBillboard(GL2 inGL2,GLU inGLU,GLUT inGLUT) {
+    public void renderFBOAsFullscreenBillboard(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         //reset frustum to default state ...
-        BaseRoutineRuntime.resetFrustumToDefaultState(inGL2,inGLU,inGLUT);
-        inGL2.glShadeModel(GL_SMOOTH);
-        inGL2.glDisable(GL_LIGHTING);
-        inGL2.glFrontFace(GL_CCW);
-        inGL2.glDisable(GL_CULL_FACE);
+        BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT);
+        inGL.glShadeModel(GL_SMOOTH);
+        inGL.glDisable(GL_LIGHTING);
+        inGL.glFrontFace(GL_CCW);
+        inGL.glDisable(GL_CULL_FACE);
     	//disable depth test so that billboards can be rendered on top of each other ...
-        inGL2.glDisable(GL_DEPTH_TEST);			
-        inGL2.glMatrixMode(GL_PROJECTION);
-        inGL2.glLoadIdentity();
-        inGL2.glOrtho(0, BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight(), 0, -1, 1);
-        inGL2.glMatrixMode(GL_MODELVIEW);
-        inGL2.glLoadIdentity();
-        this.prepareForColouredRendering(inGL2,GL_TEXTURE0);
-        inGL2.glBegin(GL_QUADS);
-	        inGL2.glTexCoord2f(0.0f, 0.0f);
-	        inGL2.glVertex2f(0.0f, 0.0f);
-	        inGL2.glTexCoord2f(1.0f, 0.0f);
-	        inGL2.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), 0.0f);
-	        inGL2.glTexCoord2f(1.0f, 1.0f);
-	        inGL2.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
-	        inGL2.glTexCoord2f(0.0f, 1.0f);
-	        inGL2.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight());
-        inGL2.glEnd(); 
-    	this.stopColouredRendering(inGL2);
+        inGL.glDisable(GL_DEPTH_TEST);			
+        inGL.glMatrixMode(GL_PROJECTION);
+        inGL.glLoadIdentity();
+        inGL.glOrtho(0, BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight(), 0, -1, 1);
+        inGL.glMatrixMode(GL_MODELVIEW);
+        inGL.glLoadIdentity();
+        this.prepareForColouredRendering(inGL,GL_TEXTURE0);
+        inGL.glBegin(GL_QUADS);
+	        inGL.glTexCoord2f(0.0f, 0.0f);
+	        inGL.glVertex2f(0.0f, 0.0f);
+	        inGL.glTexCoord2f(1.0f, 0.0f);
+	        inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), 0.0f);
+	        inGL.glTexCoord2f(1.0f, 1.0f);
+	        inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
+	        inGL.glTexCoord2f(0.0f, 1.0f);
+	        inGL.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight());
+        inGL.glEnd(); 
+    	this.stopColouredRendering(inGL);
     }
     
-    public void cleanup(GL2 inGL2,GLU inGLU,GLUT inGLUT) {
-    	inGL2.glDeleteFramebuffers(1, Buffers.newDirectIntBuffer(mFrameBufferObjectID));
-    	inGL2.glDeleteTextures(1, Buffers.newDirectIntBuffer(mColourTextureID));
-    	inGL2.glDeleteTextures(1, Buffers.newDirectIntBuffer(mDepthTextureID));
-    	mBaseFrameBufferObjectRendererInterface.cleanup_FBORenderer(inGL2,inGLU,inGLUT);
+    public void cleanup(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+    	inGL.glDeleteFramebuffers(1, Buffers.newDirectIntBuffer(mFrameBufferObjectID));
+    	inGL.glDeleteTextures(1, Buffers.newDirectIntBuffer(mColourTextureID));
+    	inGL.glDeleteTextures(1, Buffers.newDirectIntBuffer(mDepthTextureID));
+    	mBaseFrameBufferObjectRendererInterface.cleanup_FBORenderer(inGL,inGLU,inGLUT);
     }
     
-	private void checkFrameBufferObjectCompleteness(GL2 inGL2) {
+	private void checkFrameBufferObjectCompleteness(GL2 inGL) {
 		BaseLogging.getInstance().info("CHECKING FRAMEBUFFEROBJECT COMPLETENESS ...");
-		int tError = inGL2.glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		int tError = inGL.glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		switch(tError) {
 			case GL_FRAMEBUFFER_COMPLETE:
 				BaseLogging.getInstance().info("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_COMPLETE_EXT");

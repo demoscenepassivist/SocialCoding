@@ -38,7 +38,8 @@ public class DirectBufferUtils {
 		inDirectFloatBuffer.put(inFloatArray);
 		inDirectFloatBuffer.rewind();
 		if (inDirectFloatBuffer.isDirect()) {
-			BaseLogging.getInstance().info("UPDATED DIRECT FLOATBUFFER ... LENGHT="+inFloatArray.length);
+			//currently disabled ... spams the logs X-) 
+			//BaseLogging.getInstance().info("UPDATED DIRECT FLOATBUFFER ... LENGHT="+inFloatArray.length);
 		} else {
 			BaseLogging.getInstance().warning("UPDATED NON-DIRECT FLOATBUFFER ... LENGHT="+inFloatArray.length);
 		}

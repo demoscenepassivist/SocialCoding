@@ -27,16 +27,16 @@ import static javax.media.opengl.GL2.*;
 
 public class ShaderUtils {
 	
-    public static void checkShaderLogInfo(GL2 inGL2, int inShaderObjectID) {
+    public static void checkShaderLogInfo(GL2 inGL, int inShaderObjectID) {
         IntBuffer tReturnValue = Buffers.newDirectIntBuffer(1);
-        inGL2.glGetObjectParameterivARB(inShaderObjectID, GL_OBJECT_INFO_LOG_LENGTH_ARB, tReturnValue);
+        inGL.glGetObjectParameterivARB(inShaderObjectID, GL_OBJECT_INFO_LOG_LENGTH_ARB, tReturnValue);
         int tLogLength = tReturnValue.get();
         if (tLogLength <= 1) {
             return;
         }
         ByteBuffer tShaderLog = Buffers.newDirectByteBuffer(tLogLength);
         tReturnValue.flip();
-        inGL2.glGetInfoLogARB(inShaderObjectID, tLogLength, tReturnValue, tShaderLog);
+        inGL.glGetInfoLogARB(inShaderObjectID, tLogLength, tReturnValue, tShaderLog);
         byte[] tShaderLogBytes = new byte[tLogLength];
         tShaderLog.get(tShaderLogBytes);
         String tShaderValidationLog = new String(tShaderLogBytes);
@@ -71,93 +71,111 @@ public class ShaderUtils {
 		return null;
 	}
 	
-    public static int loadVertexShaderFromFile(GL2 inGL2,String inShaderSourceFileName) {
-    	return generateVertexShader(inGL2,loadShaderSourceFileAsString(inShaderSourceFileName));
+    public static int loadVertexShaderFromFile(GL2 inGL,String inShaderSourceFileName) {
+    	return generateVertexShader(inGL,loadShaderSourceFileAsString(inShaderSourceFileName));
     }
     
-    public static int loadFragmentShaderFromFile(GL2 inGL2,String inShaderSourceFileName) {
-    	return generateFragmentShader(inGL2,loadShaderSourceFileAsString(inShaderSourceFileName));
+    public static int loadFragmentShaderFromFile(GL2 inGL,String inShaderSourceFileName) {
+    	return generateFragmentShader(inGL,loadShaderSourceFileAsString(inShaderSourceFileName));
     }
     
-    public static int generateVertexShader(GL2 inGL2,String inShaderSource) {
-        return generateShader(inGL2,inShaderSource,GL_VERTEX_SHADER);
+    public static int generateVertexShader(GL2 inGL,String inShaderSource) {
+        return generateShader(inGL,inShaderSource,GL_VERTEX_SHADER);
     }
     
-    public static int generateFragmentShader(GL2 inGL2,String inShaderSource) {
-        return generateShader(inGL2,inShaderSource,GL_FRAGMENT_SHADER);
+    public static int generateFragmentShader(GL2 inGL,String inShaderSource) {
+        return generateShader(inGL,inShaderSource,GL_FRAGMENT_SHADER);
     }
     
-    public static int generateShader(GL2 inGL2,String inShaderSource,int inShaderType) {
-        int tShader = inGL2.glCreateShader(inShaderType);
+    public static int generateShader(GL2 inGL,String inShaderSource,int inShaderType) {
+        int tShader = inGL.glCreateShader(inShaderType);
         String[] tShaderSource = {inShaderSource};
-        inGL2.glShaderSource(tShader, 1, tShaderSource, (int[])null, 0);
-        inGL2.glCompileShader(tShader);
-        checkShaderLogInfo(inGL2, tShader);
+        inGL.glShaderSource(tShader, 1, tShaderSource, (int[])null, 0);
+        inGL.glCompileShader(tShader);
+        checkShaderLogInfo(inGL, tShader);
         return tShader;
     }
     
-    public static int generateSimple_1xVS_ShaderProgramm(GL2 inGL2,int inVertexShaderObjectID) {
-    	return generateSimple_1xFS_OR_1xVS_ShaderProgramm(inGL2,inVertexShaderObjectID);
+    public static int generateSimple_1xVS_ShaderProgramm(GL2 inGL,int inVertexShaderObjectID) {
+    	return generateSimple_1xFS_OR_1xVS_ShaderProgramm(inGL,inVertexShaderObjectID);
     }
     
-    public static int generateSimple_1xFS_ShaderProgramm(GL2 inGL2, int inFragmentShaderObjectID) {
-    	return generateSimple_1xFS_OR_1xVS_ShaderProgramm(inGL2,inFragmentShaderObjectID);
+    public static int generateSimple_1xFS_ShaderProgramm(GL2 inGL, int inFragmentShaderObjectID) {
+    	return generateSimple_1xFS_OR_1xVS_ShaderProgramm(inGL,inFragmentShaderObjectID);
     }
     
-    public static int generateSimple_1xFS_OR_1xVS_ShaderProgramm(GL2 inGL2, int inGenericShaderObjectID) {
-    	int tLinkedShader = inGL2.glCreateProgram();
-        inGL2.glAttachShader(tLinkedShader, inGenericShaderObjectID);
-        inGL2.glLinkProgram(tLinkedShader);
-        inGL2.glValidateProgram(tLinkedShader);
-        checkShaderLogInfo(inGL2, tLinkedShader);
+    public static int generateSimple_1xFS_OR_1xVS_ShaderProgramm(GL2 inGL, int inGenericShaderObjectID) {
+    	int tLinkedShader = inGL.glCreateProgram();
+        inGL.glAttachShader(tLinkedShader, inGenericShaderObjectID);
+        inGL.glLinkProgram(tLinkedShader);
+        inGL.glValidateProgram(tLinkedShader);
+        checkShaderLogInfo(inGL, tLinkedShader);
         return tLinkedShader;
     }
     
-    public static int generateSimple_1xVS_1xFS_ShaderProgramm(GL2 inGL2, int inVertexShaderObjectID, int inFragmentShaderObjectID) {
-    	int tLinkedShader = inGL2.glCreateProgram();
-    	inGL2.glAttachShader(tLinkedShader, inVertexShaderObjectID);
-    	inGL2.glAttachShader(tLinkedShader, inFragmentShaderObjectID);
-    	inGL2.glLinkProgram(tLinkedShader);
-    	inGL2.glValidateProgram(tLinkedShader);
-        checkShaderLogInfo(inGL2, tLinkedShader);
+    public static int generateSimple_1xVS_1xFS_ShaderProgramm(GL2 inGL, int inVertexShaderObjectID, int inFragmentShaderObjectID) {
+    	int tLinkedShader = inGL.glCreateProgram();
+    	inGL.glAttachShader(tLinkedShader, inVertexShaderObjectID);
+    	inGL.glAttachShader(tLinkedShader, inFragmentShaderObjectID);
+    	inGL.glLinkProgram(tLinkedShader);
+    	inGL.glValidateProgram(tLinkedShader);
+        checkShaderLogInfo(inGL, tLinkedShader);
         return tLinkedShader;
     }
 
-	public static void setUniform3fv(GL2 inGL2,int inProgramID, String inName, FloatBuffer inValues) {
-	    int tUniformLocation = inGL2.glGetUniformLocation(inProgramID, inName);
-	    if (tUniformLocation != -1) {
-	        inGL2.glUniform3fv(tUniformLocation, 1, inValues);
-	    } else {
-	    	BaseLogging.getInstance().warning("UNIFORM COULD NOT BE FOUND! NAME="+inName);
-	    }
-	}
-	
-	public static void setUniform4fv(GL2 inGL2,int inProgramID, String inName, FloatBuffer inValues) {
-	    int tUniformLocation = inGL2.glGetUniformLocation(inProgramID, inName);
-	    if (tUniformLocation != -1) {
-	        inGL2.glUniform4fv(tUniformLocation, 1, inValues);
-	    } else {
-	    	BaseLogging.getInstance().warning("UNIFORM COULD NOT BE FOUND! NAME="+inName);
-	    }
-	}
-	
-	public static void setUniform1i(GL2 inGL2,int inProgramID,String inName,int inValue) {
-		int tUniformLocation = inGL2.glGetUniformLocation(inProgramID,inName);
+	public static void setUniform1f(GL2 inGL,int inProgramID, String inName,float inValue) {
+		int tUniformLocation = inGL.glGetUniformLocation(inProgramID,inName);
 		if (tUniformLocation != -1) {
-			inGL2.glUniform1i(tUniformLocation, inValue);
+			inGL.glUniform1f(tUniformLocation, inValue);
+	    } else {
+	    	BaseLogging.getInstance().warning("UNIFORM COULD NOT BE FOUND! NAME="+inName);
+	    }
+	}
+		
+	public static void setUniform2fv(GL2 inGL,int inProgramID, String inName, FloatBuffer inValues) {
+		int tUniformLocation = inGL.glGetUniformLocation(inProgramID,inName);
+		if (tUniformLocation != -1) {
+			inGL.glUniform2fv(tUniformLocation, inValues.capacity()/2, inValues);   
+	    } else {
+	    	BaseLogging.getInstance().warning("UNIFORM COULD NOT BE FOUND! NAME="+inName);
+	    }
+	}
+    
+	public static void setUniform3fv(GL2 inGL,int inProgramID, String inName, FloatBuffer inValues) {
+	    int tUniformLocation = inGL.glGetUniformLocation(inProgramID, inName);
+	    if (tUniformLocation != -1) {
+	        inGL.glUniform3fv(tUniformLocation, 1, inValues);
 	    } else {
 	    	BaseLogging.getInstance().warning("UNIFORM COULD NOT BE FOUND! NAME="+inName);
 	    }
 	}
 	
-	public static void setSampler2DUniformOnTextureUnit(GL2 inGL2,int inProgramID,String inSamplerUniformName,Texture inTexture,int inTextureUnit,int inTextureUnitNumber,boolean inPreferAnisotropy) {
-		inGL2.glActiveTexture(inTextureUnit);
+	public static void setUniform4fv(GL2 inGL,int inProgramID, String inName, FloatBuffer inValues) {
+	    int tUniformLocation = inGL.glGetUniformLocation(inProgramID, inName);
+	    if (tUniformLocation != -1) {
+	        inGL.glUniform4fv(tUniformLocation, 1, inValues);
+	    } else {
+	    	BaseLogging.getInstance().warning("UNIFORM COULD NOT BE FOUND! NAME="+inName);
+	    }
+	}
+	
+	public static void setUniform1i(GL2 inGL,int inProgramID,String inName,int inValue) {
+		int tUniformLocation = inGL.glGetUniformLocation(inProgramID,inName);
+		if (tUniformLocation != -1) {
+			inGL.glUniform1i(tUniformLocation, inValue);
+	    } else {
+	    	BaseLogging.getInstance().warning("UNIFORM COULD NOT BE FOUND! NAME="+inName);
+	    }
+	}
+	
+	public static void setSampler2DUniformOnTextureUnit(GL2 inGL,int inProgramID,String inSamplerUniformName,Texture inTexture,int inTextureUnit,int inTextureUnitNumber,boolean inPreferAnisotropy) {
+		inGL.glActiveTexture(inTextureUnit);
 		inTexture.enable();
 		inTexture.bind();
 		if (inPreferAnisotropy) {
-			TextureUtils.preferAnisotropicFilteringOnTextureTarget(inGL2,inTexture.getTarget());        
+			TextureUtils.preferAnisotropicFilteringOnTextureTarget(inGL,inTexture.getTarget());        
 		}
-		ShaderUtils.setUniform1i(inGL2,inProgramID,inSamplerUniformName,inTextureUnitNumber); 
+		ShaderUtils.setUniform1i(inGL,inProgramID,inSamplerUniformName,inTextureUnitNumber); 
 		inTexture.disable();
 	}
 	

@@ -17,7 +17,7 @@ package framework.init;
  **  Possible commandline parameters are:
  **   -RESOLUTION (=640x480/1280x1024/1920x1200/...)
  **   -ROUTINE (=jogamp.routine.jogl.fixedfunctionpipeline.GL2_DisplayLists/...)	
- **   -FRAMERATE (=15/30/60)
+ **   -FRAMERATE (=15/30/60/.../MAX)
  **   -FULLSCREEN (=TRUE/FALSE)
  **   -MULTISAMPLING (=TRUE/FALSE)
  **   -SAMPLEBUFFERS (=1/2/4)
@@ -71,7 +71,11 @@ public class Bootstrap {
 				} else if(args[i].trim().startsWith("-FRAMERATE=")) {
 					String tFrameRateParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
 					BaseLogging.getInstance().info("CUSTOM FRAMERATE SET TO '"+tFrameRateParameter+"'");
-					if (!tFrameRateParameter.equalsIgnoreCase("auto")) {
+					if (tFrameRateParameter.equalsIgnoreCase("auto")) {
+						tFrameRate = -1;
+					} else if (tFrameRateParameter.equalsIgnoreCase("max")) {
+						tFrameRate = Integer.MAX_VALUE;
+					} else {
 						tFrameRate = Integer.parseInt(tFrameRateParameter);
 					}
 				} else if(args[i].trim().startsWith("-FULLSCREEN=")) {

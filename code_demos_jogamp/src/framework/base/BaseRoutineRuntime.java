@@ -39,12 +39,17 @@ public class BaseRoutineRuntime {
 	private long mLastFrameRenderingTimeStart;
 	private long mLastFrameRenderingTimeEnd;
 	private BaseRoutineInterface mBaseRoutineInterface;
+	private long mAverageFramerateCounter;
+	private long mAverageFramerateTimeStart;
+	private long mAverageFramerateTimeEnd;
+	private static final int cAverageFramerateInterval = 25;
+	private int mAverageFramerate;
 	
 	public BaseRoutineRuntime() {
 		//Zzzz ... :>
 	}
 	
-	public void initRuntime(GL inGL,GLU inGLU,GLUT inGLUT) {
+	public void initRuntime(GL2 inGL,GLU inGLU,GLUT inGLUT) {
     	mBaseGlobalEnvironment = BaseGlobalEnvironment.getInstance();
 		Font tFont = new Font("SansSerif", Font.PLAIN, 12);
     	mTextRenderer = new TextRenderer(tFont, false, false);
@@ -64,7 +69,7 @@ public class BaseRoutineRuntime {
 		}
 	}
 	
-	public void mainLoopRuntime(GL inGL,GLU inGLU,GLUT inGLUT) {
+	public void mainLoopRuntime(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		mLastFrameRenderingTimeStart = mCurrentFrameRenderingTimeStart;
 		mLastFrameRenderingTimeEnd = System.nanoTime();
 		mCurrentFrameRenderingTimeStart = System.nanoTime();
@@ -75,6 +80,7 @@ public class BaseRoutineRuntime {
 		inGL.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	    inGL.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	    mBaseRoutineInterface.mainLoop(mFrameCounter,inGL,inGLU,inGLUT);
+	    checkForGlError(inGL,inGLU);
 	    //optional fraps/kkapture-style screencapture logging ... ->=:-)X	   
 	    if (mBaseGlobalEnvironment.wantsFrameCapture()) {
 	    	BufferedImage tScreenshot = Screenshot.readToBufferedImage(0,0, mBaseGlobalEnvironment.getScreenWidth(), mBaseGlobalEnvironment.getScreenHeight(),false);
@@ -86,20 +92,20 @@ public class BaseRoutineRuntime {
 	    mFrameCounter++;
 	}
 	
-	public void cleanupRuntime(GL inGL,GLU inGLU,GLUT inGLUT) {
+	public void cleanupRuntime(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		mBaseRoutineInterface.cleanupRoutine(inGL,inGLU,inGLUT);
 	}
 	
 	/* --------------------------------------------------------------------------------------------------------------------------------------------------- */
 	
-	public static void resetFrustumToDefaultState(GL inGL,GLU inGLU,GLUT inGLUT) {
+	public static void resetFrustumToDefaultState(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		inGL.glViewport(0, 0, BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
-		inGL.getGL2().glMatrixMode(GL_PROJECTION);
-		inGL.getGL2().glLoadIdentity();
+		inGL.glMatrixMode(GL_PROJECTION);
+		inGL.glLoadIdentity();
         double tAspectRatio = (double)BaseGlobalEnvironment.getInstance().getScreenWidth() / (double)BaseGlobalEnvironment.getInstance().getScreenHeight();
         inGLU.gluPerspective(45.0, tAspectRatio, 0.01, 200.0);
-        inGL.getGL2().glMatrixMode(GL_MODELVIEW);
-        inGL.getGL2().glLoadIdentity();
+        inGL.glMatrixMode(GL_MODELVIEW);
+        inGL.glLoadIdentity();
         inGLU.gluLookAt(
         		0f, 0f, 70f,
                 0f, 0f, 0f,
@@ -107,20 +113,35 @@ public class BaseRoutineRuntime {
         );
 	}
 	
-	private void renderDebugInformation(GL inGL,GLU inGLU,GLUT inGLUT) {
+	private void renderDebugInformation(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+        if (++mAverageFramerateCounter == cAverageFramerateInterval) {
+            mAverageFramerateTimeEnd = System.nanoTime();
+            mAverageFramerateCounter = 0;
+            mAverageFramerate = (int)(1000000000.0f/((mAverageFramerateTimeEnd - mAverageFramerateTimeStart)/cAverageFramerateInterval));   
+            mAverageFramerateTimeStart = System.nanoTime();     
+        }
 		long tPossibleFrameRate = (long)(1000000000.0f/(mCurrentFrameRenderingTimeEnd-mCurrentFrameRenderingTimeStart));
 		long tActualFrameRate = (long)(1000000000.0f/(mLastFrameRenderingTimeEnd-mLastFrameRenderingTimeStart));
-		String[] tDebugInformation = new String[4];
+		String[] tDebugInformation = new String[5];
         tDebugInformation[0] = "JOGL: "+"GL_VENDOR:"+inGL.glGetString(GL_VENDOR)+" GL_RENDERER:"+inGL.glGetString(GL_RENDERER);
         tDebugInformation[1] = "GL_VERSION: "+inGL.glGetString(GL_VERSION)+" GLSL_VERSION: "+inGL.glGetString(GL_SHADING_LANGUAGE_VERSION); 
         tDebugInformation[2] = "VMMEM: USED: "+mDecimalFormat.format(mBaseGlobalEnvironment.getUsedMem())+" FREE: "+mDecimalFormat.format(mBaseGlobalEnvironment.getFreeMem())+" TOTAL: "+mDecimalFormat.format(mBaseGlobalEnvironment.getTotalMem())+" MAX: "+mDecimalFormat.format(mBaseGlobalEnvironment.getMaxMem());
-        tDebugInformation[3] = "DISPLAY RESOLUTION: "+mBaseGlobalEnvironment.getScreenWidth()+"x"+mBaseGlobalEnvironment.getScreenHeight()+" FRAME: "+mFrameCounter+" ACTUAL FPS: "+tActualFrameRate+" POSSIBLE FPS: "+mDecimalFormat.format(tPossibleFrameRate);    
+        tDebugInformation[3] = "DISPLAY RESOLUTION: "+mBaseGlobalEnvironment.getScreenWidth()+"x"+mBaseGlobalEnvironment.getScreenHeight()+" FRAME: "+mFrameCounter+" AVERAGE FPS:"+mAverageFramerate+" ACTUAL FPS: "+tActualFrameRate+" POSSIBLE FPS: "+mDecimalFormat.format(tPossibleFrameRate);    
+        tDebugInformation[4] = "ROUTINE: "+mBaseGlobalEnvironment.getBaseRoutineClassName();
         for (int i=0; i<tDebugInformation.length; i++) {
 	    	mTextRenderer.beginRendering(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
-		    mTextRenderer.setColor(0.5f, 1.0f, 0.5f, 1.0f);
+		    mTextRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
 		    mTextRenderer.draw(tDebugInformation[i], 0, BaseGlobalEnvironment.getInstance().getScreenHeight()-11*(i+1));
 		    mTextRenderer.endRendering();
         }
 	}
+	
+    private void checkForGlError(GL2 inGL,GLU inGLU) {
+    	int tError = inGL.glGetError();
+	    String tErrorString = "!!! GL-ERROR !!! GLU ERROR STRING FOR ERROR="+inGLU.gluErrorString(tError);
+	    if (tError!=GL_NO_ERROR) {
+	    	BaseLogging.getInstance().error(tErrorString);
+	    }
+    }
 	
 }

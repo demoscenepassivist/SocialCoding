@@ -76,14 +76,26 @@ public class TextureUtils {
 		return tTexture;
 	}
 		
-	public static void preferAnisotropicFilteringOnTextureTarget(GL inGL,int inTarget) {
+	public static void preferAnisotropicFilteringOnTextureTarget(GL2 inGL,int inTarget) {
 		if (BaseGlobalEnvironment.getInstance().preferAnisotropicFiltering()) {
 			inGL.glTexParameterf(inTarget, GL_TEXTURE_MAX_ANISOTROPY_EXT , new float[]{BaseGlobalEnvironment.getInstance().getAnisotropyLevel()}[0]);
 		}
 	}
 
-	public static void preferAnisotropicFilteringOnTextureTarget(GL inGL,Texture inTexture) {
+	public static void preferAnisotropicFilteringOnTextureTarget(GL2 inGL,Texture inTexture) {
 		TextureUtils.preferAnisotropicFilteringOnTextureTarget(inGL,inTexture.getTarget());
+	}
+	
+	public static int generateTextureID(GL2 inGL) {
+		int[] result = new int[1];
+		inGL.glGenTextures(1, result, 0);
+		BaseLogging.getInstance().info("ALLOCATED NEW JOGL TEXTURE ID="+result[0]);
+		return result[0];
+	}
+	
+	public static void deleteTextureID(GL2 inGL, int inTextureID) {
+		BaseLogging.getInstance().info("DELETING JOGL TEXTURE ID="+inTextureID);
+		inGL.glDeleteTextures(1, new int[] {inTextureID}, 0); 
 	}
 	
 }

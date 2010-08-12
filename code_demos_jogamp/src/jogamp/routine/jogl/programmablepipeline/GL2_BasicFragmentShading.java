@@ -35,44 +35,41 @@ public class GL2_BasicFragmentShading extends BaseRoutineAdapter implements Base
 	private int[] mLinkedShaders;
 	private int mLinkedShaderIndex;
 	
-	public void initRoutine(GL inGL,GLU inGLU,GLUT inGLUT) {		
-		GL2 tGL2 = inGL.getGL2();
+	public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		mBaseFrameBufferObjectRendererExecutor = new BaseFrameBufferObjectRendererExecutor(BaseGlobalEnvironment.getInstance().getScreenWidth(),BaseGlobalEnvironment.getInstance().getScreenHeight(),this);
-		mBaseFrameBufferObjectRendererExecutor.init(tGL2,inGLU,inGLUT);
+		mBaseFrameBufferObjectRendererExecutor.init(inGL,inGLU,inGLUT);
 		mFragmentShaders = new int[5];
-		mFragmentShaders[0] = ShaderUtils.loadFragmentShaderFromFile(tGL2,"/shaders/rasterizationshaders/noop.fs");
-		mFragmentShaders[1] = ShaderUtils.loadFragmentShaderFromFile(tGL2,"/shaders/rasterizationshaders/grayscale.fs");
-		mFragmentShaders[2] = ShaderUtils.loadFragmentShaderFromFile(tGL2,"/shaders/rasterizationshaders/grayinvert.fs");
-		mFragmentShaders[3] = ShaderUtils.loadFragmentShaderFromFile(tGL2,"/shaders/rasterizationshaders/colorinvert.fs");
-		mFragmentShaders[4] = ShaderUtils.loadFragmentShaderFromFile(tGL2,"/shaders/rasterizationshaders/sepia.fs");
+		mFragmentShaders[0] = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/rasterizationshaders/noop.fs");
+		mFragmentShaders[1] = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/rasterizationshaders/grayscale.fs");
+		mFragmentShaders[2] = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/rasterizationshaders/grayinvert.fs");
+		mFragmentShaders[3] = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/rasterizationshaders/colorinvert.fs");
+		mFragmentShaders[4] = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/rasterizationshaders/sepia.fs");
 		mLinkedShaders = new int[mFragmentShaders.length];
 		for (int i=0; i<mFragmentShaders.length; i++) {
-			mLinkedShaders[i] = ShaderUtils.generateSimple_1xFS_ShaderProgramm(tGL2,mFragmentShaders[i]);
+			mLinkedShaders[i] = ShaderUtils.generateSimple_1xFS_ShaderProgramm(inGL,mFragmentShaders[i]);
 		}
 		mLinkedShader = mLinkedShaders[0];
 		mLinkedShaderIndex = 0;	
 		//setup lighting ...
-        tGL2.glLightfv(GL_LIGHT0, GL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.0f, 0.0f, 0.0f, 1.0f}));
-        tGL2.glLightfv(GL_LIGHT0, GL_DIFFUSE, DirectBufferUtils.createDirectFloatBuffer(new float[]{1.0f, 1.0f, 1.0f, 1.0f}));
-        tGL2.glLightfv(GL_LIGHT0, GL_POSITION, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.0f, 3.0f, 3.0f, 0.0f}));
-        tGL2.glLightModelfv(GL_LIGHT_MODEL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.2f, 0.2f, 0.2f, 1.0f}));
+        inGL.glLightfv(GL_LIGHT0, GL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.0f, 0.0f, 0.0f, 1.0f}));
+        inGL.glLightfv(GL_LIGHT0, GL_DIFFUSE, DirectBufferUtils.createDirectFloatBuffer(new float[]{1.0f, 1.0f, 1.0f, 1.0f}));
+        inGL.glLightfv(GL_LIGHT0, GL_POSITION, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.0f, 3.0f, 3.0f, 0.0f}));
+        inGL.glLightModelfv(GL_LIGHT_MODEL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.2f, 0.2f, 0.2f, 1.0f}));
 	}
 	
-	public void mainLoop(int inFrameNumber,GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
+	public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		if (inFrameNumber%100==0) {
 			mLinkedShaderIndex++;
 			mLinkedShader = mLinkedShaders[mLinkedShaderIndex%mLinkedShaders.length];
 		}
-        mBaseFrameBufferObjectRendererExecutor.renderToFrameBuffer(inFrameNumber,tGL2,inGLU,inGLUT);
-        mBaseFrameBufferObjectRendererExecutor.renderFBOAsFullscreenBillboard(tGL2,inGLU,inGLUT);
+        mBaseFrameBufferObjectRendererExecutor.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
+        mBaseFrameBufferObjectRendererExecutor.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
 	}
 	
-	public void cleanupRoutine(GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
-		mBaseFrameBufferObjectRendererExecutor.cleanup(tGL2,inGLU,inGLUT);
+	public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+		mBaseFrameBufferObjectRendererExecutor.cleanup(inGL,inGLU,inGLUT);
 		for (int i=0; i<mFragmentShaders.length; i++) {
-			tGL2.glDeleteShader(mFragmentShaders[i]);
+			inGL.glDeleteShader(mFragmentShaders[i]);
 		}
 	}
 	
@@ -96,17 +93,15 @@ public class GL2_BasicFragmentShading extends BaseRoutineAdapter implements Base
         	{1.0f,0.5f,0.75f}
     };
 	
-	public void init_FBORenderer(GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
+	public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		mDisplayListSize = 1;
-		mDisplayListStartID = tGL2.glGenLists(mDisplayListSize);
-		tGL2.glNewList(mDisplayListStartID,GL_COMPILE);
+		mDisplayListStartID = inGL.glGenLists(mDisplayListSize);
+		inGL.glNewList(mDisplayListStartID,GL_COMPILE);
 			inGLUT.glutSolidTorus(0.3, 0.5, 61, 37);
-		tGL2.glEndList();
+		inGL.glEndList();
 	}
 	
-	public void mainLoop_FBORenderer(int inFrameNumber,GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
+	public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		inGL.glCullFace(GL_BACK);
 	    inGL.glEnable(GL_CULL_FACE);
         inGL.glEnable(GL_LIGHTING);
@@ -116,15 +111,15 @@ public class GL2_BasicFragmentShading extends BaseRoutineAdapter implements Base
         inGL.glEnable(GL_DEPTH_TEST);
         inGL.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);    	
         inGL.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        tGL2.glTranslatef(0.0f,0.0f,70.0f);	
+        inGL.glTranslatef(0.0f,0.0f,70.0f);	
         float tX = -0.65f;
         float tY =  0.0f;
         float tZ = -2.0f;
-        tGL2.glValidateProgram(mLinkedShader);
-        tGL2.glUseProgram(mLinkedShader);
+        inGL.glValidateProgram(mLinkedShader);
+        inGL.glUseProgram(mLinkedShader);
         for (int j=0; j<12; j+=2) {
             renderTorus(
-            	inFrameNumber+(j*10),tGL2, 
+            	inFrameNumber+(j*10),inGL, 
             	tX, tY, tZ, 
             	mRainbowColors[j][0],mRainbowColors[j][1],mRainbowColors[j][2],
             	mRainbowColors[j+1][0],mRainbowColors[j+1][1],mRainbowColors[j+1][2],
@@ -134,17 +129,16 @@ public class GL2_BasicFragmentShading extends BaseRoutineAdapter implements Base
         	tX+=1.0f;
         	tZ-=1.0f;
     	}
-        tGL2.glUseProgram(0);
+        inGL.glUseProgram(0);
 	}
 	
-	public void cleanup_FBORenderer(GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
-		tGL2.glDeleteLists(mDisplayListStartID,mDisplayListSize);
+	public void cleanup_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+		inGL.glDeleteLists(mDisplayListStartID,mDisplayListSize);
 		inGL.glFlush();		
 	}
 	
     private void renderTorus(
-    		int inFrameNumber,GL2 inGL2, 
+    		int inFrameNumber,GL2 inGL, 
     		float inX, float inY, float inZ, 
     		float inAmbientRed, float inAmbientGreen, float inAmbientBlue, 
     		float inDiffuseRed, float inDiffuseGreen, float inDiffuseBlue,
@@ -152,25 +146,25 @@ public class GL2_BasicFragmentShading extends BaseRoutineAdapter implements Base
             float inShine
     ) {
         float tMaterialColor[] = new float[4];
-        inGL2.glPushMatrix();
-        	inGL2.glTranslatef(inX, inY, inZ);
+        inGL.glPushMatrix();
+        	inGL.glTranslatef(inX, inY, inZ);
 	        tMaterialColor[0] = inAmbientRed;
 	        tMaterialColor[1] = inAmbientGreen;
 	        tMaterialColor[2] = inAmbientBlue;
 	        tMaterialColor[3] = 1.0f;
-	        inGL2.glMaterialfv(GL_FRONT, GL_AMBIENT, tMaterialColor, 0);
+	        inGL.glMaterialfv(GL_FRONT, GL_AMBIENT, tMaterialColor, 0);
 	        tMaterialColor[0] = inDiffuseRed;
 	        tMaterialColor[1] = inDiffuseGreen;
 	        tMaterialColor[2] = inDiffuseBlue;
-	        inGL2.glMaterialfv(GL_FRONT, GL_DIFFUSE, tMaterialColor, 0);
+	        inGL.glMaterialfv(GL_FRONT, GL_DIFFUSE, tMaterialColor, 0);
 	        tMaterialColor[0] = inSpecularRed;
 	        tMaterialColor[1] = inSpecularGreen;
 	        tMaterialColor[2] = inSpecularBlue;
-	        inGL2.glMaterialfv(GL_FRONT, GL_SPECULAR, tMaterialColor, 0);
-	        inGL2.glMaterialf(GL_FRONT, GL_SHININESS, inShine * 128.0f);
-	        inGL2.glRotatef(inFrameNumber%360, 1.0f, 0.5f, 0.0f);
-	        inGL2.glCallList(mDisplayListStartID);
-	    inGL2.glPopMatrix();
+	        inGL.glMaterialfv(GL_FRONT, GL_SPECULAR, tMaterialColor, 0);
+	        inGL.glMaterialf(GL_FRONT, GL_SHININESS, inShine * 128.0f);
+	        inGL.glRotatef(inFrameNumber%360, 1.0f, 0.5f, 0.0f);
+	        inGL.glCallList(mDisplayListStartID);
+	    inGL.glPopMatrix();
     }
 
 }

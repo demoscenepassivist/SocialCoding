@@ -22,15 +22,15 @@ import com.jogamp.opengl.util.gl2.*;
 
 public class BaseRoutineAdapter implements BaseRoutineInterface {
 
-	public void initRoutine(GL inGL,GLU inGLU,GLUT inGLUT) {
+	public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		//Zzzz ... =|:-)
 	}
 	
-	public void mainLoop(int inFrameNumber,GL inGL,GLU inGLU,GLUT inGLUT) {
+	public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		//Zzzz ... 7:^]
 	}
 	
-	public void cleanupRoutine(GL inGL,GLU inGLU,GLUT inGLUT) {
+	public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		//Zzzz ... =:o]
 	}
 	

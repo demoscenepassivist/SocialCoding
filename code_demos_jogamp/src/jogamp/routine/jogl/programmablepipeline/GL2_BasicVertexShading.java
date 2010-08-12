@@ -49,16 +49,15 @@ public class GL2_BasicVertexShading extends BaseRoutineAdapter implements BaseRo
     	{1.0f,0.5f,0.75f}
     };
 	
-	public void initRoutine(GL inGL,GLU inGLU,GLUT inGLUT) {		
-		GL2 tGL2 = inGL.getGL2();
+	public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		mVertexShaders = new int[4];
-		mVertexShaders[0] = ShaderUtils.loadVertexShaderFromFile(tGL2,"/shaders/basiclightingshaders/simple.vs");
-		mVertexShaders[1] = ShaderUtils.loadVertexShaderFromFile(tGL2,"/shaders/basiclightingshaders/diffuse.vs");
-		mVertexShaders[2] = ShaderUtils.loadVertexShaderFromFile(tGL2,"/shaders/basiclightingshaders/specular.vs");
-		mVertexShaders[3] = ShaderUtils.loadVertexShaderFromFile(tGL2,"/shaders/basiclightingshaders/3lights.vs");
+		mVertexShaders[0] = ShaderUtils.loadVertexShaderFromFile(inGL,"/shaders/basiclightingshaders/simple.vs");
+		mVertexShaders[1] = ShaderUtils.loadVertexShaderFromFile(inGL,"/shaders/basiclightingshaders/diffuse.vs");
+		mVertexShaders[2] = ShaderUtils.loadVertexShaderFromFile(inGL,"/shaders/basiclightingshaders/specular.vs");
+		mVertexShaders[3] = ShaderUtils.loadVertexShaderFromFile(inGL,"/shaders/basiclightingshaders/3lights.vs");
 		mLinkedShaders = new int[mVertexShaders.length];
 		for (int i=0; i<mVertexShaders.length; i++) {
-			mLinkedShaders[i] = ShaderUtils.generateSimple_1xVS_ShaderProgramm(tGL2,mVertexShaders[i]);
+			mLinkedShaders[i] = ShaderUtils.generateSimple_1xVS_ShaderProgramm(inGL,mVertexShaders[i]);
 		}
 		//create lightsource position/color uniforms ...
 		FloatBuffer tLightPos0 = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.0f, 3.0f, 3.0f,0.0f});
@@ -68,65 +67,63 @@ public class GL2_BasicVertexShading extends BaseRoutineAdapter implements BaseRo
 		FloatBuffer tLightCol1 = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.25f, 1.0f, 0.25f, 1.0f});
 		FloatBuffer tLightCol2 = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.25f, 0.25f, 1.0f, 1.0f});
 		//setup diffuse.vs ...
-		tGL2.glValidateProgram(mLinkedShaders[1]);
-        tGL2.glUseProgram(mLinkedShaders[1]);
-        ShaderUtils.setUniform3fv(tGL2,mLinkedShaders[1],"lightPos[0]",tLightPos0);
-        tGL2.glUseProgram(0);
+		inGL.glValidateProgram(mLinkedShaders[1]);
+        inGL.glUseProgram(mLinkedShaders[1]);
+        ShaderUtils.setUniform3fv(inGL,mLinkedShaders[1],"lightPos[0]",tLightPos0);
+        inGL.glUseProgram(0);
         //setup specular.vs ...
-		tGL2.glValidateProgram(mLinkedShaders[2]);
-        tGL2.glUseProgram(mLinkedShaders[2]);
-        ShaderUtils.setUniform3fv(tGL2,mLinkedShaders[2],"lightPos[0]",tLightPos0);
-        tGL2.glUseProgram(0);
+		inGL.glValidateProgram(mLinkedShaders[2]);
+        inGL.glUseProgram(mLinkedShaders[2]);
+        ShaderUtils.setUniform3fv(inGL,mLinkedShaders[2],"lightPos[0]",tLightPos0);
+        inGL.glUseProgram(0);
 		//setup 3lights.vs ...
-		tGL2.glValidateProgram(mLinkedShaders[3]);
-        tGL2.glUseProgram(mLinkedShaders[3]);
-        ShaderUtils.setUniform3fv(tGL2,mLinkedShaders[3],"lightPos[0]",tLightPos0);
-        ShaderUtils.setUniform3fv(tGL2,mLinkedShaders[3],"lightPos[1]",tLightPos1);
-        ShaderUtils.setUniform3fv(tGL2,mLinkedShaders[3],"lightPos[2]",tLightPos2);
-        ShaderUtils.setUniform4fv(tGL2,mLinkedShaders[3],"lightCol[0]",tLightCol0);
-        ShaderUtils.setUniform4fv(tGL2,mLinkedShaders[3],"lightCol[1]",tLightCol1);
-        ShaderUtils.setUniform4fv(tGL2,mLinkedShaders[3],"lightCol[2]",tLightCol2);
-        tGL2.glUseProgram(0);
+		inGL.glValidateProgram(mLinkedShaders[3]);
+        inGL.glUseProgram(mLinkedShaders[3]);
+        ShaderUtils.setUniform3fv(inGL,mLinkedShaders[3],"lightPos[0]",tLightPos0);
+        ShaderUtils.setUniform3fv(inGL,mLinkedShaders[3],"lightPos[1]",tLightPos1);
+        ShaderUtils.setUniform3fv(inGL,mLinkedShaders[3],"lightPos[2]",tLightPos2);
+        ShaderUtils.setUniform4fv(inGL,mLinkedShaders[3],"lightCol[0]",tLightCol0);
+        ShaderUtils.setUniform4fv(inGL,mLinkedShaders[3],"lightCol[1]",tLightCol1);
+        ShaderUtils.setUniform4fv(inGL,mLinkedShaders[3],"lightCol[2]",tLightCol2);
+        inGL.glUseProgram(0);
 		mLinkedShader = mLinkedShaders[0];
 		mDisplayListSize = 1;
-		mDisplayListStartID = tGL2.glGenLists(mDisplayListSize);
-		tGL2.glNewList(mDisplayListStartID,GL_COMPILE);
+		mDisplayListStartID = inGL.glGenLists(mDisplayListSize);
+		inGL.glNewList(mDisplayListStartID,GL_COMPILE);
 			inGLUT.glutSolidTorus(0.3, 0.5, 61, 37);
-		tGL2.glEndList();
+		inGL.glEndList();
 	}
 	
-	public void mainLoop(int inFrameNumber,GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
+	public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		if (inFrameNumber%100==0) {
 			mLinkedShaderIndex++;
 			mLinkedShader = mLinkedShaders[mLinkedShaderIndex%mLinkedShaders.length];
 		}
 	    inGL.glEnable(GL_CULL_FACE);
         inGL.glEnable(GL_DEPTH_TEST);
-        tGL2.glTranslatef(0.0f,0.0f,70.0f);	
+        inGL.glTranslatef(0.0f,0.0f,70.0f);	
         float tX = -0.65f;
         float tY =  0.0f;
         float tZ = -2.0f;
-        tGL2.glUseProgram(mLinkedShader);        
+        inGL.glUseProgram(mLinkedShader);        
         for (int j=0; j<12; j+=2) {    
-        	tGL2.glPushMatrix();
-    			tGL2.glTranslatef(tX, tY, tZ);
-    			tGL2.glColor3f(mRainbowColors[j+1][0],mRainbowColors[j+1][1],mRainbowColors[j+1][2]);
-    			tGL2.glRotatef((inFrameNumber+(j*10))%360, 1.0f, 0.5f, 0.0f);
-    			tGL2.glCallList(mDisplayListStartID);
-    		tGL2.glPopMatrix();
+        	inGL.glPushMatrix();
+    			inGL.glTranslatef(tX, tY, tZ);
+    			inGL.glColor3f(mRainbowColors[j+1][0],mRainbowColors[j+1][1],mRainbowColors[j+1][2]);
+    			inGL.glRotatef((inFrameNumber+(j*10))%360, 1.0f, 0.5f, 0.0f);
+    			inGL.glCallList(mDisplayListStartID);
+    		inGL.glPopMatrix();
         	tX+=1.0f;
         	tZ-=1.0f;
     	}
-        tGL2.glUseProgram(0);
+        inGL.glUseProgram(0);
 	}
 	
-	public void cleanupRoutine(GL inGL,GLU inGLU,GLUT inGLUT) {
-		GL2 tGL2 = inGL.getGL2();
+	public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
 		for (int i=0; i<mVertexShaders.length; i++) {
-			tGL2.glDeleteShader(mVertexShaders[i]);
+			inGL.glDeleteShader(mVertexShaders[i]);
 		}
-		tGL2.glDeleteLists(mDisplayListStartID,mDisplayListSize);
+		inGL.glDeleteLists(mDisplayListStartID,mDisplayListSize);
 		inGL.glFlush();	
 	}
 

@@ -27,6 +27,27 @@ public class BaseGlobalEnvironment {
 	private static BaseGlobalEnvironment mBaseGlobalEnvironmentInstance = null;
 	private Runtime mRuntime;
 	
+	//keylistener variables
+	private int mParameterKey_INT_12;
+	private int mParameterKey_INT_34;
+	private int mParameterKey_INT_56;
+	private int mParameterKey_INT_78;
+	private int mParameterKey_INT_90;
+	private int mParameterKey_INT_QW;
+	private int mParameterKey_INT_ER;
+	private int mParameterKey_INT_TZ;
+	private int mParameterKey_INT_UI;
+	private int mParameterKey_INT_OP;
+	private float mParameterKey_FLOAT_AS;
+	private float mParameterKey_FLOAT_DF;
+	private float mParameterKey_FLOAT_GH;
+	private float mParameterKey_FLOAT_JK;
+	private float mParameterKey_FLOAT_LÖ;
+	private float mParameterKey_FLOAT_YX;
+	private float mParameterKey_FLOAT_CV;
+	private float mParameterKey_FLOAT_BN;
+	private float mParameterKey_FLOAT_MCOMMA;
+	
 	private BaseGlobalEnvironment() {
 		BaseLogging.getInstance().info("CONSTRUCTING BASEGLOBALENVIRONMENT ...");	
 		mRuntime = Runtime.getRuntime();
@@ -61,7 +82,7 @@ public class BaseGlobalEnvironment {
 	    tFrame.add(tGLCanvas);
 	    final Animator tAnimator;
 	    //if vsync is requested use the vsync framerate ... otherwise use custom framerate ...
-	    if (BaseGlobalEnvironment.getInstance().wantsVSync()) {
+	    if (BaseGlobalEnvironment.getInstance().wantsVSync() || mCommandLineParameter_FrameRate==Integer.MAX_VALUE) {
 	    	tAnimator = new Animator(tGLCanvas);
 	    	tAnimator.setRunAsFastAsPossible(true);
 	    } else {
@@ -82,6 +103,29 @@ public class BaseGlobalEnvironment {
 	    tFrame.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				if (e.getKeyChar()=='\u001B') {
+					BaseLogging.getInstance().info("--------------------------------------------");
+					BaseLogging.getInstance().info("FINAL PARAMETER VALUES FROM KEYLISTENERS:");
+					BaseLogging.getInstance().info("--------------------------------------------");
+					BaseLogging.getInstance().info("mParameterKey_INT_12="+mParameterKey_INT_12);
+					BaseLogging.getInstance().info("mParameterKey_INT_34="+mParameterKey_INT_34);
+					BaseLogging.getInstance().info("mParameterKey_INT_56="+mParameterKey_INT_56);
+					BaseLogging.getInstance().info("mParameterKey_INT_78="+mParameterKey_INT_78);
+					BaseLogging.getInstance().info("mParameterKey_INT_90="+mParameterKey_INT_90);
+					BaseLogging.getInstance().info("mParameterKey_INT_QW="+mParameterKey_INT_QW);
+					BaseLogging.getInstance().info("mParameterKey_INT_ER="+mParameterKey_INT_ER);
+					BaseLogging.getInstance().info("mParameterKey_INT_TZ="+mParameterKey_INT_TZ);
+					BaseLogging.getInstance().info("mParameterKey_INT_UI="+mParameterKey_INT_UI);
+					BaseLogging.getInstance().info("mParameterKey_INT_OP="+mParameterKey_INT_OP);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_AS="+mParameterKey_FLOAT_AS);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_DF="+mParameterKey_FLOAT_DF);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_GH="+mParameterKey_FLOAT_GH);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_JK="+mParameterKey_FLOAT_JK);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_LÖ="+mParameterKey_FLOAT_LÖ);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_YX="+mParameterKey_FLOAT_YX);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_CV="+mParameterKey_FLOAT_CV);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_BN="+mParameterKey_FLOAT_BN);
+					BaseLogging.getInstance().info("mParameterKey_FLOAT_MCOMMA="+mParameterKey_FLOAT_MCOMMA);
+					BaseLogging.getInstance().info("--------------------------------------------");
 					//run this on another thread than the AWT event queue to make sure the call to Animator.stop() completes before exiting ...
 					new Thread(new Runnable() {
 						public void run() {
@@ -89,7 +133,123 @@ public class BaseGlobalEnvironment {
 							System.exit(0);
 						}
 					}).start();
-				} 
+				} else if (e.getKeyChar()=='1') {
+					mParameterKey_INT_12++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_12="+mParameterKey_INT_12);
+				} else if (e.getKeyChar()=='2') {
+					mParameterKey_INT_12--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_12="+mParameterKey_INT_12);
+				} else if (e.getKeyChar()=='3') {
+					mParameterKey_INT_34++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_34="+mParameterKey_INT_34);
+				} else if (e.getKeyChar()=='4') {
+					mParameterKey_INT_34--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_34="+mParameterKey_INT_34);
+				} else if (e.getKeyChar()=='5') {
+					mParameterKey_INT_56++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_56="+mParameterKey_INT_56);
+				} else if (e.getKeyChar()=='6') {
+					mParameterKey_INT_56--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_56="+mParameterKey_INT_56);
+				} else if (e.getKeyChar()=='7') {
+					mParameterKey_INT_78++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_78="+mParameterKey_INT_78);
+				} else if (e.getKeyChar()=='8') {
+					mParameterKey_INT_78--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_78="+mParameterKey_INT_78);
+				} else if (e.getKeyChar()=='9') {
+					mParameterKey_INT_90++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_90="+mParameterKey_INT_90);
+				} else if (e.getKeyChar()=='0') {
+					mParameterKey_INT_90--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_90="+mParameterKey_INT_90);				
+				} else if (e.getKeyChar()=='q') {
+					mParameterKey_INT_QW++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_QW="+mParameterKey_INT_QW);
+				} else if (e.getKeyChar()=='w') {
+					mParameterKey_INT_QW--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_QW="+mParameterKey_INT_QW);	
+				} else if (e.getKeyChar()=='e') {
+					mParameterKey_INT_ER++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_ER="+mParameterKey_INT_ER);
+				} else if (e.getKeyChar()=='r') {
+					mParameterKey_INT_ER--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_ER="+mParameterKey_INT_ER);		
+				} else if (e.getKeyChar()=='t') {
+					mParameterKey_INT_TZ++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_TZ="+mParameterKey_INT_TZ);
+				} else if (e.getKeyChar()=='z') {
+					mParameterKey_INT_TZ--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_TZ="+mParameterKey_INT_TZ);
+				} else if (e.getKeyChar()=='u') {
+					mParameterKey_INT_UI++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_UI="+mParameterKey_INT_UI);
+				} else if (e.getKeyChar()=='i') {
+					mParameterKey_INT_UI--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_UI="+mParameterKey_INT_UI);
+				} else if (e.getKeyChar()=='o') {
+					mParameterKey_INT_OP++;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_OP="+mParameterKey_INT_OP);
+				} else if (e.getKeyChar()=='p') {
+					mParameterKey_INT_OP--;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_INT_OP="+mParameterKey_INT_OP);				
+				} else if (e.getKeyChar()=='a') {
+					mParameterKey_FLOAT_AS+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_AS="+mParameterKey_FLOAT_AS);
+				} else if (e.getKeyChar()=='s') {
+					mParameterKey_FLOAT_AS-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_AS="+mParameterKey_FLOAT_AS);
+				} else if (e.getKeyChar()=='d') {
+					mParameterKey_FLOAT_DF+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_DF="+mParameterKey_FLOAT_DF);
+				} else if (e.getKeyChar()=='f') {
+					mParameterKey_FLOAT_DF-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_DF="+mParameterKey_FLOAT_DF);	
+				} else if (e.getKeyChar()=='g') {
+					mParameterKey_FLOAT_GH+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_GH="+mParameterKey_FLOAT_GH);
+				} else if (e.getKeyChar()=='h') {
+					mParameterKey_FLOAT_GH-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_GH="+mParameterKey_FLOAT_GH);
+				} else if (e.getKeyChar()=='j') {
+					mParameterKey_FLOAT_JK+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_JK="+mParameterKey_FLOAT_JK);
+				} else if (e.getKeyChar()=='k') {
+					mParameterKey_FLOAT_JK-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_JK="+mParameterKey_FLOAT_JK);	
+				} else if (e.getKeyChar()=='l') {
+					mParameterKey_FLOAT_LÖ+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_LÖ="+mParameterKey_FLOAT_LÖ);
+				} else if (e.getKeyChar()=='ö') {
+					mParameterKey_FLOAT_LÖ-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_LÖ="+mParameterKey_FLOAT_LÖ);
+				} else if (e.getKeyChar()=='y') {
+					mParameterKey_FLOAT_YX+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_YX="+mParameterKey_FLOAT_YX);
+				} else if (e.getKeyChar()=='x') {
+					mParameterKey_FLOAT_YX-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_YX="+mParameterKey_FLOAT_YX);
+				} else if (e.getKeyChar()=='c') {
+					mParameterKey_FLOAT_CV+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_CV="+mParameterKey_FLOAT_CV);
+				} else if (e.getKeyChar()=='v') {
+					mParameterKey_FLOAT_CV-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_CV="+mParameterKey_FLOAT_CV);
+				} else if (e.getKeyChar()=='b') {
+					mParameterKey_FLOAT_BN+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_BN="+mParameterKey_FLOAT_BN);
+				} else if (e.getKeyChar()=='n') {
+					mParameterKey_FLOAT_BN-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_BN="+mParameterKey_FLOAT_BN);	
+				} else if (e.getKeyChar()=='m') {
+					mParameterKey_FLOAT_MCOMMA+=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_MCOMMA="+mParameterKey_FLOAT_MCOMMA);
+				} else if (e.getKeyChar()==',') {
+					mParameterKey_FLOAT_MCOMMA-=0.1f;
+					BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_MCOMMA="+mParameterKey_FLOAT_MCOMMA);
+				} else {
+					BaseLogging.getInstance().info("UNKNOWN KEY TYPED - KEYCHAR="+e.getKeyChar());
+				}	
 			}
 		});
 	    if (GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported() && mCommandLineParameter_FullScreen) {
@@ -181,5 +341,25 @@ public class BaseGlobalEnvironment {
 		mCommandLineParameter_FrameCapture = inFrameCapture;
 		mCommandLineParameter_VSync = inVSync;
 	}
+	
+	public int getParameterKey_INT_12() { return mParameterKey_INT_12; }
+	public int getParameterKey_INT_34() { return mParameterKey_INT_34; }
+	public int getParameterKey_INT_56() { return mParameterKey_INT_56; }
+	public int getParameterKey_INT_78() { return mParameterKey_INT_78; }
+	public int getParameterKey_INT_90() { return mParameterKey_INT_90; }
+	public int getParameterKey_INT_QW() { return mParameterKey_INT_QW; }
+	public int getParameterKey_INT_ER() { return mParameterKey_INT_ER; }
+	public int getParameterKey_INT_TZ() { return mParameterKey_INT_TZ; }
+	public int getParameterKey_INT_UI() { return mParameterKey_INT_UI; }
+	public int getParameterKey_INT_OP() { return mParameterKey_INT_OP; }
+	public float getParameterKey_FLOAT_AS() { return mParameterKey_FLOAT_AS; }
+	public float getParameterKey_FLOAT_DF() { return mParameterKey_FLOAT_DF; }
+	public float getParameterKey_FLOAT_GH() { return mParameterKey_FLOAT_GH; }
+	public float getParameterKey_FLOAT_JK() { return mParameterKey_FLOAT_JK; }
+	public float getParameterKey_FLOAT_LÖ() { return mParameterKey_FLOAT_LÖ; }
+	public float getParameterKey_FLOAT_YX() { return mParameterKey_FLOAT_YX; }
+	public float getParameterKey_FLOAT_CV() { return mParameterKey_FLOAT_CV; }
+	public float getParameterKey_FLOAT_BN() { return mParameterKey_FLOAT_BN; }
+	public float getParameterKey_FLOAT_MCOMMA() { return mParameterKey_FLOAT_MCOMMA; }
 	
 }

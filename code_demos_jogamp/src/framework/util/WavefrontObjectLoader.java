@@ -159,24 +159,23 @@ public class WavefrontObjectLoader {
 		}
 	}
 
-	private void ConstructInterleavedArray(GL inGL) {
-		GL2 tGL2 = inGL.getGL2();
+	private void ConstructInterleavedArray(GL2 inGL) {
 		final int tv[] = (int[]) fv.get(0);
 		final int tt[] = (int[]) ft.get(0);
 		final int tn[] = (int[]) fn.get(0);
 		//if a value of zero is found that it tells us we don't have that type of data
 		if ((tv[0] != 0) && (tt[0] != 0) && (tn[0] != 0)) {
 			ConstructTNV(); //we have vertex, 2D texture, and normal Data
-			tGL2.glInterleavedArrays(GL_T2F_N3F_V3F, 0, modeldata);
+			inGL.glInterleavedArrays(GL_T2F_N3F_V3F, 0, modeldata);
 		} else if ((tv[0] != 0) && (tt[0] != 0) && (tn[0] == 0)) {
 			ConstructTV(); //we have just vertex and 2D texture Data
-			tGL2.glInterleavedArrays(GL_T2F_V3F, 0, modeldata);
+			inGL.glInterleavedArrays(GL_T2F_V3F, 0, modeldata);
 		} else if ((tv[0] != 0) && (tt[0] == 0) && (tn[0] != 0)) {
 			ConstructNV(); //we have just vertex and normal Data
-			tGL2.glInterleavedArrays(GL_N3F_V3F, 0, modeldata);
+			inGL.glInterleavedArrays(GL_N3F_V3F, 0, modeldata);
 		} else if ((tv[0] != 0) && (tt[0] == 0) && (tn[0] == 0)) {
 			ConstructV();
-			tGL2.glInterleavedArrays(GL_V3F, 0, modeldata);
+			inGL.glInterleavedArrays(GL_V3F, 0, modeldata);
 		}
 	}
 
@@ -276,7 +275,7 @@ public class WavefrontObjectLoader {
 		modeldata.position(0);
 	}
 
-	public void drawModel(GL inGL) {
+	public void drawModel(GL2 inGL) {
 		if (init) {
 			ConstructInterleavedArray(inGL);
 			cleanup();
@@ -295,12 +294,12 @@ public class WavefrontObjectLoader {
 		modeldata.clear();
 	}
 	
-	public static int loadWavefrontObjectAsDisplayList(GL2 inGL2,String inFileName) {
-		int tDisplayListID = inGL2.glGenLists(1);
+	public static int loadWavefrontObjectAsDisplayList(GL2 inGL,String inFileName) {
+		int tDisplayListID = inGL.glGenLists(1);
 		WavefrontObjectLoader tWaveFrontObjectModel = new WavefrontObjectLoader(inFileName);
-		inGL2.glNewList(tDisplayListID,GL_COMPILE);
-			tWaveFrontObjectModel.drawModel(inGL2);
-		inGL2.glEndList();
+		inGL.glNewList(tDisplayListID,GL_COMPILE);
+			tWaveFrontObjectModel.drawModel(inGL);
+		inGL.glEndList();
 	    return tDisplayListID;
 	}
 	
