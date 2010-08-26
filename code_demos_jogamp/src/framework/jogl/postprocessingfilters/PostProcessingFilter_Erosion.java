@@ -1,6 +1,6 @@
 package framework.jogl.postprocessingfilters;
 
-/**                                                                                               
+/**
  **   __ __|_  ___________________________________________________________________________  ___|__ __
  **  //    /\                                           _                                  /\    \\  
  ** //____/  \__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \____\\ 
@@ -10,7 +10,7 @@ package framework.jogl.postprocessingfilters;
  ** /  \____\                       http://jogamp.org  |_|                              /____/  \    
  ** \  /   "' _________________________________________________________________________ `"   \  /    
  **  \/____.                                                                             .____\/     
- **             
+ **
  ** Postprocessing filter implementing simple erosion. See the corresponding fragment shader 
  ** for implementation details.
  **
@@ -21,9 +21,9 @@ import framework.base.*;
 
 public class PostProcessingFilter_Erosion extends PostProcessingFilter_Base_Convolution implements BasePostProcessingFilterChainShaderInterface {
 
-	public void initFilter(GL2 inGL) {
-		mFragmentShaderFileName = "/shaders/postprocessingfilters/PostProcessingFilter_Erosion.fs";		
-		super.initFilter(inGL);
-	}
+    public void initFilter(GL2 inGL) {
+        mFragmentShaderFileName = "/shaders/postprocessingfilters/PostProcessingFilter_Erosion.fs";
+        super.initFilter(inGL);
+    }
 
 }

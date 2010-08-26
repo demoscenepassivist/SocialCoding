@@ -1,4 +1,4 @@
-/**                                                                                               
+/**
  **   __ __|_  ___________________________________________________________________________  ___|__ __
  **  //    /\                                           _                                  /\    \\  
  ** //____/  \__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \____\\ 
@@ -8,7 +8,7 @@
  ** /  \____\                       http://jogamp.org  |_|                              /____/  \    
  ** \  /   "' _________________________________________________________________________ `"   \  /    
  **  \/____.                                                                             .____\/     
- **             
+ **
  ** Postprocessing shader implementing basic 'OVERLAY' blending mode. For explanation of the different
  ** blending modes see the original Porter-Duff paper: http://dev.processing.org/bugs/attachment.cgi?id=71
  ** or for more up2date formulas take a look here: http://www.nathanm.com/photoshop-blending-math/ and
@@ -28,14 +28,14 @@ void main(void) {
     vec4 result;
     float luminance = dot(base,lumCoeff);
     if (luminance<0.45) {
-    	result = 2.0*blend*base;
+        result = 2.0*blend*base;
     } else if (luminance>0.55) {
-    	result = white-2.0*(white-blend)*(white-base);
+        result = white-2.0*(white-blend)*(white-base);
     } else {
-    	vec4 result1 = 2.0*blend*base;
-    	vec4 result2 = white-2.0*(white-blend)*(white-base);
-    	result = mix(result1,result2,(luminance-0.45)*10.0);
+        vec4 result1 = 2.0*blend*base;
+        vec4 result2 = white-2.0*(white-blend)*(white-base);
+        result = mix(result1,result2,(luminance-0.45)*10.0);
     }
-    result = clamp(result,0.0,1.0);  
+    result = clamp(result,0.0,1.0);
     gl_FragColor = mix(base,result,opacity);
 }

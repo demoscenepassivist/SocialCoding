@@ -1,4 +1,4 @@
-/**                                                                                               
+/**
  **   __ __|_  ___________________________________________________________________________  ___|__ __
  **  //    /\                                           _                                  /\    \\  
  ** //____/  \__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \____\\ 
@@ -8,7 +8,7 @@
  ** /  \____\                       http://jogamp.org  |_|                              /____/  \    
  ** \  /   "' _________________________________________________________________________ `"   \  /    
  **  \/____.                                                                             .____\/     
- **             
+ **
  ** Vertex shader doing base work for the associated fragment shader simulating refraction 
  ** (and reflection).
  ** 
@@ -19,7 +19,7 @@ varying vec3  cameradir;
 varying vec4  camerapos;
 
 void main(void) {
-    gl_Position    = ftransform();
+    gl_Position    = gl_ModelViewProjectionMatrix * gl_Vertex;
     normal         = normalize(gl_NormalMatrix * gl_Normal);
     vec4 pos       = gl_ModelViewMatrix * gl_Vertex;
     cameradir      = pos.xyz;

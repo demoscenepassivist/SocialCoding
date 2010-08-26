@@ -1,6 +1,6 @@
 package framework.base;
 
-/**                                                                                               
+/**
  **   __ __|_  ___________________________________________________________________________  ___|__ __
  **  //    /\                                           _                                  /\    \\  
  ** //____/  \__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \____\\ 
@@ -12,7 +12,7 @@ package framework.base;
  **  \/____.                                                                             .____\/     
  **             
  ** Interface to be implemented by all demonstration routines. Provides method prototypes
- ** for initialization, runtime and end/cleanup of a routine.  
+ ** for initialization, runtime and end/cleanup of a routine.
  **
  **/
 
@@ -22,8 +22,8 @@ import com.jogamp.opengl.util.gl2.*;
 
 public interface BaseRoutineInterface {
 
-	public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT);
-	public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT);
-	public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT);
-	
+    public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT);
+    public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT);
+    public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT);
+
 }

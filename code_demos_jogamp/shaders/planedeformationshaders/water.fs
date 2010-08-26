@@ -1,4 +1,4 @@
-/**                                                                                               
+/**
  **   __ __|_  ___________________________________________________________________________  ___|__ __
  **  //    /\                                           _                                  /\    \\  
  ** //____/  \__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \____\\ 
@@ -8,7 +8,7 @@
  ** /  \____\                       http://jogamp.org  |_|                              /____/  \    
  ** \  /   "' _________________________________________________________________________ `"   \  /    
  **  \/____.                                                                             .____\/     
- **             
+ **
  ** Simple plane deformation fragment shader to render a distorted texture to a billboard. 
  ** Most shader code is from this site: http://www.iquilezles.org/www/articles/deform/deform.htm
  **

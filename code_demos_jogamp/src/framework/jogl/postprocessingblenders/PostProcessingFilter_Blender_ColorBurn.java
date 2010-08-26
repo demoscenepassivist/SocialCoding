@@ -1,6 +1,6 @@
 package framework.jogl.postprocessingblenders;
 
-/**                                                                                               
+/**
  **   __ __|_  ___________________________________________________________________________  ___|__ __
  **  //    /\                                           _                                  /\    \\  
  ** //____/  \__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \____\\ 
@@ -22,10 +22,10 @@ import javax.media.opengl.GL2;
 import framework.base.*;
 
 public class PostProcessingFilter_Blender_ColorBurn extends PostProcessingFilter_Blender_Base implements BasePostProcessingFilterChainShaderInterface {
-	
-	public void initFilter(GL2 inGL) {
-		mFragmentShaderFileName = "/shaders/postprocessingblenders/PostProcessingFilter_Blender_ColorBurn.fs";
-		super.initFilter(inGL);
-	}
+
+    public void initFilter(GL2 inGL) {
+        mFragmentShaderFileName = "/shaders/postprocessingblenders/PostProcessingFilter_Blender_ColorBurn.fs";
+        super.initFilter(inGL);
+    }
 
 }
