@@ -10,3 +10,15 @@
   \/____.                                                                             .____\/     
              
              Art, code and miscellaneous experiments related in some way to JOGL.
+
+For videos and some explanation of what can be found in this repository take a look at my blog
+on tumblr: http://copypastaresearch.tumblr.com/
+
+As a helpful starter guide on how to get these examples up and running under windows using eclipse
+checkout this thread from Gavanw on the offical Jogamp/JOGL forums: http://tinyurl.com/3abdvvb
+
+Also u might wanna check out my twitter feed under http://twitter.com/ScenePassivist 
+and my YouTube channel at http://www.youtube.com/user/DemoscenePassivist
+
+For various other interesting blogs regarding JOGL and the other projects from JOGAMP, check out
+http://jogamp.org/ or go directly to http://jogamp.org/blog/

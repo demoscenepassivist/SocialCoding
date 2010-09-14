@@ -27,7 +27,7 @@ import static javax.media.opengl.GL2.*;
 public class BaseFrameBufferObjectRendererExecutor {
 
     private int mFrameBufferObjectID;
-    private int mColourTextureID;
+    private int mColorTextureID;
     private int mDepthTextureID;
     private int mTextureWidth;
     private int mTextureHeight;
@@ -38,7 +38,12 @@ public class BaseFrameBufferObjectRendererExecutor {
         mTextureHeight = inTextureHeight;
         mBaseFrameBufferObjectRendererInterface = inBaseFrameBufferObjectRendererInterface;
     }
-
+    
+    public int getColorTextureID() { return mColorTextureID; }
+    public int getDepthTextureID() { return mDepthTextureID; }
+    public int getWidth() { return mTextureWidth; }
+    public int getHeight() { return mTextureHeight; }
+    
     public void init(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         //allocate the framebuffer object ...
         int[] result = new int[1];
@@ -47,8 +52,8 @@ public class BaseFrameBufferObjectRendererExecutor {
         inGL.glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferObjectID);
         //allocate the colour texture ...
         inGL.glGenTextures(1, result, 0);
-        mColourTextureID = result[0];
-        inGL.glBindTexture(GL_TEXTURE_2D, mColourTextureID);
+        mColorTextureID = result[0];
+        inGL.glBindTexture(GL_TEXTURE_2D, mColorTextureID);
         inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
         inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
         inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE);
@@ -64,7 +69,7 @@ public class BaseFrameBufferObjectRendererExecutor {
         inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE);
         inGL.glTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT32,mTextureWidth,mTextureHeight,0,GL_DEPTH_COMPONENT,GL_UNSIGNED_INT,null);
         //attach the textures to the framebuffer
-        inGL.glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,mColourTextureID,0);
+        inGL.glFramebufferTexture2D(GL_FRAMEBUFFER,GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D,mColorTextureID,0);
         inGL.glFramebufferTexture2D(GL_FRAMEBUFFER,GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D,mDepthTextureID,0);
         inGL.glBindFramebuffer(GL_FRAMEBUFFER, 0);
         //check if fbo is set up correctly ...
@@ -89,7 +94,7 @@ public class BaseFrameBufferObjectRendererExecutor {
     public void prepareForColouredRendering(GL2 inGL, int inTextureUnitID) {
         inGL.glPushAttrib(GL_TEXTURE_BIT);
         inGL.glActiveTexture(inTextureUnitID);
-        inGL.glBindTexture(GL_TEXTURE_2D, mColourTextureID);
+        inGL.glBindTexture(GL_TEXTURE_2D, mColorTextureID);
         //set the texture up to be used for painting a surface ...
         int textureTarget = GL_TEXTURE_2D;
         inGL.glEnable(textureTarget);
@@ -136,7 +141,7 @@ public class BaseFrameBufferObjectRendererExecutor {
 
     public void cleanup(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         inGL.glDeleteFramebuffers(1, Buffers.newDirectIntBuffer(mFrameBufferObjectID));
-        inGL.glDeleteTextures(1, Buffers.newDirectIntBuffer(mColourTextureID));
+        inGL.glDeleteTextures(1, Buffers.newDirectIntBuffer(mColorTextureID));
         inGL.glDeleteTextures(1, Buffers.newDirectIntBuffer(mDepthTextureID));
         mBaseFrameBufferObjectRendererInterface.cleanup_FBORenderer(inGL,inGLU,inGLUT);
     }

@@ -25,7 +25,8 @@ package framework.init;
  **   -ANISOTROPYLEVEL (=1.0/2.0/4.0/8.0/16.0)
  **   -FRAMECAPTURE (=TRUE/FALSE)
  **   -VSYNC (=TRUE/FALSE)
- **   -FRAMESKIP (=TRUE/FALSE)    
+ **   -FRAMESKIP (=TRUE/FALSE)
+ **   -WINDOWTOOLKIT (=AWT/NEWT)
  **
  **/
 
@@ -53,6 +54,7 @@ public class Bootstrap {
         boolean tFrameCapture = false;
         boolean tVSync = true;
         boolean tFrameSkip = true;
+        String tWindowToolkitName = null;
         if (args.length>0) {
             for (int i=0; i<args.length; i++) {
                 BaseLogging.getInstance().info("PROCESSING CMDLINE PARAMETER ... ARG="+args[i]);
@@ -112,6 +114,10 @@ public class Bootstrap {
                     String tFrameSkipParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
                     BaseLogging.getInstance().info("FRAMESKIP ENABLED '"+tFrameSkipParameter+"'");
                     tFrameSkip = Boolean.parseBoolean(tFrameSkipParameter);
+                } else if(args[i].trim().startsWith("-WINDOWTOOLKIT=")) {
+                    String tWindowToolkitParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
+                    BaseLogging.getInstance().info("WINDOW TOOLKIT TO USE '"+tWindowToolkitParameter+"'");
+                    tWindowToolkitName = tWindowToolkitParameter;
                 } else {
                     BaseLogging.getInstance().error("ERROR! ILLEGAL ARGUMENT FOUND! ARGUMENT="+args[i]);
                 }
@@ -127,7 +133,8 @@ public class Bootstrap {
                 tAnisotropicFiltering,tAnisotropyLevel,
                 tFrameCapture,
                 tVSync,
-                tFrameSkip
+                tFrameSkip,
+                tWindowToolkitName
         );
         EventQueue.invokeLater(new Runnable() {
             public void run() {
