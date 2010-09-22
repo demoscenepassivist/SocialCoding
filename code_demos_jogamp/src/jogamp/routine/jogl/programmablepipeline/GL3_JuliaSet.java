@@ -25,7 +25,7 @@ import javax.media.opengl.glu.*;
 import com.jogamp.opengl.util.gl2.*;
 import static javax.media.opengl.GL2.*;
 
-public class GL3_JuliaSet extends GL3_Mandelbrot {
+public class GL3_JuliaSet extends GL2_FBO_FullscreenQuad_Base {
 
     public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         int tFragmentShader = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/fractalshaders/juliaset.fs");
@@ -33,7 +33,7 @@ public class GL3_JuliaSet extends GL3_Mandelbrot {
         mScreenDimensionUniform2fv = DirectBufferUtils.createDirectFloatBuffer(new float[] {(float)mBaseFrameBufferObjectRendererExecutor.getWidth(), (float)mBaseFrameBufferObjectRendererExecutor.getHeight()});
         //create BufferedImage to be used as LUT ...
         BufferedImage tLUT = TextureUtils.createARGBBufferedImage(5,1);
-        //"Mars" from kuler.com
+        //"Mars" from kuler.adobe.com
         tLUT.setRGB(0,0,0x00FFCE00);
         tLUT.setRGB(1,0,0x00FF9800);
         tLUT.setRGB(2,0,0x00FF005A);

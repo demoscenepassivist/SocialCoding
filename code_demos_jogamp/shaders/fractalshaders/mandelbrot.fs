@@ -26,8 +26,6 @@ const float ycenter = 0.04855101129280834;
 void main() {
     //complex plane location/movement setup ...
     //inspired by IQ's (http://www.iquilezles.org) cos/sin based zoom ...
-    vec2 position = -1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;
-    position.x *= resolution.x/resolution.y;
     vec2 p = -1.0 + 2.0 * gl_FragCoord.xy / resolution.xy;
     p.x *= resolution.x/resolution.y;
     float zoom = .62+.38*sin(.1*time);

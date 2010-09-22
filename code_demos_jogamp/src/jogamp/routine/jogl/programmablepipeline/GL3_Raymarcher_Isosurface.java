@@ -11,14 +11,14 @@ package jogamp.routine.jogl.programmablepipeline;
  ** \  /   "' _________________________________________________________________________ `"   \  /    
  **  \/____.                                                                             .____\/     
  **
- ** Advanced fragment shader demonstration implementing some kind of GPGPU calculation to render
- ** a Mandelbrot fractal zoom. Demonstrates the use of a 1D texture as LUT (using TextureUtils) 
- ** and also makes use of ShaderUtils to ease the handling of vertex&pixel shaders. For an 
- ** impression how this routine looks like see here: http://www.youtube.com/watch?v=MgEpH70oZN4
+ ** Advanced fragment shader demonstration implementing a GPGPU raymarcher to render a 3D isosurface.
+ ** (an isocube to be exact). All matrix calculations, object setup and lighting is done solely in the
+ ** fragment shader. Demonstrates the use of a 1D texture as LUT (using TextureUtils) and also makes use
+ ** of ShaderUtils to ease the handling of vertex&pixel shaders. For an impression how this routine looks
+ ** like see here: http://www.youtube.com/watch?v=RDsWqkyUkZo
  **
  **/
 
-import framework.base.*;
 import framework.util.*;
 import java.awt.image.*;
 import javax.media.opengl.*;
@@ -26,10 +26,10 @@ import javax.media.opengl.glu.*;
 import com.jogamp.opengl.util.gl2.*;
 import static javax.media.opengl.GL2.*;
 
-public class GL3_Mandelbrot extends GL2_FBO_FullscreenQuad_Base implements BaseRoutineInterface,BaseFrameBufferObjectRendererInterface {
+public class GL3_Raymarcher_Isosurface extends GL2_FBO_FullscreenQuad_Base {
 
     public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        int tFragmentShader = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/fractalshaders/mandelbrot.fs");
+        int tFragmentShader = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/raymarchingshaders/isocube.fs");
         mLinkedShader = ShaderUtils.generateSimple_1xFS_ShaderProgramm(inGL,tFragmentShader);
         mScreenDimensionUniform2fv = DirectBufferUtils.createDirectFloatBuffer(new float[] {(float)mBaseFrameBufferObjectRendererExecutor.getWidth(), (float)mBaseFrameBufferObjectRendererExecutor.getHeight()});
         //create BufferedImage to be used as LUT ...
