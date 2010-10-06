@@ -32,13 +32,47 @@ public class GL3_JuliaSet extends GL2_FBO_FullscreenQuad_Base {
         mLinkedShader = ShaderUtils.generateSimple_1xFS_ShaderProgramm(inGL,tFragmentShader);
         mScreenDimensionUniform2fv = DirectBufferUtils.createDirectFloatBuffer(new float[] {(float)mBaseFrameBufferObjectRendererExecutor.getWidth(), (float)mBaseFrameBufferObjectRendererExecutor.getHeight()});
         //create BufferedImage to be used as LUT ...
-        BufferedImage tLUT = TextureUtils.createARGBBufferedImage(5,1);
+        /*
         //"Mars" from kuler.adobe.com
+        BufferedImage tLUT = TextureUtils.createARGBBufferedImage(5,1);
         tLUT.setRGB(0,0,0x00FFCE00);
         tLUT.setRGB(1,0,0x00FF9800);
         tLUT.setRGB(2,0,0x00FF005A);
         tLUT.setRGB(3,0,0x00AD0626);
         tLUT.setRGB(4,0,0x003D182B);
+        */
+        //"Loba" from kuler.adobe.com
+        BufferedImage tLUT = TextureUtils.createARGBBufferedImage(9,1);
+        tLUT.setRGB(0,0,0x00261225);
+        tLUT.setRGB(1,0,0x00401D3D);
+        tLUT.setRGB(2,0,0x008D8AA6);
+        tLUT.setRGB(3,0,0x00C7D1D9);
+        tLUT.setRGB(4,0,0x00EEF5D6);
+        tLUT.setRGB(5,0,0x00C7D1D9);
+        tLUT.setRGB(6,0,0x008D8AA6);
+        tLUT.setRGB(7,0,0x00401D3D);
+        tLUT.setRGB(8,0,0x00261225);
+        /*
+        //"All Nighter" from kuler.adobe.com
+        BufferedImage tLUT = TextureUtils.createARGBBufferedImage(9,1);
+        tLUT.setRGB(0,0,0x0015001F);
+        tLUT.setRGB(1,0,0x00381136);
+        tLUT.setRGB(2,0,0x00431185);
+        tLUT.setRGB(3,0,0x006B7EFF);
+        //tLUT.setRGB(4,0,0x00FFFF4D);
+        tLUT.setRGB(4,0,0x00FFFFFF);
+        tLUT.setRGB(5,0,0x006B7EFF);
+        tLUT.setRGB(6,0,0x00431185);
+        tLUT.setRGB(7,0,0x00381136);
+        tLUT.setRGB(8,0,0x0015001F);
+        */
+        /*
+        //"Ripoff" von Farbdieb.com
+        BufferedImage tLUT = TextureUtils.createARGBBufferedImage(3,1);
+        tLUT.setRGB(0,0,0x00110142);
+        tLUT.setRGB(1,0,0x00FFFFFF);
+        tLUT.setRGB(2,0,0x00110142);
+        */
         mLUTTextureID = TextureUtils.generateTexture1DFromBufferedImage(inGL,tLUT,GL_CLAMP);
     }
 

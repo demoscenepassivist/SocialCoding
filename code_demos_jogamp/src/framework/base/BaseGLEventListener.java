@@ -31,7 +31,7 @@ public class BaseGLEventListener implements GLEventListener {
     public BaseGLEventListener() {
         mGLU = new GLU();
         mGLUT = new GLUT();
-        mBaseRoutineRuntime = new BaseRoutineRuntime();
+        mBaseRoutineRuntime = BaseRoutineRuntime.getInstance();
     }
 
     public void init(GLAutoDrawable inDrawable) {

@@ -25,12 +25,12 @@ import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.jogamp.opengl.util.gl2.*;
 import com.jogamp.opengl.util.awt.*;
-import static javax.media.opengl.GL.*;
 import static javax.media.opengl.GL3bc.*;
 import com.sun.jna.*;
 
 public class BaseRoutineRuntime {
 
+    private static BaseRoutineRuntime mBaseRoutineRuntimeInstance = null;
     private TextRenderer mTextRenderer;
     private DecimalFormat mDecimalFormat;
     private BaseGlobalEnvironment mBaseGlobalEnvironment;
@@ -51,6 +51,8 @@ public class BaseRoutineRuntime {
     private double mFrameCounterDifference;
     private double mFrameCounterTargetValue;
     private int mSkippedFramesCounter;
+    private BaseMusic mBaseMusic;
+    private TextureRenderer mTextureRenderer_ScopeAndSpectrumAnalyzer;
 
     public interface dwmapi extends Library {
         dwmapi INSTANCE = (dwmapi)Native.loadLibrary("dwmapi",dwmapi.class);
@@ -59,8 +61,15 @@ public class BaseRoutineRuntime {
         public int DwmEnableComposition(int uCompositionAction);
     }
 
-    public BaseRoutineRuntime() {
-        //Zzzz ... :>
+    private BaseRoutineRuntime() {
+      //Zzzz ... :>
+    }
+
+    public static BaseRoutineRuntime getInstance() {
+        if (mBaseRoutineRuntimeInstance==null) {
+            mBaseRoutineRuntimeInstance=new BaseRoutineRuntime();
+        } 
+        return mBaseRoutineRuntimeInstance;
     }
 
     public void initRuntime(GL2 inGL,GLU inGLU,GLUT inGLUT) {
@@ -97,6 +106,10 @@ public class BaseRoutineRuntime {
         } catch (Exception e) {
             BaseLogging.getInstance().fatalerror(e);
         }
+        mTextureRenderer_ScopeAndSpectrumAnalyzer = new TextureRenderer(BaseMusic_ScopeAndSpectrumAnalyzer.DEFAULT_WIDTH, BaseMusic_ScopeAndSpectrumAnalyzer.DEFAULT_HEIGHT, true);
+        mBaseMusic = new BaseMusic(BaseGlobalEnvironment.getInstance().getMusicFileName());
+        mBaseMusic.init();
+        mBaseMusic.play();
     }
 
     public void mainLoopRuntime(GL2 inGL,GLU inGLU,GLUT inGLUT) {
@@ -107,7 +120,8 @@ public class BaseRoutineRuntime {
         mLastFrameRenderingTimeStart = mCurrentFrameRenderingTimeStart;
         mLastFrameRenderingTimeEnd = System.nanoTime();
         mCurrentFrameRenderingTimeStart = System.nanoTime();
-        //---
+        //allow music DSP's to synchronize with framerate ...
+        mBaseMusic.synchonizeMusic();
         //create default frustum state ...
         resetFrustumToDefaultState(inGL,inGLU,inGLUT);
         //clear screen and z-buffer ...
@@ -122,7 +136,7 @@ public class BaseRoutineRuntime {
         }
         //---
         mCurrentFrameRenderingTimeEnd = System.nanoTime();
-        renderDebugInformation(inGL,inGLU,inGLUT);
+        renderDebugInformation(inGL,inGLU,inGLUT);        
         mFrameCounter++;    
         if (BaseGlobalEnvironment.getInstance().wantsFrameSkip() && !mBaseGlobalEnvironment.wantsFrameCapture()) {
             mFrameSkipAverageFramerateTimeEnd = System.nanoTime();
@@ -147,11 +161,19 @@ public class BaseRoutineRuntime {
 
     /* --------------------------------------------------------------------------------------------------------------------------------------------------- */
 
+    public BaseMusic getBaseMusic() {
+        return mBaseMusic;
+    }
+
     public static void resetFrustumToDefaultState(GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        inGL.glViewport(0, 0, BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
+        resetFrustumToDefaultState(inGL,inGLU,inGLUT,BaseGlobalEnvironment.getInstance().getScreenWidth(),BaseGlobalEnvironment.getInstance().getScreenHeight());
+    }
+    
+    public static void resetFrustumToDefaultState(GL2 inGL,GLU inGLU,GLUT inGLUT,int inScreenWidth,int inScreenHeight) {
+        inGL.glViewport(0, 0, inScreenWidth, inScreenHeight);
         inGL.glMatrixMode(GL_PROJECTION);
         inGL.glLoadIdentity();
-        double tAspectRatio = (double)BaseGlobalEnvironment.getInstance().getScreenWidth() / (double)BaseGlobalEnvironment.getInstance().getScreenHeight();
+        double tAspectRatio = (double)inScreenWidth/(double)inScreenHeight;
         inGLU.gluPerspective(45.0, tAspectRatio, 0.01, 200.0);
         inGL.glMatrixMode(GL_MODELVIEW);
         inGL.glLoadIdentity();
@@ -162,31 +184,48 @@ public class BaseRoutineRuntime {
         );
     }
 
+    private static final boolean DEBUGDISPLAY_STATS = true;
+    private static final boolean DEBUGDISPLAY_MUSIC = true;
+    
     private void renderDebugInformation(GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        if (++mAverageFramerateCounter == cAverageFramerateInterval) {
-            mAverageFramerateTimeEnd = System.nanoTime();
-            mAverageFramerateCounter = 0;
-            mAverageFramerate = (int)(1000000000.0f/((mAverageFramerateTimeEnd - mAverageFramerateTimeStart)/cAverageFramerateInterval));
-            mAverageFramerateTimeStart = System.nanoTime();
+        if (!mBaseMusic.isOffline() && DEBUGDISPLAY_MUSIC) {
+            Graphics2D tTextureGraphics2D = mTextureRenderer_ScopeAndSpectrumAnalyzer.createGraphics();
+            tTextureGraphics2D.drawImage(mBaseMusic.getScopeAndSpectrumAnalyzerVisualization(),0,0,null);
+            tTextureGraphics2D.dispose();
+            mTextureRenderer_ScopeAndSpectrumAnalyzer.markDirty(0, 0, BaseMusic_ScopeAndSpectrumAnalyzer.DEFAULT_WIDTH, BaseMusic_ScopeAndSpectrumAnalyzer.DEFAULT_HEIGHT);
+            mTextureRenderer_ScopeAndSpectrumAnalyzer.beginOrthoRendering(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
+            inGL.glEnable(GL_BLEND);
+            inGL.glBlendFunc(GL_ONE, GL_ONE);
+            mTextureRenderer_ScopeAndSpectrumAnalyzer.drawOrthoRect(0, 0);
+            inGL.glDisable(GL_BLEND);
+            mTextureRenderer_ScopeAndSpectrumAnalyzer.endOrthoRendering();
         }
-        long tPossibleFrameRate = (long)(1000000000.0f/(mCurrentFrameRenderingTimeEnd-mCurrentFrameRenderingTimeStart));
-        long tActualFrameRate = (long)(1000000000.0f/(mLastFrameRenderingTimeEnd-mLastFrameRenderingTimeStart));
-        String[] tDebugInformation = new String[6];
-        tDebugInformation[0] = "JOGL: "+"GL_VENDOR:"+inGL.glGetString(GL_VENDOR)+" GL_RENDERER:"+inGL.glGetString(GL_RENDERER);
-        tDebugInformation[1] = "GL_VERSION: "+inGL.glGetString(GL_VERSION)+" GLSL_VERSION: "+inGL.glGetString(GL_SHADING_LANGUAGE_VERSION); 
-        tDebugInformation[2] = "VMMEM: USED: "+mDecimalFormat.format(mBaseGlobalEnvironment.getUsedMem())+" FREE: "+mDecimalFormat.format(mBaseGlobalEnvironment.getFreeMem())+" TOTAL: "+mDecimalFormat.format(mBaseGlobalEnvironment.getTotalMem())+" MAX: "+mDecimalFormat.format(mBaseGlobalEnvironment.getMaxMem());
-        tDebugInformation[3] = "DISPLAY RESOLUTION: "+mBaseGlobalEnvironment.getScreenWidth()+"x"+mBaseGlobalEnvironment.getScreenHeight()+" FRAME: "+mFrameCounter+" AVERAGE FPS:"+mAverageFramerate+" ACTUAL FPS: "+tActualFrameRate+" POSSIBLE FPS: "+mDecimalFormat.format(tPossibleFrameRate);    
-        tDebugInformation[4] = "ROUTINE: "+mBaseGlobalEnvironment.getBaseRoutineClassName();
-        if (BaseGlobalEnvironment.getInstance().wantsFrameSkip() && !mBaseGlobalEnvironment.wantsFrameCapture()) {
-            tDebugInformation[5] = "FRAMESKIP: CURRENT FRAMECOUNTER: "+(int)mFrameCounter+" TARGET FRAMECOUNTER="+(int)mFrameCounterTargetValue+" DIFFERENCE:"+mDecimalFormat.format(mFrameCounterDifference)+" TOTAL SKIPPED:"+mSkippedFramesCounter;
-        } else {
-            tDebugInformation[5] = "FRAMESKIP: DISABLED!";
-        }
-        for (int i=0; i<tDebugInformation.length; i++) {
-            mTextRenderer.beginRendering(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
-            mTextRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-            mTextRenderer.draw(tDebugInformation[i], 0, BaseGlobalEnvironment.getInstance().getScreenHeight()-11*(i+1));
-            mTextRenderer.endRendering();
+        if (DEBUGDISPLAY_STATS) {
+            if (++mAverageFramerateCounter == cAverageFramerateInterval) {
+                mAverageFramerateTimeEnd = System.nanoTime();
+                mAverageFramerateCounter = 0;
+                mAverageFramerate = (int)(1000000000.0f/((mAverageFramerateTimeEnd - mAverageFramerateTimeStart)/cAverageFramerateInterval));
+                mAverageFramerateTimeStart = System.nanoTime();
+            }
+            long tPossibleFrameRate = (long)(1000000000.0f/(mCurrentFrameRenderingTimeEnd-mCurrentFrameRenderingTimeStart));
+            long tActualFrameRate = (long)(1000000000.0f/(mLastFrameRenderingTimeEnd-mLastFrameRenderingTimeStart));
+            String[] tDebugInformation = new String[6];
+            tDebugInformation[0] = "JOGL: "+"GL_VENDOR:"+inGL.glGetString(GL_VENDOR)+" GL_RENDERER:"+inGL.glGetString(GL_RENDERER);
+            tDebugInformation[1] = "GL_VERSION: "+inGL.glGetString(GL_VERSION)+" GLSL_VERSION: "+inGL.glGetString(GL_SHADING_LANGUAGE_VERSION); 
+            tDebugInformation[2] = "VMMEM: USED: "+mDecimalFormat.format(mBaseGlobalEnvironment.getUsedMem())+" FREE: "+mDecimalFormat.format(mBaseGlobalEnvironment.getFreeMem())+" TOTAL: "+mDecimalFormat.format(mBaseGlobalEnvironment.getTotalMem())+" MAX: "+mDecimalFormat.format(mBaseGlobalEnvironment.getMaxMem());
+            tDebugInformation[3] = "DISPLAY RESOLUTION: "+mBaseGlobalEnvironment.getScreenWidth()+"x"+mBaseGlobalEnvironment.getScreenHeight()+" FRAME: "+mFrameCounter+" AVERAGE FPS:"+mAverageFramerate+" ACTUAL FPS: "+tActualFrameRate+" POSSIBLE FPS: "+mDecimalFormat.format(tPossibleFrameRate);    
+            tDebugInformation[4] = "ROUTINE: "+mBaseGlobalEnvironment.getBaseRoutineClassName();
+            if (BaseGlobalEnvironment.getInstance().wantsFrameSkip() && !mBaseGlobalEnvironment.wantsFrameCapture()) {
+                tDebugInformation[5] = "FRAMESKIP: CURRENT FRAMECOUNTER: "+(int)mFrameCounter+" TARGET FRAMECOUNTER="+(int)mFrameCounterTargetValue+" DIFFERENCE:"+mDecimalFormat.format(mFrameCounterDifference)+" TOTAL SKIPPED:"+mSkippedFramesCounter;
+            } else {
+                tDebugInformation[5] = "FRAMESKIP: DISABLED!";
+            }
+            for (int i=0; i<tDebugInformation.length; i++) {
+                mTextRenderer.beginRendering(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
+                mTextRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+                mTextRenderer.draw(tDebugInformation[i], 0, BaseGlobalEnvironment.getInstance().getScreenHeight()-11*(i+1));
+                mTextRenderer.endRendering();
+            }
         }
     }
 

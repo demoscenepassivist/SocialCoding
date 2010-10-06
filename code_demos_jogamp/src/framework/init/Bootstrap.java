@@ -27,6 +27,7 @@ package framework.init;
  **   -VSYNC (=TRUE/FALSE)
  **   -FRAMESKIP (=TRUE/FALSE)
  **   -WINDOWTOOLKIT (=AWT/NEWT)
+ **   -MUSIC=/binaries/music/Little_Bitchard-The_Code_Inside.mp3
  **
  **/
 
@@ -55,6 +56,7 @@ public class Bootstrap {
         boolean tVSync = true;
         boolean tFrameSkip = true;
         String tWindowToolkitName = null;
+        String tMusicFileName = null;
         if (args.length>0) {
             for (int i=0; i<args.length; i++) {
                 BaseLogging.getInstance().info("PROCESSING CMDLINE PARAMETER ... ARG="+args[i]);
@@ -118,6 +120,10 @@ public class Bootstrap {
                     String tWindowToolkitParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
                     BaseLogging.getInstance().info("WINDOW TOOLKIT TO USE '"+tWindowToolkitParameter+"'");
                     tWindowToolkitName = tWindowToolkitParameter;
+                } else if(args[i].trim().startsWith("-MUSIC=")) {
+                    String tMusicParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
+                    BaseLogging.getInstance().info("MUSIC TO PLAY '"+tMusicParameter+"'");
+                    tMusicFileName = tMusicParameter;
                 } else {
                     BaseLogging.getInstance().error("ERROR! ILLEGAL ARGUMENT FOUND! ARGUMENT="+args[i]);
                 }
@@ -134,7 +140,8 @@ public class Bootstrap {
                 tFrameCapture,
                 tVSync,
                 tFrameSkip,
-                tWindowToolkitName
+                tWindowToolkitName,
+                tMusicFileName
         );
         EventQueue.invokeLater(new Runnable() {
             public void run() {

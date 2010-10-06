@@ -1,6 +1,6 @@
 package framework.base;
 
-/**                                                                                               
+/**
  **   __ __|_  ___________________________________________________________________________  ___|__ __
  **  //    /\                                           _                                  /\    \\  
  ** //____/  \__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \____\\ 
@@ -21,28 +21,182 @@ package framework.base;
 import java.util.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
+import framework.jogl.postprocessingblenders.*;
 import com.jogamp.opengl.util.gl2.*;
-import framework.util.*;
 import static javax.media.opengl.GL2.*;
 
 public class BasePostProcessingFilterChainExecutor {
 
-    private int mScreenWidth;
-    private int mScreenHeight;
-    private int mFullScreenBackBufferID;
-    private int mBackBufferTextureID;
     private ArrayList<BasePostProcessingFilterChainShaderInterface> mFilterList;
-    private int mGLBorderMode = GL_CLAMP;
+    private int mScreenSizeDivisionFactor;
+    private BaseFrameBufferObjectRendererExecutor mBaseFrameBufferObjectRendererExecutor_Primary;
+    private BaseFrameBufferObjectRendererExecutor mBaseFrameBufferObjectRendererExecutor_Secondary;
+    private BaseFrameBufferObjectRendererExecutor mBaseFrameBufferObjectRendererExecutor_Original;
+    private BaseFrameBufferObjectRendererInterface mPrimaryFBORenderer;
+    private BaseFrameBufferObjectRendererInterface mSecondaryFBORenderer;
+    private BaseFrameBufferObjectRendererInterface mOriginalFBORenderer;
+    private BasePostProcessingFilterChainShaderInterface mBasePostProcessingFilterChainShaderInterface_Primary;
+    private BasePostProcessingFilterChainShaderInterface mBasePostProcessingFilterChainShaderInterface_Secondary;
+    private BasePostProcessingFilterChainShaderInterface mBasePostProcessingFilterChainShaderInterface_Original;
+    private BaseFrameBufferObjectRendererExecutor mOriginalFBO;
+    private BaseFrameBufferObjectRendererExecutor mCurrent_PrimaryFBO;
+    private BaseFrameBufferObjectRendererExecutor mCurrent_SecondaryFBO;
+    private BaseFrameBufferObjectRendererExecutor mCurrent_OriginalFBO;
+    private enum ENDRESULT_BUFFER {PRIMARY,SECONDARY,ORIGINAL}
 
-    public BasePostProcessingFilterChainExecutor() {
-        mScreenWidth = BaseGlobalEnvironment.getInstance().getScreenWidth();
-        mScreenHeight = BaseGlobalEnvironment.getInstance().getScreenHeight();
+    public BasePostProcessingFilterChainExecutor(int inScreenSizeDivisionFactor) {
         mFilterList = new ArrayList<BasePostProcessingFilterChainShaderInterface>();
+        mScreenSizeDivisionFactor = inScreenSizeDivisionFactor;
     }
 
     public void init(GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        mFullScreenBackBufferID = TextureUtils.generateTextureID(inGL);
-        mBackBufferTextureID = TextureUtils.generateTextureID(inGL);
+        mPrimaryFBORenderer = new PrimaryFBORenderer();
+        mSecondaryFBORenderer = new SecondaryFBORenderer();
+        mOriginalFBORenderer = new OriginalFBORenderer();
+        mBaseFrameBufferObjectRendererExecutor_Primary = new BaseFrameBufferObjectRendererExecutor(
+                BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor,
+                BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor,
+                mPrimaryFBORenderer
+        );
+        mBaseFrameBufferObjectRendererExecutor_Primary.init(inGL,inGLU,inGLUT);
+        mBaseFrameBufferObjectRendererExecutor_Secondary = new BaseFrameBufferObjectRendererExecutor(
+                BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor,
+                BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor,
+                mSecondaryFBORenderer
+        );
+        mBaseFrameBufferObjectRendererExecutor_Secondary.init(inGL,inGLU,inGLUT);
+        mBaseFrameBufferObjectRendererExecutor_Original = new BaseFrameBufferObjectRendererExecutor(
+                BaseGlobalEnvironment.getInstance().getScreenWidth()/1,
+                BaseGlobalEnvironment.getInstance().getScreenHeight()/1,
+                mOriginalFBORenderer
+        );
+        mBaseFrameBufferObjectRendererExecutor_Original.init(inGL,inGLU,inGLUT);
+    }
+
+    //quite a lot of redundant code here ... anyway who cares X-)
+    private class PrimaryFBORenderer implements BaseFrameBufferObjectRendererInterface {
+
+        public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
+
+        public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
+            //BaseLogging.getInstance().info("RENDER SECONDARY->PRIMARY");
+            BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT,BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
+            inGL.glShadeModel(GL_SMOOTH);
+            inGL.glDisable(GL_LIGHTING);
+            inGL.glFrontFace(GL_CCW);
+            inGL.glDisable(GL_CULL_FACE);
+            inGL.glDisable(GL_DEPTH_TEST);
+            inGL.glMatrixMode(GL_PROJECTION);
+            inGL.glLoadIdentity();
+            inGL.glOrtho(0, BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor, 0, -1, 1);
+            inGL.glMatrixMode(GL_MODELVIEW);
+            inGL.glLoadIdentity();
+            //bind old fullscreen texture to texture unit 1
+            inGL.glActiveTexture(GL_TEXTURE1);
+            inGL.glBindTexture(GL_TEXTURE_2D, mOriginalFBO.getColorTextureID());
+            inGL.glActiveTexture(GL_TEXTURE0);
+            mCurrent_PrimaryFBO.prepareForColouredRendering(inGL,GL_TEXTURE0);
+            mBasePostProcessingFilterChainShaderInterface_Primary.prepareForProgramUse(inGL);
+            inGL.glBegin(GL_QUADS);
+                inGL.glTexCoord2f(0.0f, 0.0f);
+                inGL.glVertex2f(0.0f, 0.0f);
+                inGL.glTexCoord2f(1.0f, 0.0f);
+                inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, 0.0f);
+                inGL.glTexCoord2f(1.0f, 1.0f);
+                inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
+                inGL.glTexCoord2f(0.0f, 1.0f);
+                inGL.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
+            inGL.glEnd();
+            mBasePostProcessingFilterChainShaderInterface_Primary.stopProgramUse(inGL);
+            mCurrent_PrimaryFBO.stopColouredRendering(inGL);
+        }
+
+        public void cleanup_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
+
+    }
+
+    //quite a lot of redundant code here ... anyway who cares X-)
+    private class SecondaryFBORenderer implements BaseFrameBufferObjectRendererInterface {
+
+        public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
+
+        public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
+            //BaseLogging.getInstance().info("RENDER PRIMARY->SECONDARY");
+            BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT,BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
+            inGL.glShadeModel(GL_SMOOTH);
+            inGL.glDisable(GL_LIGHTING);
+            inGL.glFrontFace(GL_CCW);
+            inGL.glDisable(GL_CULL_FACE);
+            inGL.glDisable(GL_DEPTH_TEST);          
+            inGL.glMatrixMode(GL_PROJECTION);
+            inGL.glLoadIdentity();
+            inGL.glOrtho(0, BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor, 0, -1, 1);
+            inGL.glMatrixMode(GL_MODELVIEW);
+            inGL.glLoadIdentity();
+            //bind old fullscreen texture to texture unit 1
+            inGL.glActiveTexture(GL_TEXTURE1);
+            inGL.glBindTexture(GL_TEXTURE_2D, mOriginalFBO.getColorTextureID());
+            inGL.glActiveTexture(GL_TEXTURE0);
+            mCurrent_SecondaryFBO.prepareForColouredRendering(inGL,GL_TEXTURE0);
+            mBasePostProcessingFilterChainShaderInterface_Secondary.prepareForProgramUse(inGL);
+            inGL.glBegin(GL_QUADS);
+                inGL.glTexCoord2f(0.0f, 0.0f);
+                inGL.glVertex2f(0.0f, 0.0f);
+                inGL.glTexCoord2f(1.0f, 0.0f);
+                inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, 0.0f);
+                inGL.glTexCoord2f(1.0f, 1.0f);
+                inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
+                inGL.glTexCoord2f(0.0f, 1.0f);
+                inGL.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
+            inGL.glEnd();
+            mBasePostProcessingFilterChainShaderInterface_Secondary.stopProgramUse(inGL);
+            mCurrent_SecondaryFBO.stopColouredRendering(inGL);
+        }
+
+        public void cleanup_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
+
+    }
+
+    //quite a lot of redundant code here ... anyway who cares X-)
+    private class OriginalFBORenderer implements BaseFrameBufferObjectRendererInterface {
+
+        public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
+
+        public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
+            //BaseLogging.getInstance().info("RENDER PRIMARY/SECONDARY->ORIGINAL");
+            BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT,BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
+            inGL.glShadeModel(GL_SMOOTH);
+            inGL.glDisable(GL_LIGHTING);
+            inGL.glFrontFace(GL_CCW);
+            inGL.glDisable(GL_CULL_FACE);
+            inGL.glDisable(GL_DEPTH_TEST);
+            inGL.glMatrixMode(GL_PROJECTION);
+            inGL.glLoadIdentity();
+            inGL.glOrtho(0, BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight(), 0, -1, 1);
+            inGL.glMatrixMode(GL_MODELVIEW);
+            inGL.glLoadIdentity();
+            //bind old fullscreen texture to texture unit 1
+            inGL.glActiveTexture(GL_TEXTURE1);
+            inGL.glBindTexture(GL_TEXTURE_2D, mOriginalFBO.getColorTextureID());
+            inGL.glActiveTexture(GL_TEXTURE0);
+            mCurrent_OriginalFBO.prepareForColouredRendering(inGL,GL_TEXTURE0);
+            mBasePostProcessingFilterChainShaderInterface_Original.prepareForProgramUse(inGL);
+            inGL.glBegin(GL_QUADS);
+                inGL.glTexCoord2f(0.0f, 0.0f);
+                inGL.glVertex2f(0.0f, 0.0f);
+                inGL.glTexCoord2f(1.0f, 0.0f);
+                inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), 0.0f);
+                inGL.glTexCoord2f(1.0f, 1.0f);
+                inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
+                inGL.glTexCoord2f(0.0f, 1.0f);
+                inGL.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight());
+            inGL.glEnd();
+            mBasePostProcessingFilterChainShaderInterface_Original.stopProgramUse(inGL);
+            mCurrent_OriginalFBO.stopColouredRendering(inGL);
+        }
+
+        public void cleanup_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
+
     }
 
     public void addFilter(BasePostProcessingFilterChainShaderInterface inBasePostProcessingFilterChainShaderInterface) {
@@ -57,112 +211,69 @@ public class BasePostProcessingFilterChainExecutor {
         mFilterList.clear();
     }
 
-    public void executeFilterChain(GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        BasePostProcessingFilterChainShaderInterface tBasePostProcessingFilterChainShaderInterface = mFilterList.get(0);
-        prepareFilterChainShaderRendering(inGL,inGLU,inGLUT,tBasePostProcessingFilterChainShaderInterface);
-        renderFilterChainShader(inGL,inGLU,inGLUT,tBasePostProcessingFilterChainShaderInterface);
-        if (mFilterList.size()>1) {
-            if (mFilterList.get(1).getScreenSizeDivisionFactor()!=tBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor()) {
-                //rollout texture to fullscreen size if division factor of filters varies ... really hurts performance! X-)
-                copyScreenBufferTo_GL_TEXTURE_2D(inGL,mScreenWidth,mScreenHeight,tBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor());
-                renderFullScreenQuad(inGL);
-                copyScreenBufferTo_GL_TEXTURE_2D(inGL,mScreenWidth,mScreenHeight,1);
-            } else {
-                copyScreenBufferTo_GL_TEXTURE_2D(inGL,mScreenWidth,mScreenHeight,tBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor());
-            }
-        }
-        for (int i=1; i<mFilterList.size(); i++) {
-            tBasePostProcessingFilterChainShaderInterface = mFilterList.get(i);
-            renderQuad(inGL,tBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor());
-            renderFilterChainShader(inGL,inGLU,inGLUT,tBasePostProcessingFilterChainShaderInterface);
-            if ((mFilterList.size()-1)>=i+1) {
-                if (mFilterList.get(i+1).getScreenSizeDivisionFactor()!=tBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor()) {
-                    //rollout texture to fullscreen size if division factor of filters varies ... really hurts performance! X-)
-                    copyScreenBufferTo_GL_TEXTURE_2D(inGL,mScreenWidth,mScreenHeight,tBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor());
-                    renderFullScreenQuad(inGL);
-                    copyScreenBufferTo_GL_TEXTURE_2D(inGL,mScreenWidth,mScreenHeight,1);
+    public void executeFilterChain(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT,BaseFrameBufferObjectRendererExecutor inOriginalFBO) {
+        mOriginalFBO = inOriginalFBO;
+        ENDRESULT_BUFFER tEndresultBuffer = ENDRESULT_BUFFER.PRIMARY;
+        boolean tUsePrimary = false;
+        for (int i=0; i<mFilterList.size(); i++) {
+            if (mFilterList.get(i) instanceof PostProcessingFilter_Blender_Base) {
+                mBasePostProcessingFilterChainShaderInterface_Original = mFilterList.get(i);
+                //BaseLogging.getInstance().info("USING BLENDER FILTER HANDLING ON FILTER NUMBER="+i);
+                if (tEndresultBuffer==ENDRESULT_BUFFER.PRIMARY) {
+                    //BaseLogging.getInstance().info("BLENDER ENDRESULT_BUFFER.PRIMARY");
+                    mCurrent_OriginalFBO = mBaseFrameBufferObjectRendererExecutor_Primary;
+                    mBaseFrameBufferObjectRendererExecutor_Original.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
+                    tEndresultBuffer = ENDRESULT_BUFFER.ORIGINAL;
                 } else {
-                    copyScreenBufferTo_GL_TEXTURE_2D(inGL,mScreenWidth,mScreenHeight,tBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor());
+                    //BaseLogging.getInstance().info("BLENDER ENDRESULT_BUFFER.SECONDARY");
+                    mCurrent_OriginalFBO = mBaseFrameBufferObjectRendererExecutor_Secondary;
+                    mBaseFrameBufferObjectRendererExecutor_Original.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
+                    tEndresultBuffer = ENDRESULT_BUFFER.ORIGINAL;
+                }
+            } else {
+                //BaseLogging.getInstance().info("NEXT FILTER ------- FILTER NUMBER="+i);
+                mBasePostProcessingFilterChainShaderInterface_Primary = mFilterList.get(i);
+                mBasePostProcessingFilterChainShaderInterface_Secondary = mFilterList.get(i);
+                //hardcoded initial iteration ... :-X
+                if (i==0) {
+                    //BaseLogging.getInstance().info("RENDER ORIGINAL->PRIMARY");
+                    mCurrent_PrimaryFBO = mOriginalFBO;
+                    mBaseFrameBufferObjectRendererExecutor_Primary.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
+                    tEndresultBuffer = ENDRESULT_BUFFER.PRIMARY;
+                }
+                mCurrent_PrimaryFBO = mBaseFrameBufferObjectRendererExecutor_Secondary;
+                mCurrent_SecondaryFBO = mBaseFrameBufferObjectRendererExecutor_Primary;
+                int tNumberOfIterations;
+                if (i==0) {
+                    tNumberOfIterations = mFilterList.get(i).getNumberOfIterations()-1;
+                } else {
+                    tNumberOfIterations = mFilterList.get(i).getNumberOfIterations();
+                }
+                for (int j=0; j<tNumberOfIterations; j++) {
+                    //BaseLogging.getInstance().info("ITERATION LOOP NUMBER="+j);
+                    if (tUsePrimary) {
+                        mBaseFrameBufferObjectRendererExecutor_Primary.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
+                        tEndresultBuffer = ENDRESULT_BUFFER.PRIMARY;
+                    } else {
+                        mBaseFrameBufferObjectRendererExecutor_Secondary.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
+                        tEndresultBuffer = ENDRESULT_BUFFER.SECONDARY;
+                    }
+                    tUsePrimary = tUsePrimary^true;
                 }
             }
         }
-        //expand to fullscreen if last filter wasn't fullscreen ...
-        if (mFilterList.get(mFilterList.size()-1).getScreenSizeDivisionFactor()!=1) {
-            renderFullScreenQuad(inGL);
-        }
-    }
-
-    private void prepareFilterChainShaderRendering(GL2 inGL,GLU inGLU,GLUT inGLUT,BasePostProcessingFilterChainShaderInterface inBasePostProcessingFilterChainShaderInterface) {
-        int tScreenSizeDivisionFactor = inBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor();
         BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT);
-        inGL.glDisable(GL_LIGHTING);
-        inGL.glFrontFace(GL_CCW);
-        inGL.glDisable(GL_CULL_FACE);
-        inGL.glDisable(GL_DEPTH_TEST);
-        inGL.glMatrixMode(GL_PROJECTION);
-        inGL.glLoadIdentity();
-        inGL.glOrtho(0, mScreenWidth, mScreenHeight, 0, -1, 1);
-        inGL.glMatrixMode(GL_MODELVIEW);
-        inGL.glLoadIdentity();
-        //---
-        inGL.glActiveTexture(GL_TEXTURE0);
-        inGL.glBindTexture(GL_TEXTURE_2D, mFullScreenBackBufferID);
-        inGL.glEnable(GL_TEXTURE_2D);
-        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,mGLBorderMode);
-        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,mGLBorderMode);
-        //copy full screen to texture ...
-        copyScreenBufferTo_GL_TEXTURE_2D(inGL,mScreenWidth,mScreenHeight,1);
-        inGL.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-        renderQuad(inGL,tScreenSizeDivisionFactor);
-        //bind old fullscreen texture to texture unit 1
-        inGL.glActiveTexture(GL_TEXTURE1);
-        inGL.glBindTexture(GL_TEXTURE_2D, mFullScreenBackBufferID);
-        //---
-        inGL.glActiveTexture(GL_TEXTURE0);
-        inGL.glBindTexture(GL_TEXTURE_2D, mBackBufferTextureID);
-        inGL.glEnable(GL_TEXTURE_2D);
-        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_S,mGLBorderMode);
-        inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_WRAP_T,mGLBorderMode);
-    }
-
-    private void renderFilterChainShader(GL2 inGL,GLU inGLU,GLUT inGLUT,BasePostProcessingFilterChainShaderInterface inBasePostProcessingFilterChainShaderInterface) {
-        inBasePostProcessingFilterChainShaderInterface.prepareForProgramUse(inGL);
-        int tNumberOfIterations = inBasePostProcessingFilterChainShaderInterface.getNumberOfIterations();
-        int tScreenSizeDivisionFactor = inBasePostProcessingFilterChainShaderInterface.getScreenSizeDivisionFactor();
-        for (int i=0; i<tNumberOfIterations; i++) {
-            copyScreenBufferTo_GL_TEXTURE_2D(inGL,mScreenWidth,mScreenHeight,tScreenSizeDivisionFactor);
-            renderQuad(inGL,tScreenSizeDivisionFactor);
+        if (tEndresultBuffer==ENDRESULT_BUFFER.PRIMARY) {
+            //BaseLogging.getInstance().info("ENDRESULT_BUFFER.PRIMARY");
+            mBaseFrameBufferObjectRendererExecutor_Primary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+        } else if (tEndresultBuffer==ENDRESULT_BUFFER.SECONDARY) {
+            //BaseLogging.getInstance().info("ENDRESULT_BUFFER.SECONDARY");
+            mBaseFrameBufferObjectRendererExecutor_Secondary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+        } else {
+            //BaseLogging.getInstance().info("ENDRESULT_BUFFER.ORIGINAL");
+            mBaseFrameBufferObjectRendererExecutor_Original.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
         }
-        inBasePostProcessingFilterChainShaderInterface.stopProgramUse(inGL);
-    }
-
-    public void cleanup(GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        TextureUtils.deleteTextureID(inGL,mBackBufferTextureID);
-    }
- 
-    private void copyScreenBufferTo_GL_TEXTURE_2D(GL2 inGL,int inScreenWidth,int inScreenHeight,int inScreenSizeDivisionFactor) {
-        inGL.glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, inScreenHeight-(inScreenHeight/inScreenSizeDivisionFactor), inScreenWidth/inScreenSizeDivisionFactor, inScreenHeight/inScreenSizeDivisionFactor, 0);
-    }
-
-    private void renderFullScreenQuad(GL2 inGL) {
-        renderQuad(inGL,1);
-    }
-
-    private void renderQuad(GL2 inGL,int inScreenSizeDivisionFactor) {
-        inGL.glBegin(GL_QUADS);
-            inGL.glTexCoord2f(0.0f, 1.0f);
-            inGL.glVertex2f(0.0f, 0.0f);
-            inGL.glTexCoord2f(1.0f, 1.0f);
-            inGL.glVertex2f(mScreenWidth/inScreenSizeDivisionFactor, 0.0f);
-            inGL.glTexCoord2f(1.0f, 0.0f);
-            inGL.glVertex2f(mScreenWidth/inScreenSizeDivisionFactor, mScreenHeight/inScreenSizeDivisionFactor);
-            inGL.glTexCoord2f(0.0f, 0.0f);
-            inGL.glVertex2f(0.0f, mScreenHeight/inScreenSizeDivisionFactor);
-        inGL.glEnd();
+        //BaseLogging.getInstance().info("------- NEXT FRAME -------");
     }
 
 }

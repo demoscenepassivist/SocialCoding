@@ -562,7 +562,9 @@ public class BaseGlobalEnvironment {
     private boolean     mCommandLineParameter_VSync;
     private boolean     mCommandLineParameter_FrameSkip;
     private String      mCommandLineParameter_WindowToolkit;
+    private String      mCommandLineParameter_MusicFileName;
     private boolean     mUsesFullScreenMode;
+    
     
     public String   getBaseRoutineClassName()       { return mCommandLineParameter_BaseRoutineClassName; }
     public boolean  preferMultiSampling()           { return mCommandLineParameter_MultiSampling; }
@@ -574,6 +576,7 @@ public class BaseGlobalEnvironment {
     public int      getDesiredFramerate()           { return mCommandLineParameter_FrameRate; }
     public boolean  wantsFrameSkip()                { return mCommandLineParameter_FrameSkip; }
     public String   getWindowToolkitName()          { return mCommandLineParameter_WindowToolkit; }
+    public String   getMusicFileName()              { return mCommandLineParameter_MusicFileName; }
     public boolean  usesFullScreenMode()            { return mUsesFullScreenMode; }
     
     public void configureWithUserParameters(
@@ -589,7 +592,8 @@ public class BaseGlobalEnvironment {
             boolean inFrameCapture,
             boolean inVSync,
             boolean inFrameSkip,
-            String inWindowToolkitName
+            String inWindowToolkitName,
+            String inMusicFileName
     ) {
         mCommandLineParameter_BaseRoutineClassName = inBaseRoutineClassName;
         mCommandLineParameter_DisplayMode = (inResolutionX!=-1 && inResolutionY!=-1) ? new DisplayMode(inResolutionX,inResolutionY,32,60) : null;
@@ -603,6 +607,7 @@ public class BaseGlobalEnvironment {
         mCommandLineParameter_VSync = inVSync;
         mCommandLineParameter_FrameSkip = inFrameSkip;
         mCommandLineParameter_WindowToolkit = inWindowToolkitName;
+        mCommandLineParameter_MusicFileName = inMusicFileName;
     }
 
     public int getParameterKey_INT_12() { return mParameterKey_INT_12; }

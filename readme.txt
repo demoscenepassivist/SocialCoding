@@ -24,5 +24,5 @@ For various other interesting blogs regarding JOGL and the other projects from J
 http://jogamp.org/ or go directly to http://jogamp.org/blog/
 
 If u are just in the mood for some smalltalk or have spontaneous technical questions u can also
-join the jogamp XMPP chat under: Server: conference.jabber.org - Room: jogamp
+join the JOGAMP XMPP chat under: Server: conference.jabber.org - Room: jogamp
      

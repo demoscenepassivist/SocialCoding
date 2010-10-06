@@ -25,6 +25,14 @@ import framework.jogl.postprocessingfilters.*;
 
 public class PostProcessingUtils {
 
+    public static final int POSTPROCESSINGFILTER_PREFILTER_NOOP = 0;
+    public static final int POSTPROCESSINGFILTER_PREFILTER_BRIGHTNESS = 1;
+    public static final int POSTPROCESSINGFILTER_PREFILTER_GRAYSCALE = 2;
+    public static final int POSTPROCESSINGFILTER_PREFILTER_SATURATION = 3;
+    public static final int POSTPROCESSINGFILTER_PREFILTER_COLORINVERT = 4;
+    public static final int POSTPROCESSINGFILTER_PREFILTER_GRAYINVERT = 5;
+    public static final int POSTPROCESSINGFILTER_PREFILTER_SEPIA = 6;
+
     public static ArrayList<BasePostProcessingFilterChainShaderInterface> generatePreFilterArrayList(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         ArrayList<BasePostProcessingFilterChainShaderInterface> tPreFilters = new ArrayList<BasePostProcessingFilterChainShaderInterface>();
         BasePostProcessingFilterChainShaderInterface tNoOp = new PostProcessingFilter_NoOp();
@@ -65,6 +73,18 @@ public class PostProcessingUtils {
         tPreFilters.add(tSepia);
         return tPreFilters;
     }
+
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_NOOP = 0;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_BOXBLUR = 1;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_EROSION = 2;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_DILATION = 3;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_GAUSSIANBLUR_HARDCODED = 4;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_KIRSCHNER_COMPASS = 5;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_LAPLACIAN = 6;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_PREWITT = 7;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_ROBERTS = 8;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_SHARPEN = 9;
+    public static final int POSTPROCESSINGFILTER_CONVOLUTION_SOBEL = 10;
 
     public static ArrayList<BasePostProcessingFilterChainShaderInterface> generatePostProcessingFilterArrayList(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         ArrayList<BasePostProcessingFilterChainShaderInterface> tConvolutions = new ArrayList<BasePostProcessingFilterChainShaderInterface>();
@@ -114,6 +134,23 @@ public class PostProcessingUtils {
         tConvolutions.add(tSobel);
         return tConvolutions;
     }
+
+    public static final int POSTPROCESSINGFILTER_BLENDER_NOOP = 0;
+    public static final int POSTPROCESSINGFILTER_BLENDER_ADD = 1;
+    public static final int POSTPROCESSINGFILTER_BLENDER_AVERAGE = 2;
+    public static final int POSTPROCESSINGFILTER_BLENDER_DARKEN = 3;
+    public static final int POSTPROCESSINGFILTER_BLENDER_LIGHTEN = 4;
+    public static final int POSTPROCESSINGFILTER_BLENDER_MULTIPLY = 5;
+    public static final int POSTPROCESSINGFILTER_BLENDER_COLORDODGE = 6;
+    public static final int POSTPROCESSINGFILTER_BLENDER_COLORBURN = 7;
+    public static final int POSTPROCESSINGFILTER_BLENDER_DIFFERENCE = 8;
+    public static final int POSTPROCESSINGFILTER_BLENDER_EXCLUSION = 9;
+    public static final int POSTPROCESSINGFILTER_BLENDER_HARDLIGHT = 10;
+    public static final int POSTPROCESSINGFILTER_BLENDER_INVERSEDIFFRENCE = 11;
+    public static final int POSTPROCESSINGFILTER_BLENDER_OPACITY = 12;
+    public static final int POSTPROCESSINGFILTER_BLENDER_SCREEN = 13;
+    public static final int POSTPROCESSINGFILTER_BLENDER_SOFTLIGHT = 14;
+    public static final int POSTPROCESSINGFILTER_BLENDER_SUBSTRACT = 15;
 
     public static ArrayList<BasePostProcessingFilterChainShaderInterface> generateBlenderFilterArrayList(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         ArrayList<BasePostProcessingFilterChainShaderInterface> tBlenders = new ArrayList<BasePostProcessingFilterChainShaderInterface>();

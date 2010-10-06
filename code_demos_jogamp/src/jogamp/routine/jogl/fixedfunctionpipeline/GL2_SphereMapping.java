@@ -13,14 +13,11 @@ package jogamp.routine.jogl.fixedfunctionpipeline;
  **
  ** Simple GL2-Profile demonstration using wavefront object loading, display-lists, automatic
  ** texture coordinate generation (sphere-mapping) and basic materials and lighting. Also uses 
- ** OffsetTableUtils to precalculate some nice cosinus based object movement. Enables the user
- ** to play around the post-processing filter infrastructure using keys 1+2,3+4,5+6 and 7+8 to
- ** switch between different prefilters, linear convolutions and blending modes. For an impression
+ ** OffsetTableUtils to precalculate some nice cosinus based object movement. For an impression
  ** how this routine looks like see here: http://www.youtube.com/watch?v=ceEF5Z5K3lE
  **
  **/
 
-import java.util.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
 import com.jogamp.opengl.util.gl2.*;
@@ -31,10 +28,6 @@ import static javax.media.opengl.GL2.*;
 
 public class GL2_SphereMapping extends BaseRoutineAdapter implements BaseRoutineInterface {
 
-    private BasePostProcessingFilterChainExecutor mBasePostProcessingFilterChainExecutor;
-    private ArrayList<BasePostProcessingFilterChainShaderInterface> mPreFilters;
-    private ArrayList<BasePostProcessingFilterChainShaderInterface> mBlenders;
-    private ArrayList<BasePostProcessingFilterChainShaderInterface> mConvolutions;
     private int mDisplayListID;
     private float[] mOffsetSinTable;
     private static final int OFFSETSINTABLE_SIZE = 2700;
@@ -44,12 +37,6 @@ public class GL2_SphereMapping extends BaseRoutineAdapter implements BaseRoutine
         mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,360,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
         mTexture = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Spheremap_Uffizi_Gallery_MedRes.png");
         mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/DiscoSphere.wobj.zip");
-        //setup post-processing filter chain ...
-        mBasePostProcessingFilterChainExecutor = new BasePostProcessingFilterChainExecutor();
-        mBasePostProcessingFilterChainExecutor.init(inGL,inGLU,inGLUT);
-        mPreFilters = PostProcessingUtils.generatePreFilterArrayList(inGL,inGLU,inGLUT);
-        mConvolutions = PostProcessingUtils.generatePostProcessingFilterArrayList(inGL,inGLU,inGLUT);
-        mBlenders = PostProcessingUtils.generateBlenderFilterArrayList(inGL,inGLU,inGLUT);
         inGL.glLightModelfv(GL_LIGHT_MODEL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.0f,0.0f,0.0f,0.0f}));
         inGL.glLightfv(GL_LIGHT0, GL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.25f,0.25f,0.25f,1.0f}));
         inGL.glLightfv(GL_LIGHT0, GL_DIFFUSE, DirectBufferUtils.createDirectFloatBuffer(new float[]{1.0f,1.0f,1.0f,1.0f}));
@@ -96,17 +83,6 @@ public class GL2_SphereMapping extends BaseRoutineAdapter implements BaseRoutine
         inGL.glDisable(GL_COLOR_SUM);
         inGL.glDisable(GL_TEXTURE_GEN_S);
         inGL.glDisable(GL_TEXTURE_GEN_T);
-        //build postprocessing filterchain and execute ...
-        mBasePostProcessingFilterChainExecutor.removeAllFilters();
-        int tCurrentPreFilterIndex = Math.abs(BaseGlobalEnvironment.getInstance().getParameterKey_INT_78()%mPreFilters.size());
-        mBasePostProcessingFilterChainExecutor.addFilter(mPreFilters.get(tCurrentPreFilterIndex));
-        int tCurrentConvolutionIndex = Math.abs(BaseGlobalEnvironment.getInstance().getParameterKey_INT_34()%mConvolutions.size());
-        BasePostProcessingFilterChainShaderInterface tCurrentShader = mConvolutions.get(tCurrentConvolutionIndex);
-        tCurrentShader.setNumberOfIterations(Math.abs(25+BaseGlobalEnvironment.getInstance().getParameterKey_INT_56()));
-        mBasePostProcessingFilterChainExecutor.addFilter(mConvolutions.get(tCurrentConvolutionIndex));
-        int tCurrentBlenderIndex = Math.abs(BaseGlobalEnvironment.getInstance().getParameterKey_INT_12()%mBlenders.size());
-        mBasePostProcessingFilterChainExecutor.addFilter(mBlenders.get(tCurrentBlenderIndex));	
-        mBasePostProcessingFilterChainExecutor.executeFilterChain(inGL,inGLU,inGLUT);
     }
 
     public void cleanupRoutineJOGL(GL2 inGL,GLU inGLU,GLUT inGLUT) {

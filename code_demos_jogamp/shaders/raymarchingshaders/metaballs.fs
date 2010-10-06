@@ -49,7 +49,7 @@ float surfacefunction(vec3 hitpoint) {
     vec3 ball3 = vec3(-cos(time),sin(time),2.0*sin(time))-hitpoint;
     vec3 ball4 = vec3(-2.0*cos(time),-sin(time),2.0*sin(time))-hitpoint;
     vec3 ball5 = vec3(-0.5*cos(time),-cos(time),2.5*sin(time))-hitpoint;
-    vec3 ball6 = vec3(-0.5*cos(time),-1.5*cos(time),1.75*sin(time)) - hitpoint;
+    vec3 ball6 = vec3(-0.5*cos(time),-1.5*cos(time),1.75*sin(time))-hitpoint;
     float ball0dist = dot(ball0, ball0);
     float ball1dist = dot(ball1, ball1);
     float ball2dist = dot(ball2, ball2);
@@ -66,7 +66,6 @@ float surfacefunction(vec3 hitpoint) {
     ball6dist = pow(ball6dist, max(0.02, 1.0));
     return -(size/ball0dist+size/ball1dist+size/ball2dist+size/ball3dist+size/ball4dist+size/ball5dist+size/ball6dist)+1.0;
 }
-
 
 void main(void) {
     //hardcode everything X-)
