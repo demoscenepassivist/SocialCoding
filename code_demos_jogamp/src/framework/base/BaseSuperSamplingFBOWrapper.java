@@ -27,7 +27,7 @@ import javax.media.opengl.glu.GLU;
 import com.jogamp.opengl.util.gl2.GLUT;
 import framework.util.*;
 
-public class BaseSuperSamplingFBOWrapper {
+public class BaseSuperSamplingFBOWrapper implements BaseFrameBufferObjectRendererInterface {
 
     private BaseFrameBufferObjectRendererExecutor mBaseFrameBufferObjectRendererExecutor;
     private float mSuperSamplingFactor;
@@ -42,6 +42,9 @@ public class BaseSuperSamplingFBOWrapper {
         mSuperSamplingFBO_Width = (int)(BaseGlobalEnvironment.getInstance().getScreenWidth()*mSuperSamplingFactor);
         mSuperSamplingFBO_Height = (int)(BaseGlobalEnvironment.getInstance().getScreenHeight()*mSuperSamplingFactor);
     }
+    
+    public int getSuperSampledWidth() { return mSuperSamplingFBO_Width; }
+    public int getSuperSampledHeight() { return mSuperSamplingFBO_Height; }
     
     private float[] generateTextureCoordinateOffsets() {
         BaseLogging.getInstance().info("CALCULATING TEXTUREOFFSETS FOR 2FV UNIFORM ...");
@@ -84,7 +87,7 @@ public class BaseSuperSamplingFBOWrapper {
         mLinkedShader_SuperSampling = ShaderUtils.generateSimple_1xFS_ShaderProgramm(inGL,tFragmentShader);
     }
 
-    public void execute(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
+    public void executeToFrameBuffer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
         mBaseFrameBufferObjectRendererExecutor.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
         inGL.glUseProgram(mLinkedShader_SuperSampling);
         ShaderUtils.setUniform1i(inGL,mLinkedShader_SuperSampling,"sampler0",0);
@@ -93,8 +96,27 @@ public class BaseSuperSamplingFBOWrapper {
         inGL.glUseProgram(0);
     }
     
+    public void executeToFBORendererExecutor(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT,BaseFrameBufferObjectRendererExecutor inBaseFrameBufferObjectRendererExecutor) {
+        mBaseFrameBufferObjectRendererExecutor.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
+        inBaseFrameBufferObjectRendererExecutor.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
+    }
+    
     public void cleanup(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         mBaseFrameBufferObjectRendererExecutor.cleanup(inGL,inGLU,inGLUT);
     }
+    
+    /* --------------------------------------------------------------------------------------------------------------------------------------------------- */
+    
+    public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
+    
+    public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
+        inGL.glUseProgram(mLinkedShader_SuperSampling);
+        ShaderUtils.setUniform1i(inGL,mLinkedShader_SuperSampling,"sampler0",0);
+        inGL.glValidateProgram(mLinkedShader_SuperSampling);
+        mBaseFrameBufferObjectRendererExecutor.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+        inGL.glUseProgram(0);
+    }
+    
+    public void cleanup_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}    
     
 }

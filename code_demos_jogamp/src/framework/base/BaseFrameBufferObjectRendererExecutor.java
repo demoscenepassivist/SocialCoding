@@ -38,13 +38,14 @@ public class BaseFrameBufferObjectRendererExecutor {
         mTextureHeight = inTextureHeight;
         mBaseFrameBufferObjectRendererInterface = inBaseFrameBufferObjectRendererInterface;
     }
-    
+
     public int getColorTextureID() { return mColorTextureID; }
     public int getDepthTextureID() { return mDepthTextureID; }
     public int getWidth() { return mTextureWidth; }
     public int getHeight() { return mTextureHeight; }
-    
+
     public void init(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+        BaseLogging.getInstance().info("INITIALIZING BaseFrameBufferObjectRendererExecutor ... "+mTextureWidth+"x"+mTextureHeight);
         //allocate the framebuffer object ...
         int[] result = new int[1];
         inGL.glGenFramebuffers(1, result, 0);
@@ -74,8 +75,12 @@ public class BaseFrameBufferObjectRendererExecutor {
         inGL.glBindFramebuffer(GL_FRAMEBUFFER, 0);
         //check if fbo is set up correctly ...
         checkFrameBufferObjectCompleteness(inGL);
-        //initialize the assigned fbo renderer ...
-        mBaseFrameBufferObjectRendererInterface.init_FBORenderer(inGL,inGLU,inGLUT);
+        if (mBaseFrameBufferObjectRendererInterface!=null) {
+            //initialize the assigned fbo renderer ...
+            mBaseFrameBufferObjectRendererInterface.init_FBORenderer(inGL,inGLU,inGLUT);
+        } else {
+            BaseLogging.getInstance().warning("BaseFrameBufferObjectRendererInterface FOR THIS EXECUTOR IS NULL! init_FBORenderer() SKIPPED!");
+        }
     }
 
     public void renderToFrameBuffer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
@@ -84,7 +89,11 @@ public class BaseFrameBufferObjectRendererExecutor {
             inGL.glBindFramebuffer(GL_FRAMEBUFFER, mFrameBufferObjectID);
             inGL.glPushAttrib(GL_VIEWPORT_BIT);
             inGL.glViewport(0,0,mTextureWidth,mTextureHeight);
-            mBaseFrameBufferObjectRendererInterface.mainLoop_FBORenderer(inFrameNumber,inGL,inGLU,inGLUT);
+            if (mBaseFrameBufferObjectRendererInterface!=null) {
+                mBaseFrameBufferObjectRendererInterface.mainLoop_FBORenderer(inFrameNumber,inGL,inGLU,inGLUT);
+            } else {
+                BaseLogging.getInstance().warning("BaseFrameBufferObjectRendererInterface FOR THIS EXECUTOR IS NULL! renderToFrameBuffer() SKIPPED!");
+            }
             inGL.glPopAttrib();
             //unbind the framebuffer ...
             inGL.glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -110,8 +119,16 @@ public class BaseFrameBufferObjectRendererExecutor {
         //restore the active texture ...
         inGL.glPopAttrib();
     }
-
+    
     public void renderFBOAsFullscreenBillboard(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+        renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT,false);
+    }
+
+    public void renderFBOAsFullscreenBillboard_FLIPPED(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+        renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT,true);
+    }
+
+    public void renderFBOAsFullscreenBillboard(GL2 inGL,GLU inGLU,GLUT inGLUT,boolean inFlipped) {
         //reset frustum to default state ...
         BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT);
         inGL.glShadeModel(GL_SMOOTH);
@@ -127,6 +144,8 @@ public class BaseFrameBufferObjectRendererExecutor {
         inGL.glLoadIdentity();
         this.prepareForColouredRendering(inGL,GL_TEXTURE0);
         inGL.glBegin(GL_QUADS);
+        if (inFlipped) {
+            //flipped billboard
             inGL.glTexCoord2f(0.0f, 0.0f);
             inGL.glVertex2f(0.0f, 0.0f);
             inGL.glTexCoord2f(1.0f, 0.0f);
@@ -135,6 +154,16 @@ public class BaseFrameBufferObjectRendererExecutor {
             inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
             inGL.glTexCoord2f(0.0f, 1.0f);
             inGL.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight());
+        } else {
+            inGL.glTexCoord2f(0.0f, 1.0f);
+            inGL.glVertex2f(0.0f, 0.0f);
+            inGL.glTexCoord2f(1.0f, 1.0f);
+            inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), 0.0f);
+            inGL.glTexCoord2f(1.0f, 0.0f);
+            inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
+            inGL.glTexCoord2f(0.0f, 0.0f);
+            inGL.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight());    
+        }
         inGL.glEnd(); 
         this.stopColouredRendering(inGL);
     }
@@ -143,7 +172,11 @@ public class BaseFrameBufferObjectRendererExecutor {
         inGL.glDeleteFramebuffers(1, Buffers.newDirectIntBuffer(mFrameBufferObjectID));
         inGL.glDeleteTextures(1, Buffers.newDirectIntBuffer(mColorTextureID));
         inGL.glDeleteTextures(1, Buffers.newDirectIntBuffer(mDepthTextureID));
-        mBaseFrameBufferObjectRendererInterface.cleanup_FBORenderer(inGL,inGLU,inGLUT);
+        if (mBaseFrameBufferObjectRendererInterface!=null) {
+            mBaseFrameBufferObjectRendererInterface.cleanup_FBORenderer(inGL,inGLU,inGLUT);
+        } else {
+            BaseLogging.getInstance().warning("BaseFrameBufferObjectRendererInterface FOR THIS EXECUTOR IS NULL! cleanup() SKIPPED!");
+        }
     }
 
     private void checkFrameBufferObjectCompleteness(GL2 inGL) {

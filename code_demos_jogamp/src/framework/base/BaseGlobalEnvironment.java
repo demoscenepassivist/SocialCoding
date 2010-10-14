@@ -17,6 +17,7 @@ package framework.base;
  **/
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
 import com.jogamp.opengl.util.*;
@@ -48,6 +49,9 @@ public class BaseGlobalEnvironment {
     private float mParameterKey_FLOAT_CV;
     private float mParameterKey_FLOAT_BN;
     private float mParameterKey_FLOAT_MCOMMA;
+    private float mParameterKey_FLOAT_X;
+    private float mParameterKey_FLOAT_Y;
+    private float mParameterKey_FLOAT_Z;
 
     private BaseGlobalEnvironment() {
         BaseLogging.getInstance().info("CONSTRUCTING BASEGLOBALENVIRONMENT ...");
@@ -113,6 +117,29 @@ public class BaseGlobalEnvironment {
             }
         });
         tNEWTWindow.addKeyListener(new com.jogamp.newt.event.KeyAdapter() {
+
+            public void keyPressed(com.jogamp.newt.event.KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    mParameterKey_FLOAT_X-=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_X="+mParameterKey_FLOAT_X);
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    mParameterKey_FLOAT_X+=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_X="+mParameterKey_FLOAT_X);
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    mParameterKey_FLOAT_Y+=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Y="+mParameterKey_FLOAT_Y);
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    mParameterKey_FLOAT_Y-=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Y="+mParameterKey_FLOAT_Y);
+                } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+                    mParameterKey_FLOAT_Z-=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Z="+mParameterKey_FLOAT_Z);
+                } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+                    mParameterKey_FLOAT_Z+=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Z="+mParameterKey_FLOAT_Z);
+                }
+            }
+
             public void keyTyped(com.jogamp.newt.event.KeyEvent e) {
                 if (e.getKeyChar()=='\u001B') {
                     BaseLogging.getInstance().info("--------------------------------------------");
@@ -137,6 +164,9 @@ public class BaseGlobalEnvironment {
                     BaseLogging.getInstance().info("mParameterKey_FLOAT_CV="+mParameterKey_FLOAT_CV);
                     BaseLogging.getInstance().info("mParameterKey_FLOAT_BN="+mParameterKey_FLOAT_BN);
                     BaseLogging.getInstance().info("mParameterKey_FLOAT_MCOMMA="+mParameterKey_FLOAT_MCOMMA);
+                    BaseLogging.getInstance().info("mParameterKey_FLOAT_X="+mParameterKey_FLOAT_X);
+                    BaseLogging.getInstance().info("mParameterKey_FLOAT_Y="+mParameterKey_FLOAT_Y);
+                    BaseLogging.getInstance().info("mParameterKey_FLOAT_Z="+mParameterKey_FLOAT_Z);
                     BaseLogging.getInstance().info("--------------------------------------------");
                     tAnimator.stop();
                     System.exit(0);
@@ -345,6 +375,29 @@ public class BaseGlobalEnvironment {
             }
         });
         tFrame.addKeyListener(new java.awt.event.KeyAdapter() {
+
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    mParameterKey_FLOAT_X-=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_X="+mParameterKey_FLOAT_X);
+                } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    mParameterKey_FLOAT_X+=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_X="+mParameterKey_FLOAT_X);
+                } else if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    mParameterKey_FLOAT_Y+=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Y="+mParameterKey_FLOAT_Y);
+                } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    mParameterKey_FLOAT_Y-=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Y="+mParameterKey_FLOAT_Y);
+                } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
+                    mParameterKey_FLOAT_Z-=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Z="+mParameterKey_FLOAT_Z);
+                } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
+                    mParameterKey_FLOAT_Z+=0.1f;
+                    BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Z="+mParameterKey_FLOAT_Z);
+                }
+            }
+
             public void keyTyped(java.awt.event.KeyEvent e) {
                 if (e.getKeyChar()=='\u001B') {
                     BaseLogging.getInstance().info("--------------------------------------------");
@@ -369,6 +422,9 @@ public class BaseGlobalEnvironment {
                     BaseLogging.getInstance().info("mParameterKey_FLOAT_CV="+mParameterKey_FLOAT_CV);
                     BaseLogging.getInstance().info("mParameterKey_FLOAT_BN="+mParameterKey_FLOAT_BN);
                     BaseLogging.getInstance().info("mParameterKey_FLOAT_MCOMMA="+mParameterKey_FLOAT_MCOMMA);
+                    BaseLogging.getInstance().info("mParameterKey_FLOAT_X="+mParameterKey_FLOAT_X);
+                    BaseLogging.getInstance().info("mParameterKey_FLOAT_Y="+mParameterKey_FLOAT_Y);
+                    BaseLogging.getInstance().info("mParameterKey_FLOAT_Z="+mParameterKey_FLOAT_Z);
                     BaseLogging.getInstance().info("--------------------------------------------");
                     //run this on another thread than the AWT event queue to make sure the call to Animator.stop() completes before exiting ...
                     new Thread(new Runnable() {
@@ -629,5 +685,8 @@ public class BaseGlobalEnvironment {
     public float getParameterKey_FLOAT_CV() { return mParameterKey_FLOAT_CV; }
     public float getParameterKey_FLOAT_BN() { return mParameterKey_FLOAT_BN; }
     public float getParameterKey_FLOAT_MCOMMA() { return mParameterKey_FLOAT_MCOMMA; }
+    public float getParameterKey_FLOAT_X() { return mParameterKey_FLOAT_X; }
+    public float getParameterKey_FLOAT_Y() { return mParameterKey_FLOAT_Y; }
+    public float getParameterKey_FLOAT_Z() { return mParameterKey_FLOAT_Z; }
 
 }

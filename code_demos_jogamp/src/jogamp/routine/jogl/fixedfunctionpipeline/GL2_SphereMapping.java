@@ -85,7 +85,7 @@ public class GL2_SphereMapping extends BaseRoutineAdapter implements BaseRoutine
         inGL.glDisable(GL_TEXTURE_GEN_T);
     }
 
-    public void cleanupRoutineJOGL(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+    public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         inGL.glDeleteLists(mDisplayListID,1);
         inGL.glFlush();
         mTexture.destroy(inGL);

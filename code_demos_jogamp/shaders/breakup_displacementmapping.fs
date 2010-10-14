@@ -11,7 +11,7 @@
  **
  ** Basic displacement mapping fragment shader part. As all displacement work is already done in the
  ** vertex shader, the only thing left to do in the fragment shader is do apply the diffuse texure and
- ** attenuate its brightness according to the scale value (wich is caculated from the spetrum analyzer).
+ ** attenuate its brightness according to the scale value (wich is calculated from the spectrum analyzer).
  **
  **/
 

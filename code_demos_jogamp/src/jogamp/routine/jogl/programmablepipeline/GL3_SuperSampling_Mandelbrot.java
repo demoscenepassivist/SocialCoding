@@ -34,7 +34,7 @@ public class GL3_SuperSampling_Mandelbrot extends GL3_Mandelbrot implements Base
     }
     
     public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        mBaseSuperSamplingFBOWrapper.execute(inFrameNumber,inGL,inGLU,inGLUT);
+        mBaseSuperSamplingFBOWrapper.executeToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
     }
     
     public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
