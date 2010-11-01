@@ -44,5 +44,15 @@ public class DirectBufferUtils {
             BaseLogging.getInstance().warning("UPDATED NON-DIRECT FLOATBUFFER ... LENGHT="+inFloatArray.length);
         }
     }
+    
+    public static FloatBuffer createDirectFloatBuffer(int inLength) {
+        FloatBuffer tDirectFloatBuffer = Buffers.newDirectFloatBuffer(inLength);
+        if (tDirectFloatBuffer.isDirect()) {
+            BaseLogging.getInstance().info("ALLOCATED DIRECT FLOATBUFFER ... LENGHT="+inLength);
+        } else {
+            BaseLogging.getInstance().warning("ALLOCATED NON-DIRECT FLOATBUFFER ... LENGHT="+inLength);
+        }
+        return tDirectFloatBuffer;
+    }
 
 }
