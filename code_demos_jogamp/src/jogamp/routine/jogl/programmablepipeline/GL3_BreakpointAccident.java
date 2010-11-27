@@ -52,7 +52,7 @@ public class GL3_BreakpointAccident extends BaseRoutineAdapter implements BaseRo
         mBasePostProcessingFilterChainExecutor.addFilter(mConvolutions.get(PostProcessingUtils.POSTPROCESSINGFILTER_CONVOLUTION_BOXBLUR));
         mConvolutions.get(PostProcessingUtils.POSTPROCESSINGFILTER_CONVOLUTION_EROSION).setNumberOfIterations(1+Math.abs(BaseGlobalEnvironment.getInstance().getParameterKey_INT_12()));
         mBasePostProcessingFilterChainExecutor.addFilter(mConvolutions.get(PostProcessingUtils.POSTPROCESSINGFILTER_CONVOLUTION_EROSION));
-        mBasePostProcessingFilterChainExecutor.executeFilterChain(inFrameNumber,inGL,inGLU,inGLUT,mBaseFrameBufferObjectRendererExecutor);
+        mBasePostProcessingFilterChainExecutor.executeFilterChain(inFrameNumber,inGL,inGLU,inGLUT,mBaseFrameBufferObjectRendererExecutor,true);
     }
 
     public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {

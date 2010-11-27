@@ -32,6 +32,18 @@ public class DirectBufferUtils {
         }
         return tDirectFloatBuffer;
     }
+    
+    public static DoubleBuffer createDirectDoubleBuffer(double[] inDoubleArray) {
+        DoubleBuffer tDirectDoubleBuffer = Buffers.newDirectDoubleBuffer(inDoubleArray.length);
+        tDirectDoubleBuffer.put(inDoubleArray);
+        tDirectDoubleBuffer.rewind();
+        if (tDirectDoubleBuffer.isDirect()) {
+            BaseLogging.getInstance().info("ALLOCATED DIRECT DOUBLEBUFFER ... LENGHT="+inDoubleArray.length);
+        } else {
+            BaseLogging.getInstance().warning("ALLOCATED NON-DIRECT DOUBLEBUFFER ... LENGHT="+inDoubleArray.length);
+        }
+        return tDirectDoubleBuffer;
+    }
 
     public static void updateDirectFloatBuffer(FloatBuffer inDirectFloatBuffer, float[] inFloatArray) {
         inDirectFloatBuffer.rewind();
@@ -53,6 +65,16 @@ public class DirectBufferUtils {
             BaseLogging.getInstance().warning("ALLOCATED NON-DIRECT FLOATBUFFER ... LENGHT="+inLength);
         }
         return tDirectFloatBuffer;
+    }
+    
+    public static DoubleBuffer createDirectDoubleBuffer(int inLength) {
+        DoubleBuffer tDirectDoubleBuffer = Buffers.newDirectDoubleBuffer(inLength);
+        if (tDirectDoubleBuffer.isDirect()) {
+            BaseLogging.getInstance().info("ALLOCATED DIRECT DOUBLEBUFFER ... LENGHT="+inLength);
+        } else {
+            BaseLogging.getInstance().warning("ALLOCATED NON-DIRECT DOUBLEBUFFER ... LENGHT="+inLength);
+        }
+        return tDirectDoubleBuffer;
     }
 
 }

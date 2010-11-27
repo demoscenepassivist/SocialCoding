@@ -43,6 +43,7 @@ public class BasePostProcessingFilterChainExecutor {
     private BaseFrameBufferObjectRendererExecutor mCurrent_SecondaryFBO;
     private BaseFrameBufferObjectRendererExecutor mCurrent_OriginalFBO;
     private enum ENDRESULT_BUFFER {PRIMARY,SECONDARY,ORIGINAL}
+    private int mFilterChainResultColorTexture;
 
     public BasePostProcessingFilterChainExecutor(int inScreenSizeDivisionFactor) {
         mFilterList = new ArrayList<BasePostProcessingFilterChainShaderInterface>();
@@ -192,8 +193,12 @@ public class BasePostProcessingFilterChainExecutor {
     public void removeAllFilters() {
         mFilterList.clear();
     }
+    
+    public int getFilterChainResultColorTexture() {
+        return mFilterChainResultColorTexture;
+    }
 
-    public void executeFilterChain(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT,BaseFrameBufferObjectRendererExecutor inOriginalFBO) {
+    public void executeFilterChain(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT,BaseFrameBufferObjectRendererExecutor inOriginalFBO,boolean inDrawToFrameBuffer) {
         mOriginalFBO = inOriginalFBO;
         ENDRESULT_BUFFER tEndresultBuffer = ENDRESULT_BUFFER.PRIMARY;
         boolean tUsePrimary = false;
@@ -247,17 +252,26 @@ public class BasePostProcessingFilterChainExecutor {
         BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT);
         if (tEndresultBuffer==ENDRESULT_BUFFER.PRIMARY) {
             //BaseLogging.getInstance().info("ENDRESULT_BUFFER.PRIMARY");
-            mBaseFrameBufferObjectRendererExecutor_Primary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+            mFilterChainResultColorTexture = mBaseFrameBufferObjectRendererExecutor_Primary.getColorTextureID();
+            if (inDrawToFrameBuffer) {
+                mBaseFrameBufferObjectRendererExecutor_Primary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+            }
         } else if (tEndresultBuffer==ENDRESULT_BUFFER.SECONDARY) {
             //BaseLogging.getInstance().info("ENDRESULT_BUFFER.SECONDARY");
-            mBaseFrameBufferObjectRendererExecutor_Secondary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+            mFilterChainResultColorTexture = mBaseFrameBufferObjectRendererExecutor_Secondary.getColorTextureID();
+            if (inDrawToFrameBuffer) {
+                mBaseFrameBufferObjectRendererExecutor_Secondary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+            }
         } else {
             //BaseLogging.getInstance().info("ENDRESULT_BUFFER.ORIGINAL");
-            mBaseFrameBufferObjectRendererExecutor_Original.renderFBOAsFullscreenBillboard_FLIPPED(inGL,inGLU,inGLUT);
+            mFilterChainResultColorTexture = mBaseFrameBufferObjectRendererExecutor_Original.getColorTextureID();
+            if (inDrawToFrameBuffer) {
+                mBaseFrameBufferObjectRendererExecutor_Original.renderFBOAsFullscreenBillboard_FLIPPED(inGL,inGLU,inGLUT);
+            }
         }
         //BaseLogging.getInstance().info("------- NEXT FRAME -------");
     }
-    
+
     private void renderInternalBillboardWithAutomaticFlipping(GL2 inGL,GLU inGLU,GLUT inGLUT,boolean inFlipped) {
         if (inFlipped) {
             //flipped billboard
@@ -270,7 +284,7 @@ public class BasePostProcessingFilterChainExecutor {
             inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
             inGL.glTexCoord2f(0.0f, 1.0f);
             inGL.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
-        inGL.glEnd();
+            inGL.glEnd();
         } else {
             inGL.glBegin(GL_QUADS);
             inGL.glTexCoord2f(0.0f, 1.0f);
@@ -281,8 +295,14 @@ public class BasePostProcessingFilterChainExecutor {
             inGL.glVertex2f(BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
             inGL.glTexCoord2f(0.0f, 0.0f);
             inGL.glVertex2f(0.0f, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
-        inGL.glEnd();
+            inGL.glEnd();
         }
+    }
+
+    public void cleanup(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+        mBaseFrameBufferObjectRendererExecutor_Primary.cleanup(inGL,inGLU,inGLUT);
+        mBaseFrameBufferObjectRendererExecutor_Secondary.cleanup(inGL,inGLU,inGLUT);
+        mBaseFrameBufferObjectRendererExecutor_Original.cleanup(inGL,inGLU,inGLUT);
     }
 
 }

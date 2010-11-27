@@ -55,7 +55,7 @@ public class GL3_EnvironmentBasedLighting_SphericalHarmonics extends BaseRoutine
         mConvolutions.get(PostProcessingUtils.POSTPROCESSINGFILTER_CONVOLUTION_BOXBLUR).setNumberOfIterations(26+Math.abs(BaseGlobalEnvironment.getInstance().getParameterKey_INT_12()));
         mBasePostProcessingFilterChainExecutor.addFilter(mConvolutions.get(PostProcessingUtils.POSTPROCESSINGFILTER_CONVOLUTION_BOXBLUR));
         mBasePostProcessingFilterChainExecutor.addFilter(mBlenders.get(PostProcessingUtils.POSTPROCESSINGFILTER_BLENDER_LIGHTEN));
-        mBasePostProcessingFilterChainExecutor.executeFilterChain(inFrameNumber,inGL,inGLU,inGLUT,mBaseFrameBufferObjectRendererExecutor);
+        mBasePostProcessingFilterChainExecutor.executeFilterChain(inFrameNumber,inGL,inGLU,inGLUT,mBaseFrameBufferObjectRendererExecutor,true);
     }
 
     public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {

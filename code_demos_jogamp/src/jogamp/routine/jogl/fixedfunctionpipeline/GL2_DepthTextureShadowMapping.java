@@ -32,19 +32,19 @@ public class GL2_DepthTextureShadowMapping extends BaseRoutineAdapter implements
     //nice shadowmapping tutorial:
     //http://dalab.se.sjtu.edu.cn/~jietan/shadowMappingTutorial.html
     
-    boolean mShowShadowMap = false;
-    int mShadowTextureID;
-    FloatBuffer mAmbientLight = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.2f, 0.2f, 0.2f, 1.0f});
-    FloatBuffer mDiffuseLight = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.7f, 0.7f, 0.7f, 1.0f});  
-    FloatBuffer mLowAmbient = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.1f, 0.1f, 0.1f, 1.0f});
-    FloatBuffer mLowDiffuse = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.25f, 0.25f, 0.25f, 1.0f});
-    float mLightPos[] = {50.0f, 100.0f, 50.0f, 1.0f};
-    FloatBuffer mLightPosFloatBuffer = DirectBufferUtils.createDirectFloatBuffer(mLightPos);
-    float mCameraPos[] = {100.0f, 150.0f, 150.0f, 1.0f};
-    double mCameraZoom = 0.4;
-    FloatBuffer mLightModelview = DirectBufferUtils.createDirectFloatBuffer(16);
-    FloatBuffer mLightProjection = DirectBufferUtils.createDirectFloatBuffer(16);
-    FloatBuffer mMatrixBuffer = DirectBufferUtils.createDirectFloatBuffer(16); 
+    private boolean mShowShadowMap = false;
+    private int mShadowTextureID;
+    private FloatBuffer mAmbientLight = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.2f, 0.2f, 0.2f, 1.0f});
+    private FloatBuffer mDiffuseLight = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.7f, 0.7f, 0.7f, 1.0f});  
+    private FloatBuffer mLowAmbient = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.1f, 0.1f, 0.1f, 1.0f});
+    private FloatBuffer mLowDiffuse = DirectBufferUtils.createDirectFloatBuffer(new float[]{0.25f, 0.25f, 0.25f, 1.0f});
+    private float mLightPos[] = {50.0f, 100.0f, 50.0f, 1.0f};
+    private FloatBuffer mLightPosFloatBuffer = DirectBufferUtils.createDirectFloatBuffer(mLightPos);
+    private float mCameraPos[] = {100.0f, 150.0f, 150.0f, 1.0f};
+    private double mCameraZoom = 0.4;
+    private FloatBuffer mLightModelview = DirectBufferUtils.createDirectFloatBuffer(16);
+    private FloatBuffer mLightProjection = DirectBufferUtils.createDirectFloatBuffer(16);
+    private FloatBuffer mMatrixBuffer = DirectBufferUtils.createDirectFloatBuffer(16); 
     
     public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         mShadowTextureID = TextureUtils.generateTextureID(inGL);
@@ -253,8 +253,8 @@ public class GL2_DepthTextureShadowMapping extends BaseRoutineAdapter implements
             inGLUT.glutSolidOctahedron();
         inGL.glPopMatrix();
     }
-    
-    private void generateTextureMatrix(GL2 inGL,GLU inGLU,GLUT inGLUT) {                
+
+    private void generateTextureMatrix(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         //set up projective texture matrix. Use the GL_MODELVIEW matrix
         //stack and OpenGL matrix commands to make the matrix.
         float tSceneBoundingRadius = 95.0f;
@@ -262,7 +262,7 @@ public class GL2_DepthTextureShadowMapping extends BaseRoutineAdapter implements
         float tLightToSceneDistance = (float)Math.sqrt(mLightPos[0] * mLightPos[0] + mLightPos[1] * mLightPos[1] + mLightPos[2] * mLightPos[2]);
         float tNearPlane = tLightToSceneDistance - tSceneBoundingRadius;
         //keep the scene filling the depth texture
-        float tFieldOfView = (float)Math.toDegrees(2.0f * Math.atan(tSceneBoundingRadius / tLightToSceneDistance));             
+        float tFieldOfView = (float)Math.toDegrees(2.0f * Math.atan(tSceneBoundingRadius / tLightToSceneDistance));
         inGL.glPushMatrix();
         inGL.glLoadIdentity();
         inGL.glTranslatef(0.5f, 0.5f, 0.5f);
@@ -285,7 +285,7 @@ public class GL2_DepthTextureShadowMapping extends BaseRoutineAdapter implements
         inGL.glTexGenfv(GL_Q, GL_EYE_PLANE, mMatrixBuffer);
         mMatrixBuffer.rewind();
     }
-        
+
     private void transpose(FloatBuffer inMatrix) {
         float tTempValue = inMatrix.get(1);
         inMatrix.put(1, inMatrix.get(4));

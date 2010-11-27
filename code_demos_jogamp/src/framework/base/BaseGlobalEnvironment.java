@@ -137,6 +137,30 @@ public class BaseGlobalEnvironment {
                 } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
                     mParameterKey_FLOAT_Z+=0.1f;
                     BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Z="+mParameterKey_FLOAT_Z);
+                } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    BaseLogging.getInstance().info("!!!RESETTING EVERY PARAMETER VALUE TO 0/0.0!!!");
+                    mParameterKey_INT_12=0;
+                    mParameterKey_INT_34=0;
+                    mParameterKey_INT_56=0;
+                    mParameterKey_INT_78=0;
+                    mParameterKey_INT_90=0;
+                    mParameterKey_INT_QW=0;
+                    mParameterKey_INT_ER=0;
+                    mParameterKey_INT_TZ=0;
+                    mParameterKey_INT_UI=0;
+                    mParameterKey_INT_OP=0;
+                    mParameterKey_FLOAT_AS=0.0f;
+                    mParameterKey_FLOAT_DF=0.0f;
+                    mParameterKey_FLOAT_GH=0.0f;
+                    mParameterKey_FLOAT_JK=0.0f;
+                    mParameterKey_FLOAT_LÖ=0.0f;
+                    mParameterKey_FLOAT_YX=0.0f;
+                    mParameterKey_FLOAT_CV=0.0f;
+                    mParameterKey_FLOAT_BN=0.0f;
+                    mParameterKey_FLOAT_MCOMMA=0.0f;
+                    mParameterKey_FLOAT_X=0.0f;
+                    mParameterKey_FLOAT_Y=0.0f;
+                    mParameterKey_FLOAT_Z=0.0f;
                 }
             }
 
@@ -285,7 +309,7 @@ public class BaseGlobalEnvironment {
                     mParameterKey_FLOAT_MCOMMA-=0.1f;
                     BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_MCOMMA="+mParameterKey_FLOAT_MCOMMA);
                 } else {
-                    BaseLogging.getInstance().info("UNKNOWN KEY TYPED - KEYCHAR="+e.getKeyChar());
+                    //BaseLogging.getInstance().info("UNKNOWN KEY TYPED - KEYCHAR="+e.getKeyChar());
                 }   
             }
         });
@@ -395,6 +419,30 @@ public class BaseGlobalEnvironment {
                 } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
                     mParameterKey_FLOAT_Z+=0.1f;
                     BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_Z="+mParameterKey_FLOAT_Z);
+                } else if (e.getKeyCode() == KeyEvent.VK_SPACE) {
+                    BaseLogging.getInstance().info("!!!RESETTING EVERY PARAMETER VALUE TO 0/0.0!!!");
+                    mParameterKey_INT_12=0;
+                    mParameterKey_INT_34=0;
+                    mParameterKey_INT_56=0;
+                    mParameterKey_INT_78=0;
+                    mParameterKey_INT_90=0;
+                    mParameterKey_INT_QW=0;
+                    mParameterKey_INT_ER=0;
+                    mParameterKey_INT_TZ=0;
+                    mParameterKey_INT_UI=0;
+                    mParameterKey_INT_OP=0;
+                    mParameterKey_FLOAT_AS=0.0f;
+                    mParameterKey_FLOAT_DF=0.0f;
+                    mParameterKey_FLOAT_GH=0.0f;
+                    mParameterKey_FLOAT_JK=0.0f;
+                    mParameterKey_FLOAT_LÖ=0.0f;
+                    mParameterKey_FLOAT_YX=0.0f;
+                    mParameterKey_FLOAT_CV=0.0f;
+                    mParameterKey_FLOAT_BN=0.0f;
+                    mParameterKey_FLOAT_MCOMMA=0.0f;
+                    mParameterKey_FLOAT_X=0.0f;
+                    mParameterKey_FLOAT_Y=0.0f;
+                    mParameterKey_FLOAT_Z=0.0f;
                 }
             }
 
@@ -548,7 +596,7 @@ public class BaseGlobalEnvironment {
                     mParameterKey_FLOAT_MCOMMA-=0.1f;
                     BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_MCOMMA="+mParameterKey_FLOAT_MCOMMA);
                 } else {
-                    BaseLogging.getInstance().info("UNKNOWN KEY TYPED - KEYCHAR="+e.getKeyChar());
+                    //BaseLogging.getInstance().info("UNKNOWN KEY TYPED - KEYCHAR="+e.getKeyChar());
                 }	
             }
         });
