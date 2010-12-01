@@ -39,7 +39,7 @@ public class Bootstrap {
 
     static {
         //stg dirty I dont wanna think about any further X-) ...
-        GLProfile.initSingleton();
+        GLProfile.initSingleton(true);
     }
 
     public static void main(String args[]) throws Exception {

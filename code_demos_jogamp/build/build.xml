@@ -47,6 +47,7 @@
                 <attribute name="Manifest-Version" value="1.0"/>
                 <attribute name="Created-By" value="1.6.0_18 (Sun Microsystems Inc.)"/>
                 <attribute name="Main-Class" value="framework.init.Bootstrap"/>
+                <!-- <attribute name="Main-Class" value="framework.init.WindowToolkitCapabilities"/> -->
                 <attribute name="Class-Path" value=". .\libraries\gluegen-rt.jar .\libraries\jogl.all.jar .\libraries\nativewindow.all.jar .\libraries\jna.jar .\libraries\newt.all.jar .\libraries\jl1.0.1.jar .\libraries\mp3spi1.9.4.jar .\libraries\tritonus_share.jar .\libraries\jogg-0.0.7.jar .\libraries\jorbis-0.0.15.jar .\libraries\vorbisspi1.0.3.jar"/>
             </manifest>
         </jar>

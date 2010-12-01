@@ -22,6 +22,8 @@ import javax.media.opengl.*;
 import javax.media.opengl.awt.*;
 import com.jogamp.opengl.util.*;
 import com.jogamp.newt.opengl.*;
+import com.jogamp.newt.*;
+import com.jogamp.newt.util.*;
 //import javax.media.nativewindow.*;
 
 public class BaseGlobalEnvironment {
@@ -87,9 +89,6 @@ public class BaseGlobalEnvironment {
         //print graphics capabilities ... values are very unreliable X-)
         BaseWindowToolkitUtils.printGraphicsCapabilities();
         GLCapabilities tGLCapabilities = new GLCapabilities(GLProfile.getDefault());
-        //create NEWT native window ... :-0
-        GLWindow tNEWTWindow = GLWindow.create(tGLCapabilities);
-        tNEWTWindow.setTitle("Jogamp.org - JOGL Demos - NEWT");
         //enable/configure multisampling support ...
         if (preferMultiSampling()) {
             tGLCapabilities.setSampleBuffers(true);
@@ -98,14 +97,19 @@ public class BaseGlobalEnvironment {
             tGLCapabilities.setAccumBlueBits(16);
             tGLCapabilities.setAccumGreenBits(16);
             tGLCapabilities.setAccumRedBits(16);
+            //turns out we need to have alpha, otherwise no AA will be visible ?-)
+            tGLCapabilities.setAlphaBits(8); 
         }
+        //create NEWT native window ... :-0
+        GLWindow tNEWTWindow = GLWindow.create(tGLCapabilities);
+        tNEWTWindow.setTitle("Jogamp.org - JOGL Demos - NEWT");   
         BaseGLEventListener tBaseGLEventListener = new BaseGLEventListener();
         tNEWTWindow.addGLEventListener(tBaseGLEventListener);
-        final Animator tAnimator;
+        final AnimatorBase tAnimator;
         //if vsync is requested use the vsync framerate ... otherwise use custom framerate ...
         if (BaseGlobalEnvironment.getInstance().wantsVSync() || mCommandLineParameter_FrameRate==Integer.MAX_VALUE) {
             tAnimator = new Animator(tNEWTWindow);
-            tAnimator.setRunAsFastAsPossible(true);
+            ((Animator)tAnimator).setRunAsFastAsPossible(true);
         } else {
             //i'm currently not sure if it is a good idea to use system-clock based timing ... :+)
             tAnimator = new FPSAnimator(tNEWTWindow,mCommandLineParameter_FrameRate,true);
@@ -315,13 +319,38 @@ public class BaseGlobalEnvironment {
         });
         if (mCommandLineParameter_FullScreen) {
             BaseLogging.getInstance().info("SWITCHING TO NEWT FULLSCREEN MODE!");
-            //as NEWT is currently not capable of changing the display resolution choose the desktop resolution as display mode ... X-)            
-            mScreenWidth = tDesktopDisplayMode.getWidth();
-            mScreenHeight =  tDesktopDisplayMode.getHeight();
+            //using awt to query for the supported display modes ... need to change that in the future when NEWT is ready X-)
+            DisplayMode tDisplayMode;
+            if (mCommandLineParameter_DisplayMode!=null) {
+                tDisplayMode = mCommandLineParameter_DisplayMode;
+            } else {
+                //choose best preferred display mode ...
+                tDisplayMode = BaseWindowToolkitUtils.getBestDisplayModeWithBackupModes(BaseWindowToolkitUtils.DEFAULT_DISPLAYMODES,BaseWindowToolkitUtils.BACKUP_DISPLAYMODES,tDesktopDisplayModeNormalized);
+            }
+            mScreenWidth = tDisplayMode.getWidth();
+            mScreenHeight =  tDisplayMode.getHeight();            
             tNEWTWindow.setUndecorated(true);
             tNEWTWindow.setVisible(true);
-            tNEWTWindow.setFullscreen(true);
-            mUsesFullScreenMode = true;
+            tNEWTWindow.setFullscreen(true);         
+            //create local display on screen 0 ...
+            Display tDisplay = NewtFactory.createDisplay(null);
+            Screen tScreen = NewtFactory.createScreen(tDisplay, 0);
+            //determine target refresh rate ...
+            ScreenMode tOriginalScreenMode = tScreen.getOriginalScreenMode();
+            int tOriginalRefreshRate = tOriginalScreenMode.getMonitorMode().getRefreshRate();
+            //target resolution
+            javax.media.nativewindow.util.Dimension tResolution = new javax.media.nativewindow.util.Dimension(mScreenWidth, mScreenHeight);
+            //target rotation
+            int tRotation = 0;
+            //filter available ScreenModes and get the nearest one ...
+            java.util.List<?> screenModes = tScreen.getScreenModes();
+            screenModes = ScreenModeUtil.filterByRate(screenModes, tOriginalRefreshRate); 
+            screenModes = ScreenModeUtil.filterByRotation(screenModes, tRotation);
+            screenModes = ScreenModeUtil.filterByResolution(screenModes, tResolution);
+            screenModes = ScreenModeUtil.getHighestAvailableBpp(screenModes);
+            //pick 1st one ...
+            tScreen.setCurrentScreenMode((ScreenMode)screenModes.get(0)); 
+            mUsesFullScreenMode = true; 
         } else {
             BaseLogging.getInstance().info("FULLSCREEN MODE NOT SUPPORTED ... RUNNING IN WINDOWED MODE INSTEAD!");
             DisplayMode tDisplayMode;
@@ -378,11 +407,11 @@ public class BaseGlobalEnvironment {
         BaseGLEventListener tBaseGLEventListener = new BaseGLEventListener();
         tGLCanvas.addGLEventListener(tBaseGLEventListener);
         tFrame.add(tGLCanvas);
-        final Animator tAnimator;
+        final AnimatorBase tAnimator;
         //if vsync is requested use the vsync framerate ... otherwise use custom framerate ...
         if (BaseGlobalEnvironment.getInstance().wantsVSync() || mCommandLineParameter_FrameRate==Integer.MAX_VALUE) {
             tAnimator = new Animator(tGLCanvas);
-            tAnimator.setRunAsFastAsPossible(true);
+            ((Animator)tAnimator).setRunAsFastAsPossible(true);
         } else {
             //i'm currently not sure if it is a good idea to use system-clock based timing ... :+)
             tAnimator = new FPSAnimator(tGLCanvas,mCommandLineParameter_FrameRate,true);
