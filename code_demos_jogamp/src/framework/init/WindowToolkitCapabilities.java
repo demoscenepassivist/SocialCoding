@@ -1,10 +1,33 @@
 package framework.init;
 
+/**
+ **   __ __|_  ___________________________________________________________________________  ___|__ __
+ **  //    /\                                           _                                  /\    \\  
+ ** //____/  \__     __ _____ _____ _____ _____ _____  | |     __ _____ _____ __        __/  \____\\ 
+ **  \    \  / /  __|  |     |   __|  _  |     |  _  | | |  __|  |     |   __|  |      /\ \  /    /  
+ **   \____\/_/  |  |  |  |  |  |  |     | | | |   __| | | |  |  |  |  |  |  |  |__   "  \_\/____/   
+ **  /\    \     |_____|_____|_____|__|__|_|_|_|__|    | | |_____|_____|_____|_____|  _  /    /\     
+ ** /  \____\                       http://jogamp.org  |_|                              /____/  \    
+ ** \  /   "' _________________________________________________________________________ `"   \  /    
+ **  \/____.                                                                             .____\/     
+ **
+ ** Small helper class wich main purpose is to list the capabilities from NEWT and AWT without the
+ ** overhead of the full framework initialization. Greatly helps with diagnosing basic window
+ ** toolkit problems.
+ **
+ **/
+
 import java.util.*;
+import javax.media.opengl.*;
 import com.jogamp.newt.*;
 import framework.base.*;
 
 public class WindowToolkitCapabilities {
+
+    static {
+        //stg dirty I dont wanna think about any further X-) ...
+        GLProfile.initSingleton(true);
+    }
 
     public static void main(String args[]) throws Exception {
         BaseLogging.getInstance().info("LOGGING BASIC WINDOW TOOLKIT CAPABILITIES ...");
