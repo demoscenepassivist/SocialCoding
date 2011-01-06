@@ -28,14 +28,14 @@ public class ShaderUtils {
 
     public static void checkShaderLogInfo(GL2 inGL, int inShaderObjectID) {
         IntBuffer tReturnValue = Buffers.newDirectIntBuffer(1);
-        inGL.glGetObjectParameterivARB(inShaderObjectID, GL_OBJECT_INFO_LOG_LENGTH_ARB, tReturnValue);
+        inGL.glGetProgramiv(inShaderObjectID, GL2ES2.GL_INFO_LOG_LENGTH, tReturnValue);
         int tLogLength = tReturnValue.get();
         if (tLogLength <= 1) {
             return;
         }
         ByteBuffer tShaderLog = Buffers.newDirectByteBuffer(tLogLength);
         tReturnValue.flip();
-        inGL.glGetInfoLogARB(inShaderObjectID, tLogLength, tReturnValue, tShaderLog);
+        inGL.glGetProgramInfoLog(inShaderObjectID, tLogLength, tReturnValue, tShaderLog);         
         byte[] tShaderLogBytes = new byte[tLogLength];
         tShaderLog.get(tShaderLogBytes);
         String tShaderValidationLog = new String(tShaderLogBytes);

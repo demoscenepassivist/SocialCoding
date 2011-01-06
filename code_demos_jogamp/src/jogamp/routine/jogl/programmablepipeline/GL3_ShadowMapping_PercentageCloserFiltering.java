@@ -81,9 +81,7 @@ public class GL3_ShadowMapping_PercentageCloserFiltering extends BaseRoutineAdap
         inGL.glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowMapWidth, shadowMapHeight, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, null);
         inGL.glBindTexture(GL_TEXTURE_2D, 0);
         //create a framebuffer object
-        int[] result = new int[1];
-        inGL.glGenFramebuffers(1, result, 0);
-        mShadowFrameBufferID = result[0];
+        mShadowFrameBufferID = FrameBufferObjectUtils.generateFrameBufferObjectID(inGL);
         inGL.glBindFramebuffer(GL_FRAMEBUFFER, mShadowFrameBufferID);
         //don't bind a color texture with the currently binded FBO
         inGL.glDrawBuffer(GL_NONE);
@@ -91,36 +89,7 @@ public class GL3_ShadowMapping_PercentageCloserFiltering extends BaseRoutineAdap
         //attach the texture to FBO depth attachment point
         inGL.glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, mDepthTextureID, 0);
         //check FBO status
-        BaseLogging.getInstance().info("CHECKING FRAMEBUFFEROBJECT COMPLETENESS ...");
-        int tError = inGL.glCheckFramebufferStatus(GL_FRAMEBUFFER);
-        switch(tError) {
-            case GL_FRAMEBUFFER_COMPLETE:
-                BaseLogging.getInstance().info("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_COMPLETE_EXT");
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
-                BaseLogging.getInstance().error("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT");
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
-                BaseLogging.getInstance().error("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT");
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS:
-                BaseLogging.getInstance().error("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT");
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_FORMATS:
-                BaseLogging.getInstance().error("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT");
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
-                BaseLogging.getInstance().error("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT");
-                break;
-            case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
-                BaseLogging.getInstance().error("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT");
-                break;
-            case GL_FRAMEBUFFER_UNSUPPORTED:
-                BaseLogging.getInstance().error("FRAMEBUFFEROBJECT CHECK RESULT=GL_FRAMEBUFFER_UNSUPPORTED_EXT");
-                break;
-            default:
-                BaseLogging.getInstance().error("FRAMEBUFFER CHECK RETURNED UNKNOWN RESULT ...");
-        }
+        FrameBufferObjectUtils.isFrameBufferObjectComplete(inGL);
         //switch back to window-system-provided framebuffer
         inGL.glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
@@ -143,7 +112,7 @@ public class GL3_ShadowMapping_PercentageCloserFiltering extends BaseRoutineAdap
         inGL.glActiveTexture(GL_TEXTURE7);
         inGL.glLoadIdentity();   
         inGL.glLoadMatrixd(mUniCubeBiasMatrix);
-        //concatating all matrice into one ...
+        //concatinating all matrice into one ...
         inGL.glMultMatrixd(mProjectionMatrix);
         inGL.glMultMatrixd(mModelViewMatrix);
         //go back to normal matrix mode ...
@@ -268,7 +237,7 @@ public class GL3_ShadowMapping_PercentageCloserFiltering extends BaseRoutineAdap
          drawObjects(inFrameNumber,inGL,inGLU,inGLUT);
          inGL.glUseProgram(0);
      }
-     
+
      public String generatePCFVertexShader() {
          BaseLogging.getInstance().info("GENERATING PCF VERTEX SHADER CODE ...");
          StringBuilder tStringBuilder = new StringBuilder();
