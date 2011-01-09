@@ -32,6 +32,7 @@ public class PostProcessingUtils {
     public static final int POSTPROCESSINGFILTER_PREFILTER_COLORINVERT = 4;
     public static final int POSTPROCESSINGFILTER_PREFILTER_GRAYINVERT = 5;
     public static final int POSTPROCESSINGFILTER_PREFILTER_SEPIA = 6;
+    public static final int POSTPROCESSINGFILTER_PREFILTER_ANALOGDISTORTION = 7;
 
     public static ArrayList<BasePostProcessingFilterChainShaderInterface> generatePreFilterArrayList(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         ArrayList<BasePostProcessingFilterChainShaderInterface> tPreFilters = new ArrayList<BasePostProcessingFilterChainShaderInterface>();
@@ -71,6 +72,11 @@ public class PostProcessingUtils {
         tSepia.setScreenSizeDivisionFactor(1);
         tSepia.initFilter(inGL);
         tPreFilters.add(tSepia);
+        BasePostProcessingFilterChainShaderInterface tAnalogDistortion = new PostProcessingFilter_AnalogDistortion();
+        tAnalogDistortion.setNumberOfIterations(1);
+        tAnalogDistortion.setScreenSizeDivisionFactor(1);
+        tAnalogDistortion.initFilter(inGL);
+        tPreFilters.add(tAnalogDistortion);    
         return tPreFilters;
     }
 
