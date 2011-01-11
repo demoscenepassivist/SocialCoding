@@ -44,7 +44,9 @@ public class BasePostProcessingFilterChainExecutor {
     private BaseFrameBufferObjectRendererExecutor mCurrent_OriginalFBO;
     private enum ENDRESULT_BUFFER {PRIMARY,SECONDARY,ORIGINAL}
     private int mFilterChainResultColorTexture;
-
+    private BaseFrameBufferObjectRendererExecutor mFilterChainResultFrameBufferObjectRendererExecutor;
+    private boolean mFilterChainLogging;
+    
     public BasePostProcessingFilterChainExecutor(int inScreenSizeDivisionFactor) {
         mFilterList = new ArrayList<BasePostProcessingFilterChainShaderInterface>();
         mScreenSizeDivisionFactor = inScreenSizeDivisionFactor;
@@ -80,7 +82,7 @@ public class BasePostProcessingFilterChainExecutor {
         public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
 
         public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
-            //BaseLogging.getInstance().info("RENDER SECONDARY->PRIMARY");
+            if (mFilterChainLogging) { BaseLogging.getInstance().info("RENDER SECONDARY->PRIMARY"); }
             BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT,BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
             inGL.glShadeModel(GL_SMOOTH);
             inGL.glDisable(GL_LIGHTING);
@@ -113,7 +115,7 @@ public class BasePostProcessingFilterChainExecutor {
         public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
 
         public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
-            //BaseLogging.getInstance().info("RENDER PRIMARY->SECONDARY");
+            if (mFilterChainLogging) { BaseLogging.getInstance().info("RENDER PRIMARY->SECONDARY"); }
             BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT,BaseGlobalEnvironment.getInstance().getScreenWidth()/mScreenSizeDivisionFactor, BaseGlobalEnvironment.getInstance().getScreenHeight()/mScreenSizeDivisionFactor);
             inGL.glShadeModel(GL_SMOOTH);
             inGL.glDisable(GL_LIGHTING);
@@ -146,7 +148,7 @@ public class BasePostProcessingFilterChainExecutor {
         public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {}
 
         public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
-            //BaseLogging.getInstance().info("RENDER PRIMARY/SECONDARY->ORIGINAL");
+            if (mFilterChainLogging) { BaseLogging.getInstance().info("RENDER PRIMARY/SECONDARY->ORIGINAL"); }
             BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT,BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
             inGL.glShadeModel(GL_SMOOTH);
             inGL.glDisable(GL_LIGHTING);
@@ -197,33 +199,46 @@ public class BasePostProcessingFilterChainExecutor {
     public int getFilterChainResultColorTexture() {
         return mFilterChainResultColorTexture;
     }
-
+    
+    public BaseFrameBufferObjectRendererExecutor getFilterChainResultFBOExecutor() {
+        return mFilterChainResultFrameBufferObjectRendererExecutor;
+    }
+    
     public void executeFilterChain(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT,BaseFrameBufferObjectRendererExecutor inOriginalFBO,boolean inDrawToFrameBuffer) {
+        executeFilterChain(inFrameNumber,inGL,inGLU,inGLUT,inOriginalFBO,inDrawToFrameBuffer,false);
+    }
+    
+    public void setFilterChainLogging(boolean inFilterChainLogging) {
+        mFilterChainLogging = inFilterChainLogging;
+    }
+
+    public void executeFilterChain(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT,BaseFrameBufferObjectRendererExecutor inOriginalFBO,boolean inDrawToFrameBuffer,boolean inFlipped) {
+        if (mFilterChainLogging) { BaseLogging.getInstance().info("-!PROCESSING executeFilterChain() on "+this+" !-"); }
         mOriginalFBO = inOriginalFBO;
         ENDRESULT_BUFFER tEndresultBuffer = ENDRESULT_BUFFER.PRIMARY;
         boolean tUsePrimary = false;
         for (int i=0; i<mFilterList.size(); i++) {
             if (mFilterList.get(i) instanceof PostProcessingFilter_Blender_Base) {
                 mBasePostProcessingFilterChainShaderInterface_Original = mFilterList.get(i);
-                //BaseLogging.getInstance().info("USING BLENDER FILTER HANDLING ON FILTER NUMBER="+i);
+                if (mFilterChainLogging) { BaseLogging.getInstance().info("USING BLENDER FILTER HANDLING ON FILTER NUMBER="+i); }
                 if (tEndresultBuffer==ENDRESULT_BUFFER.PRIMARY) {
-                    //BaseLogging.getInstance().info("BLENDER ENDRESULT_BUFFER.PRIMARY");
+                    if (mFilterChainLogging) { BaseLogging.getInstance().info("BLENDER ENDRESULT_BUFFER.PRIMARY"); }
                     mCurrent_OriginalFBO = mBaseFrameBufferObjectRendererExecutor_Primary;
                     mBaseFrameBufferObjectRendererExecutor_Original.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
                     tEndresultBuffer = ENDRESULT_BUFFER.ORIGINAL;
                 } else {
-                    //BaseLogging.getInstance().info("BLENDER ENDRESULT_BUFFER.SECONDARY");
+                    if (mFilterChainLogging) { BaseLogging.getInstance().info("BLENDER ENDRESULT_BUFFER.SECONDARY"); }
                     mCurrent_OriginalFBO = mBaseFrameBufferObjectRendererExecutor_Secondary;
                     mBaseFrameBufferObjectRendererExecutor_Original.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
                     tEndresultBuffer = ENDRESULT_BUFFER.ORIGINAL;
                 }
             } else {
-                //BaseLogging.getInstance().info("NEXT FILTER ------- FILTER NUMBER="+i);
+                if (mFilterChainLogging) { BaseLogging.getInstance().info("NEXT FILTER ------- FILTER NUMBER="+i); }
                 mBasePostProcessingFilterChainShaderInterface_Primary = mFilterList.get(i);
                 mBasePostProcessingFilterChainShaderInterface_Secondary = mFilterList.get(i);
                 //hardcoded initial iteration ... :-X
                 if (i==0) {
-                    //BaseLogging.getInstance().info("RENDER ORIGINAL->PRIMARY");
+                    if (mFilterChainLogging) { BaseLogging.getInstance().info("RENDER ORIGINAL->PRIMARY"); }
                     mCurrent_PrimaryFBO = mOriginalFBO;
                     mBaseFrameBufferObjectRendererExecutor_Primary.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
                     tEndresultBuffer = ENDRESULT_BUFFER.PRIMARY;
@@ -237,7 +252,7 @@ public class BasePostProcessingFilterChainExecutor {
                     tNumberOfIterations = mFilterList.get(i).getNumberOfIterations();
                 }
                 for (int j=0; j<tNumberOfIterations; j++) {
-                    //BaseLogging.getInstance().info("ITERATION LOOP NUMBER="+j);
+                    if (mFilterChainLogging) { BaseLogging.getInstance().info("ITERATION LOOP NUMBER="+j); }
                     if (tUsePrimary) {
                         mBaseFrameBufferObjectRendererExecutor_Primary.renderToFrameBuffer(inFrameNumber,inGL,inGLU,inGLUT);
                         tEndresultBuffer = ENDRESULT_BUFFER.PRIMARY;
@@ -251,25 +266,32 @@ public class BasePostProcessingFilterChainExecutor {
         }
         BaseRoutineRuntime.resetFrustumToDefaultState(inGL,inGLU,inGLUT);
         if (tEndresultBuffer==ENDRESULT_BUFFER.PRIMARY) {
-            //BaseLogging.getInstance().info("ENDRESULT_BUFFER.PRIMARY");
+            if (mFilterChainLogging) { BaseLogging.getInstance().info("ENDRESULT_BUFFER.PRIMARY"); }
             mFilterChainResultColorTexture = mBaseFrameBufferObjectRendererExecutor_Primary.getColorTextureID();
+            mFilterChainResultFrameBufferObjectRendererExecutor = mBaseFrameBufferObjectRendererExecutor_Primary;
             if (inDrawToFrameBuffer) {
-                mBaseFrameBufferObjectRendererExecutor_Primary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+                mBaseFrameBufferObjectRendererExecutor_Primary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT,inFlipped);
             }
         } else if (tEndresultBuffer==ENDRESULT_BUFFER.SECONDARY) {
-            //BaseLogging.getInstance().info("ENDRESULT_BUFFER.SECONDARY");
+            if (mFilterChainLogging) { BaseLogging.getInstance().info("ENDRESULT_BUFFER.SECONDARY"); }
             mFilterChainResultColorTexture = mBaseFrameBufferObjectRendererExecutor_Secondary.getColorTextureID();
+            mFilterChainResultFrameBufferObjectRendererExecutor = mBaseFrameBufferObjectRendererExecutor_Secondary;
             if (inDrawToFrameBuffer) {
-                mBaseFrameBufferObjectRendererExecutor_Secondary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+                mBaseFrameBufferObjectRendererExecutor_Secondary.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT,inFlipped);
             }
         } else {
-            //BaseLogging.getInstance().info("ENDRESULT_BUFFER.ORIGINAL");
+            if (mFilterChainLogging) { BaseLogging.getInstance().info("ENDRESULT_BUFFER.ORIGINAL"); }
             mFilterChainResultColorTexture = mBaseFrameBufferObjectRendererExecutor_Original.getColorTextureID();
+            mFilterChainResultFrameBufferObjectRendererExecutor = mBaseFrameBufferObjectRendererExecutor_Original;
             if (inDrawToFrameBuffer) {
-                mBaseFrameBufferObjectRendererExecutor_Original.renderFBOAsFullscreenBillboard_FLIPPED(inGL,inGLU,inGLUT);
+                if (inFlipped) {
+                    mBaseFrameBufferObjectRendererExecutor_Original.renderFBOAsFullscreenBillboard(inGL,inGLU,inGLUT);
+                } else {
+                    mBaseFrameBufferObjectRendererExecutor_Original.renderFBOAsFullscreenBillboard_FLIPPED(inGL,inGLU,inGLUT);
+                }
             }
         }
-        //BaseLogging.getInstance().info("------- NEXT FRAME -------");
+        if (mFilterChainLogging) { BaseLogging.getInstance().info("------- NEXT FRAME -------"); }
     }
 
     private void renderInternalBillboardWithAutomaticFlipping(GL2 inGL,GLU inGLU,GLUT inGLUT,boolean inFlipped) {
