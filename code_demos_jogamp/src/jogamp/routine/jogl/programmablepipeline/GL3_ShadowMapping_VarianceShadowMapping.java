@@ -93,7 +93,7 @@ public class GL3_ShadowMapping_VarianceShadowMapping extends BaseRoutineAdapter 
         mColorTextureID = TextureUtils.generateTextureID(inGL);
         inGL.glBindTexture(GL_TEXTURE_2D, mColorTextureID);
         inGL.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        inGL.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        inGL.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         inGL.glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
         //remove artefact on the edges of the shadowmap ...
         inGL.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);

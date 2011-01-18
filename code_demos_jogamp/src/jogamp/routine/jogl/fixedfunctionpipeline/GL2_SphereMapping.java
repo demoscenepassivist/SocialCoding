@@ -36,7 +36,7 @@ public class GL2_SphereMapping extends BaseRoutineAdapter implements BaseRoutine
     public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,360,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
         mTexture = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Spheremap_Uffizi_Gallery_MedRes.png");
-        mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/DiscoSphere.wobj.zip");
+        mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/DiscoSphere.wobj.zip");
         inGL.glLightModelfv(GL_LIGHT_MODEL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.0f,0.0f,0.0f,0.0f}));
         inGL.glLightfv(GL_LIGHT0, GL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.25f,0.25f,0.25f,1.0f}));
         inGL.glLightfv(GL_LIGHT0, GL_DIFFUSE, DirectBufferUtils.createDirectFloatBuffer(new float[]{1.0f,1.0f,1.0f,1.0f}));

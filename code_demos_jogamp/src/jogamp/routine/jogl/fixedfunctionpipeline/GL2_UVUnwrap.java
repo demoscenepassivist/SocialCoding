@@ -56,7 +56,7 @@ public class GL2_UVUnwrap extends BaseRoutineAdapter implements BaseRoutineInter
         inGL.glEnable(GL_LIGHT0);
         inGL.glMaterialfv(GL_FRONT, GL_SPECULAR, DirectBufferUtils.createDirectFloatBuffer(new float[]{1.0f,1.0f,1.0f,1.0f}));
         inGL.glMateriali(GL_FRONT, GL_SHININESS, 12);		
-        mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/TextureBaking_Normals.wobj.zip");
+        mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/TextureBaking_Normals.wobj.zip");
     }
 
     public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {	

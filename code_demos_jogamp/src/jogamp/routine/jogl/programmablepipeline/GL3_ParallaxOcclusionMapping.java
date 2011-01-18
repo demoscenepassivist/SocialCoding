@@ -48,7 +48,7 @@ public class GL3_ParallaxOcclusionMapping extends BaseRoutineAdapter implements 
         mTexture_Specular = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Specular.png");
         mTexture_Normal = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Normals_TangentSpace.png");
         mTexture_Height = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Displacement.png");
-        mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/Cube.wobj");
+        mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/Cube.wobj");
         inGL.glValidateProgram(mLinkedShader);
         inGL.glUseProgram(mLinkedShader);
         ShaderUtils.setSampler2DUniformOnTextureUnit(inGL,mLinkedShader,"sampler0_diffuse",mTexture_Diffuse,GL_TEXTURE0,0,true);

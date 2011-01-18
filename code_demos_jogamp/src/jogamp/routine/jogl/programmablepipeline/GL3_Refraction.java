@@ -37,7 +37,7 @@ public class GL3_Refraction extends BaseRoutineAdapter implements BaseRoutineInt
 
     public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,360,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
-        mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/Refraction.wobj.zip");
+        mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/Refraction.wobj.zip");
         mTexture = TextureUtils.loadImageAsTexture_FLIPPED("/binaries/textures/Wallpaper_JOGAMP_PubNeon_02_1920pel.png");
         mVertexShader = ShaderUtils.loadVertexShaderFromFile(inGL,"/shaders/refraction.vs");
         mFragmentShader = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/refraction.fs");

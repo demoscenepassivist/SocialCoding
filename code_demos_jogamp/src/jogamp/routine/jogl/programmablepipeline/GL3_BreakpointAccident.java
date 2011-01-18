@@ -80,7 +80,7 @@ public class GL3_BreakpointAccident extends BaseRoutineAdapter implements BaseRo
         mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,360,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
         mTexture_Diffuse = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/MysticIceSphere_Normals.png");
         mTexture_Displace = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/MysticIceSphere_Displacement.png");
-        mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/MysticIceSphere.wobj.zip");
+        mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/MysticIceSphere.wobj.zip");
         float[] tTextureCoordinateOffsets = new float[18];
         float tXIncrease = 1.0f / (float)BaseGlobalEnvironment.getInstance().getScreenWidth();
         float tYIncrease = 1.0f / (float)BaseGlobalEnvironment.getInstance().getScreenHeight();

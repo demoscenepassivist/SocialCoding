@@ -32,7 +32,7 @@ public class GL3_BasicParticleSystem extends BaseRoutineAdapter implements BaseR
     private int mVertexShader;
 
     public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/PointBasedRendering_Low.wobj.zip");
+        mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/PointBasedRendering_Low.wobj.zip");
         mVertexShader = ShaderUtils.loadVertexShaderFromFile(inGL,"/shaders/basicparticlesystem.vs");
         mLinkedShader = ShaderUtils.generateSimple_1xVS_ShaderProgramm(inGL,mVertexShader);
         inGL.glValidateProgram(mLinkedShader);

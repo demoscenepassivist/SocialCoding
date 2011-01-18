@@ -46,7 +46,7 @@ public class GL3_EnvironmentBasedLighting_SphericalHarmonics extends BaseRoutine
         mBasePostProcessingFilterChainExecutor = new BasePostProcessingFilterChainExecutor(4);
         mBasePostProcessingFilterChainExecutor.init(inGL,inGLU,inGLUT);
         mConvolutions = PostProcessingUtils.generatePostProcessingFilterArrayList(inGL,inGLU,inGLUT);
-        mBlenders = PostProcessingUtils.generateBlenderFilterArrayList(inGL,inGLU,inGLUT);
+        mBlenders = PostProcessingUtils.generateBlenderFilterArrayList(inGL,inGLU,inGLUT); 
     }
 
     public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
@@ -61,12 +61,14 @@ public class GL3_EnvironmentBasedLighting_SphericalHarmonics extends BaseRoutine
     public void cleanupRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         mBaseSuperSamplingFBOWrapper.cleanup(inGL,inGLU,inGLUT);
         mBaseFrameBufferObjectRendererExecutor.cleanup(inGL,inGLU,inGLUT);
+        mBasePostProcessingFilterChainExecutor.cleanup(inGL,inGLU,inGLUT);
     }
 
     /* --------------------------------------------------------------------------------------------------------------------------------------------------- */
 
     private int mLinkedShader;
-    private int mDisplayListID;
+    //private int mDisplayListID;
+    WavefrontObjectLoader_VertexBufferObject mWavefrontObjectLoader_VertexBufferObject;
     private static final int OFFSETSINTABLE_SIZE = 2700;
     private float[] mOffsetSinTable;
     private Texture mTexture_AmbientOcclusion;
@@ -77,7 +79,8 @@ public class GL3_EnvironmentBasedLighting_SphericalHarmonics extends BaseRoutine
         int tVertexShader = ShaderUtils.loadVertexShaderFromFile(inGL,"/shaders/environmentbasedlightingshaders/sphericalharmonics_pervertex.vs");
         int tFragmentShader = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/environmentbasedlightingshaders/sphericalharmonics_pervertex.fs");
         mLinkedShader = ShaderUtils.generateSimple_1xVS_1xFS_ShaderProgramm(inGL,tVertexShader,tFragmentShader);
-        mDisplayListID = WavefrontObjectLoader.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/LinkingStars.wobj.zip");
+        //mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/LinkingStars.wobj.zip");
+        mWavefrontObjectLoader_VertexBufferObject = new WavefrontObjectLoader_VertexBufferObject("/binaries/geometry/LinkingStars.wobj.zip");
         mTexture_AmbientOcclusion = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/LinkingStars_BakedAmbientOcclusion.png");
         mTexture_Background = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/GraceCathedral_Background.png");
     }
@@ -100,14 +103,15 @@ public class GL3_EnvironmentBasedLighting_SphericalHarmonics extends BaseRoutine
         inGL.glPushMatrix();
             inGL.glRotatef(tYRotation, 0.25f, 1.0f, 0.5f);
             inGL.glRotatef(tXRotation, 0.75f, 0.3f, 0.1f);
-            inGL.glCallList(mDisplayListID+0);
+            //inGL.glCallList(mDisplayListID+0);
+            mWavefrontObjectLoader_VertexBufferObject.DrawModel(inGL);
         inGL.glPopMatrix();
         inGL.glUseProgram(0);
     }
 
     public void cleanup_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         inGL.glDeleteShader(mLinkedShader);
-        inGL.glDeleteLists(mDisplayListID,1);
+        //inGL.glDeleteLists(mDisplayListID,1);
         inGL.glFlush(); 
     }
 
