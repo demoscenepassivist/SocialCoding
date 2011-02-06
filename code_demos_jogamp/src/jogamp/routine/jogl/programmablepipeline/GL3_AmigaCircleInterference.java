@@ -51,7 +51,6 @@ public class GL3_AmigaCircleInterference extends BaseRoutineAdapter implements B
     protected int mLinkedShader;
     protected FloatBuffer mScreenDimensionUniform2fv;
 
-    //override at least this method ... -=:-)
     public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         int tFragmentShader = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/circleinterference.fs");
         mLinkedShader = ShaderUtils.generateSimple_1xFS_ShaderProgramm(inGL,tFragmentShader);

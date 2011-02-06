@@ -22,20 +22,44 @@ import javax.media.opengl.*;
 import framework.base.*;
 import com.jogamp.common.nio.*;
 import com.jogamp.opengl.util.texture.*;
-import static javax.media.opengl.GL2.*;
+import static javax.media.opengl.GL3bc.*;
 
 public class ShaderUtils {
 
+    /*
+    //uses the correct logcalls and avoids the oldskool ARB stuff ...
+    //suggested by julien: http://jogamp.762907.n3.nabble.com/problems-with-shaders-tt2092883.html#a2316436
     public static void checkShaderLogInfo(GL2 inGL, int inShaderObjectID) {
         IntBuffer tReturnValue = Buffers.newDirectIntBuffer(1);
-        inGL.glGetProgramiv(inShaderObjectID, GL2ES2.GL_INFO_LOG_LENGTH, tReturnValue);
+        inGL.glGetShaderiv(inShaderObjectID, GL_COMPILE_STATUS, tReturnValue);
+        if (tReturnValue.get(0) == GL.GL_FALSE) {
+                inGL.glGetShaderiv(inShaderObjectID, GL_INFO_LOG_LENGTH, tReturnValue);
+                final int length = tReturnValue.get(0);
+                String out = null;
+                if (length > 0) {
+                    final ByteBuffer infoLog = Buffers.newDirectByteBuffer(length);
+                    inGL.glGetShaderInfoLog(inShaderObjectID, infoLog.limit(), tReturnValue, infoLog);
+                    final byte[] infoBytes = new byte[length];
+                    infoLog.get(infoBytes);
+                    out = new String(infoBytes);
+                    System.out.print(out);
+                }
+                throw new GLException("Error during shader compilation: " + out);
+            } 
+    }
+    */
+    
+    //I like it the oldskool way ... :)
+    public static void checkShaderLogInfo(GL2 inGL, int inShaderObjectID) {
+        IntBuffer tReturnValue = Buffers.newDirectIntBuffer(1);
+        inGL.glGetObjectParameterivARB(inShaderObjectID, GL_OBJECT_INFO_LOG_LENGTH_ARB, tReturnValue);
         int tLogLength = tReturnValue.get();
         if (tLogLength <= 1) {
             return;
         }
         ByteBuffer tShaderLog = Buffers.newDirectByteBuffer(tLogLength);
         tReturnValue.flip();
-        inGL.glGetProgramInfoLog(inShaderObjectID, tLogLength, tReturnValue, tShaderLog);         
+        inGL.glGetInfoLogARB(inShaderObjectID, tLogLength, tReturnValue, tShaderLog);
         byte[] tShaderLogBytes = new byte[tLogLength];
         tShaderLog.get(tShaderLogBytes);
         String tShaderValidationLog = new String(tShaderLogBytes);
