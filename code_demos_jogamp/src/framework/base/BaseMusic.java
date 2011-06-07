@@ -89,6 +89,8 @@ public class BaseMusic {
                         } catch (Exception e) { 
                             e.printStackTrace();
                         }
+                        BaseLogging.getInstance().info("MUSIC STREAM FINISHED! AUTOCLOSE APPLICATION ...");
+                        System.exit(0);
                     }
                 };
                 mPlayerThread.setPriority(Thread.MAX_PRIORITY);

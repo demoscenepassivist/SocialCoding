@@ -30,6 +30,7 @@ public class BaseGlobalEnvironment {
 
     private static BaseGlobalEnvironment mBaseGlobalEnvironmentInstance = null;
     private Runtime mRuntime;
+    private BaseGLEventListener mBaseGLEventListener;
 
     //keylistener variables
     private int mParameterKey_INT_12;
@@ -79,7 +80,7 @@ public class BaseGlobalEnvironment {
             BaseLogging.getInstance().fatalerror("UNKNOWN WINDOWTOOLKIT!!!");
         }
     }
-    
+
     public void initGLEnvironment_NEWT() {
         //get current display mode/desktop display mode ...
         DisplayMode tDesktopDisplayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
@@ -103,8 +104,8 @@ public class BaseGlobalEnvironment {
         //create NEWT native window ... :-0
         GLWindow tNEWTWindow = GLWindow.create(tGLCapabilities);
         tNEWTWindow.setTitle("Jogamp.org - JOGL Demos - NEWT");   
-        BaseGLEventListener tBaseGLEventListener = new BaseGLEventListener();
-        tNEWTWindow.addGLEventListener(tBaseGLEventListener);
+        mBaseGLEventListener = new BaseGLEventListener();
+        tNEWTWindow.addGLEventListener(mBaseGLEventListener);
         final AnimatorBase tAnimator;
         //if vsync is requested use the vsync framerate ... otherwise use custom framerate ...
         if (BaseGlobalEnvironment.getInstance().wantsVSync() || mCommandLineParameter_FrameRate==Integer.MAX_VALUE) {
@@ -165,6 +166,9 @@ public class BaseGlobalEnvironment {
                     mParameterKey_FLOAT_X=0.0f;
                     mParameterKey_FLOAT_Y=0.0f;
                     mParameterKey_FLOAT_Z=0.0f;
+                    
+                } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    mBaseGLEventListener.getBaseRoutineRuntime().resetFrameCounter();
                 }
             }
 
@@ -314,7 +318,7 @@ public class BaseGlobalEnvironment {
                     BaseLogging.getInstance().info("CHANGE PARAMETER KEY VARIABLE mParameterKey_FLOAT_MCOMMA="+mParameterKey_FLOAT_MCOMMA);
                 } else {
                     //BaseLogging.getInstance().info("UNKNOWN KEY TYPED - KEYCHAR="+e.getKeyChar());
-                }   
+                }
             }
         });
         if (mCommandLineParameter_FullScreen) {
@@ -328,10 +332,10 @@ public class BaseGlobalEnvironment {
                 tDisplayMode = BaseWindowToolkitUtils.getBestDisplayModeWithBackupModes(BaseWindowToolkitUtils.DEFAULT_DISPLAYMODES,BaseWindowToolkitUtils.BACKUP_DISPLAYMODES,tDesktopDisplayModeNormalized);
             }
             mScreenWidth = tDisplayMode.getWidth();
-            mScreenHeight =  tDisplayMode.getHeight();            
+            mScreenHeight =  tDisplayMode.getHeight();
             tNEWTWindow.setUndecorated(true);
             tNEWTWindow.setVisible(true);
-            tNEWTWindow.setFullscreen(true);         
+            tNEWTWindow.setFullscreen(true);
             //create local display on screen 0 ...
             Display tDisplay = NewtFactory.createDisplay(null);
             Screen tScreen = NewtFactory.createScreen(tDisplay, 0);
@@ -344,13 +348,13 @@ public class BaseGlobalEnvironment {
             int tRotation = 0;
             //filter available ScreenModes and get the nearest one ...
             java.util.List<?> screenModes = tScreen.getScreenModes();
-            screenModes = ScreenModeUtil.filterByRate(screenModes, tOriginalRefreshRate); 
+            screenModes = ScreenModeUtil.filterByRate(screenModes, tOriginalRefreshRate);
             screenModes = ScreenModeUtil.filterByRotation(screenModes, tRotation);
             screenModes = ScreenModeUtil.filterByResolution(screenModes, tResolution);
             screenModes = ScreenModeUtil.getHighestAvailableBpp(screenModes);
             //pick 1st one ...
-            tScreen.setCurrentScreenMode((ScreenMode)screenModes.get(0)); 
-            mUsesFullScreenMode = true; 
+            tScreen.setCurrentScreenMode((ScreenMode)screenModes.get(0));
+            mUsesFullScreenMode = true;
         } else {
             BaseLogging.getInstance().info("FULLSCREEN MODE NOT SUPPORTED ... RUNNING IN WINDOWED MODE INSTEAD!");
             DisplayMode tDisplayMode;
@@ -362,14 +366,14 @@ public class BaseGlobalEnvironment {
             }
             mScreenWidth = tDisplayMode.getWidth();
             mScreenHeight =  tDisplayMode.getHeight();
-            tNEWTWindow.setVisible(true); 
+            tNEWTWindow.setVisible(true);
             tNEWTWindow.setSize(tDisplayMode.getWidth(),tDisplayMode.getHeight());
             tNEWTWindow.setPosition((tDesktopDisplayMode.getWidth()-tDisplayMode.getWidth())/2, (tDesktopDisplayMode.getHeight()-tDisplayMode.getHeight())/2);
             mUsesFullScreenMode = false;
         }
         tAnimator.start();
     }
-    
+
     public void initGLEnvironment_AWT() {
         //get current display mode/desktop display mode ...
         DisplayMode tDesktopDisplayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
@@ -404,8 +408,8 @@ public class BaseGlobalEnvironment {
         }, null, null);
         */
         GLCanvas tGLCanvas = new GLCanvas(tGLCapabilities);
-        BaseGLEventListener tBaseGLEventListener = new BaseGLEventListener();
-        tGLCanvas.addGLEventListener(tBaseGLEventListener);
+        mBaseGLEventListener = new BaseGLEventListener();
+        tGLCanvas.addGLEventListener(mBaseGLEventListener);
         tFrame.add(tGLCanvas);
         final AnimatorBase tAnimator;
         //if vsync is requested use the vsync framerate ... otherwise use custom framerate ...
@@ -472,6 +476,9 @@ public class BaseGlobalEnvironment {
                     mParameterKey_FLOAT_X=0.0f;
                     mParameterKey_FLOAT_Y=0.0f;
                     mParameterKey_FLOAT_Z=0.0f;
+                    mBaseGLEventListener.getBaseRoutineRuntime().resetFrameCounter();
+                } else if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+                    mBaseGLEventListener.getBaseRoutineRuntime().resetFrameCounter();
                 }
             }
 
@@ -670,9 +677,9 @@ public class BaseGlobalEnvironment {
         }
         tAnimator.start();
     }
-    
+
     /* --------------------------------------------------------------------------------------------------------------------------------------------------- */
-    
+
     private int mScreenWidth;
     private int mScreenHeight;
     public int getScreenWidth()  { return mScreenWidth; }
@@ -697,8 +704,8 @@ public class BaseGlobalEnvironment {
     private String      mCommandLineParameter_WindowToolkit;
     private String      mCommandLineParameter_MusicFileName;
     private boolean     mUsesFullScreenMode;
-    
-    
+
+
     public String   getBaseRoutineClassName()       { return mCommandLineParameter_BaseRoutineClassName; }
     public boolean  preferMultiSampling()           { return mCommandLineParameter_MultiSampling; }
     public int      getNumberOfSamplingBuffers()    { return mCommandLineParameter_NumberOfSampleBuffers; }
@@ -711,7 +718,7 @@ public class BaseGlobalEnvironment {
     public String   getWindowToolkitName()          { return mCommandLineParameter_WindowToolkit; }
     public String   getMusicFileName()              { return mCommandLineParameter_MusicFileName; }
     public boolean  usesFullScreenMode()            { return mUsesFullScreenMode; }
-    
+
     public void configureWithUserParameters(
             String inBaseRoutineClassName,
             int inResolutionX,

@@ -45,6 +45,7 @@ vec4 getVortex(vec2 position) {
 
 void main(void) {
     vec2 position = -1.0+2.0*gl_FragCoord.xy/resolution.xy;
+    position.x *= resolution.x/resolution.y;
     vec4 vortex1 = getVortex(vec2(position.x,position.y));
     gl_FragColor = vortex1;
 }

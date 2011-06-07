@@ -34,6 +34,10 @@ public class BaseGLEventListener implements GLEventListener {
         mBaseRoutineRuntime = BaseRoutineRuntime.getInstance();
     }
 
+    public BaseRoutineRuntime getBaseRoutineRuntime() {
+        return mBaseRoutineRuntime;
+    }
+
     public void init(GLAutoDrawable inDrawable) {
         GL2 tGL = inDrawable.getGL().getGL2();
         if (BaseGlobalEnvironment.getInstance().wantsVSync()) {

@@ -53,6 +53,7 @@ public class BaseRoutineRuntime {
     private int mSkippedFramesCounter;
     private BaseMusic mBaseMusic;
     private TextureRenderer mTextureRenderer_ScopeAndSpectrumAnalyzer;
+    boolean mMusicSyncStartTimeInitialized = false;
 
     public interface dwmapi extends Library {
         dwmapi INSTANCE = (dwmapi)Native.loadLibrary("dwmapi",dwmapi.class);
@@ -113,9 +114,18 @@ public class BaseRoutineRuntime {
     }
 
     public void mainLoopRuntime(GL2 inGL,GLU inGLU,GLUT inGLUT) {
+        //if NO music is used sync to mainloop start ...
         if (!mFrameSkipAverageFrameStartTimeInitialized) {
             mFrameSkipAverageFrameStartTimeInitialized = true;
             mFrameSkipAverageFramerateTimeStart = System.nanoTime();
+        }
+        if (!BaseRoutineRuntime.getInstance().getBaseMusic().isOffline()) {
+            //if music IS used sync to first second of music ...
+            if (BaseRoutineRuntime.getInstance().getBaseMusic().getPositionInMilliseconds()>0 && !mMusicSyncStartTimeInitialized) {
+                BaseLogging.getInstance().info("Synching to BaseMusic ...");
+                mFrameSkipAverageFramerateTimeStart = (long)(System.nanoTime()-((double)BaseRoutineRuntime.getInstance().getBaseMusic().getPositionInMilliseconds()*1000000.0d));
+                mMusicSyncStartTimeInitialized = true;
+            }
         }
         mLastFrameRenderingTimeStart = mCurrentFrameRenderingTimeStart;
         mLastFrameRenderingTimeEnd = System.nanoTime();
@@ -136,13 +146,15 @@ public class BaseRoutineRuntime {
         }
         //---
         mCurrentFrameRenderingTimeEnd = System.nanoTime();
-        renderDebugInformation(inGL,inGLU,inGLUT);        
-        mFrameCounter++;    
+        renderDebugInformation(inGL,inGLU,inGLUT);
+        //----
+        mFrameCounter++;
         if (BaseGlobalEnvironment.getInstance().wantsFrameSkip() && !mBaseGlobalEnvironment.wantsFrameCapture()) {
             mFrameSkipAverageFramerateTimeEnd = System.nanoTime();
             double tDesiredFrameRate = (float)BaseGlobalEnvironment.getInstance().getDesiredFramerate();
             double tSingleFrameTime = 1000000000.0f/tDesiredFrameRate;
             double tElapsedTime = mFrameSkipAverageFramerateTimeEnd - mFrameSkipAverageFramerateTimeStart;
+            //BaseLogging.getInstance().info("mFrameCounter="+mFrameCounter+" getPositionInMilliseconds="+BaseRoutineRuntime.getInstance().getBaseMusic().getPositionInMilliseconds()+" tElapsedTime="+tElapsedTime/1000000.0f);
             mFrameCounterTargetValue = tElapsedTime/tSingleFrameTime;
             mFrameCounterDifference = mFrameCounterTargetValue-mFrameCounter;
             if (mFrameCounterDifference>2) {
@@ -164,11 +176,15 @@ public class BaseRoutineRuntime {
     public BaseMusic getBaseMusic() {
         return mBaseMusic;
     }
+    
+    public void resetFrameCounter() {
+        mFrameCounter = 0;
+    }
 
     public static void resetFrustumToDefaultState(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         resetFrustumToDefaultState(inGL,inGLU,inGLUT,BaseGlobalEnvironment.getInstance().getScreenWidth(),BaseGlobalEnvironment.getInstance().getScreenHeight());
     }
-    
+
     public static void resetFrustumToDefaultState(GL2 inGL,GLU inGLU,GLUT inGLUT,int inScreenWidth,int inScreenHeight) {
         inGL.glViewport(0, 0, inScreenWidth, inScreenHeight);
         inGL.glMatrixMode(GL_PROJECTION);
