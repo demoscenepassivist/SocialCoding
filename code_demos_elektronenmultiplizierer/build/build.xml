@@ -1,0 +1,47 @@
+<?xml version="1.0" ?>
+<project default="build elektronenmultiplizierer">
+    <property name="destination" location="E:\Elektronenmulitplizierer_Deployment" />
+    <property name="buildfiles" location="../build/" />
+    <property name="libraryfiles" location="../libraries/" />
+    <property name="nativefiles" location="../native/" />
+    <property name="shaderfiles" location="../shaders/" />
+    <target name="build elektronenmultiplizierer" description="elektronenmultiplizierer target">
+       <mkdir dir="${destination}/runtime"/>
+       <javac encoding="8859_1" debug="true" debuglevel="lines,vars,source" srcdir="../" listfiles="false" destdir="${destination}"/>
+       <copy overwrite="false" todir="${destination}">
+            <fileset dir="${buildfiles}">
+                <include name="**/*.bat"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${destination}/libraries"/>
+        <copy overwrite="false" todir="${destination}/libraries">
+            <fileset dir="${libraryfiles}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${destination}/native"/>
+        <copy overwrite="false" todir="${destination}/native">
+            <fileset dir="${nativefiles}">
+                <include name="**/*.dll"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${destination}/shaders"/>
+        <copy overwrite="false" todir="${destination}/shaders">
+            <fileset dir="${shaderfiles}">
+                <include name="**/*.*"/>
+            </fileset>
+        </copy>
+        <jar destfile="${destination}/jogamp.jar"  basedir="${destination}">
+            <include name="*.class"/>
+            <include name="shaders/**"/>
+            <manifest>
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Created-By" value="1.6.0_18 (Sun Microsystems Inc.)"/>
+                <attribute name="Main-Class" value="GL3_Elektronenmultiplizierer_Port"/>
+                <attribute name="Class-Path" value=". .\libraries\gluegen-rt.jar .\libraries\jogl.all.jar .\libraries\nativewindow.all.jar .\libraries\newt.all.jar .\libraries\jl1.0.1.jar .\libraries\mp3spi1.9.4.jar .\libraries\tritonus_share.jar .\libraries\jogg-0.0.7.jar .\libraries\jorbis-0.0.15.jar .\libraries\vorbisspi1.0.3.jar"/>
+            </manifest>
+        </jar>
+        <delete><fileset dir="${destination}" includes="*.class"/></delete>
+        <delete dir="${destination}/shaders"/>
+    </target>
+</project>
