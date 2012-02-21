@@ -6,10 +6,10 @@
      |  |  |  |  |  |  |     | | | |   __| | | |  |  |  |  |  |  |  |__   
      |_____|_____|_____|__|__|_|_|_|__|    | | |_____|_____|_____|_____|  
                         http://jogamp.org  |_|                            
-	 ______________________________________________________________________
+   ______________________________________________________________________
                                                                               
     Art, code and miscellaneous experiments related in some way to JOGL.
-	 ______________________________________________________________________
+   ______________________________________________________________________
 
 For videos and some explanation of what can be found in this repository take a 
 look at my blog on tumblr: http://copypastaresearch.tumblr.com/
