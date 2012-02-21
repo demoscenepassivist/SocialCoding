@@ -44,10 +44,10 @@ public class GL3_ParallaxOcclusionMapping extends BaseRoutineAdapter implements 
         mFragmentShader = ShaderUtils.loadFragmentShaderFromFile(inGL,"/shaders/textureshaders/parallaxocclusionmapping.fs");
         mLinkedShader = ShaderUtils.generateSimple_1xVS_1xFS_ShaderProgramm(inGL,mVertexShader,mFragmentShader);
         mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,360,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
-        mTexture_Diffuse = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Diffuse.png");
-        mTexture_Specular = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Specular.png");
-        mTexture_Normal = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Normals_TangentSpace.png");
-        mTexture_Height = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Cube_Displacement.png");
+        mTexture_Diffuse = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/Cube_Diffuse.png");
+        mTexture_Specular = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/Cube_Specular.png");
+        mTexture_Normal = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/Cube_Normals_TangentSpace.png");
+        mTexture_Height = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/Cube_Displacement.png");
         mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/Cube.wobj");
         inGL.glValidateProgram(mLinkedShader);
         inGL.glUseProgram(mLinkedShader);

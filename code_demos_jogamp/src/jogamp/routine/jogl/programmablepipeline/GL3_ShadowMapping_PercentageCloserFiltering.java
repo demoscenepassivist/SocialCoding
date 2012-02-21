@@ -283,7 +283,9 @@ public class GL3_ShadowMapping_PercentageCloserFiltering extends BaseRoutineAdap
                  for (float y = -3.5f ; y <=3.5f ; y+=1.0f) {
                      for (float x = -3.5f ; x <=3.5f ; x+=1.0f) {                        
                                                       //values are multiplied by ShadowCoord.w because shadow2DProj does a W division for us.
-                         tStringBuilder.append("      shadow += shadow2DProj(shadowmap, shadowcoord + vec4("+x+" * xpixeloffset * shadowcoord.w, "+y+" * ypixeloffset * shadowcoord.w, shadowoffset, 0.0) ).w;\n");
+                         //tStringBuilder.append("      shadow += shadow2DProj(shadowmap, shadowcoord + vec4("+x+" * xpixeloffset * shadowcoord.w, "+y+" * ypixeloffset * shadowcoord.w, shadowoffset, 0.0) ).w;\n");
+                         //FIX for strange ATI Radeon 6990M shadow2DProj issue: http://forums.amd.com/forum/messageview.cfm?catid=392&threadid=149243 
+                         tStringBuilder.append("      shadow += textureProj(shadowmap, shadowcoord + vec4("+x+" * xpixeloffset * shadowcoord.w, "+y+" * ypixeloffset * shadowcoord.w, shadowoffset, 0.0) );\n");
                          tPixelSumDivider++;
                      }
                  }

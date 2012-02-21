@@ -32,15 +32,15 @@ import static javax.media.opengl.GL2.*;
 
 public class TextureUtils {
 
-    public static Texture loadImageAsTexture_UNMODIFIED(String inFileName) {
+    public static Texture loadImageAsTexture_UNMODIFIED(GL2 inGL,String inFileName) {
         BaseLogging.getInstance().info("LOADING IMAGE FILE "+inFileName+" AS TEXTURE UNFLIPPED ...");
         //kinda 'soften' exception-handling ... -:-)
         try {
             Texture tTexture = TextureIO.newTexture(new BufferedInputStream((new Object()).getClass().getResourceAsStream(inFileName)),true,null);
-            tTexture.setTexParameterf(GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-            tTexture.setTexParameterf(GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-            tTexture.setTexParameterf(GL_TEXTURE_WRAP_S,GL_REPEAT);
-            tTexture.setTexParameterf(GL_TEXTURE_WRAP_T,GL_REPEAT);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_WRAP_S,GL_REPEAT);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_WRAP_T,GL_REPEAT);
             BaseLogging.getInstance().info("TEXTURE "+inFileName+" ("+tTexture.getWidth()+"x"+tTexture.getWidth()+" AUTOMIPMAPS:"+tTexture.isUsingAutoMipmapGeneration()+") LOADED! ESTIMATED MEMORY SIZE: "+tTexture.getEstimatedMemorySize());
             return tTexture;
         } catch (Exception e) {
@@ -50,17 +50,17 @@ public class TextureUtils {
         return null;
     }
 
-    public static Texture loadImageAsTexture_FLIPPED(String inFileName) {
+    public static Texture loadImageAsTexture_FLIPPED(GL2 inGL,String inFileName) {
         //kinda 'soften' exception-handling ... -:-)
         BaseLogging.getInstance().info("LOADING IMAGE FILE "+inFileName+" AS TEXTURE FLIPPED ...");
         try {
             BufferedImage tBufferedImage = ImageIO.read(new BufferedInputStream((new Object()).getClass().getResourceAsStream(inFileName)));
             ImageUtil.flipImageVertically(tBufferedImage);
             Texture tTexture = AWTTextureIO.newTexture(GLProfile.getDefault(), tBufferedImage, true);
-            tTexture.setTexParameterf(GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
-            tTexture.setTexParameterf(GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-            tTexture.setTexParameterf(GL_TEXTURE_WRAP_S,GL_REPEAT);
-            tTexture.setTexParameterf(GL_TEXTURE_WRAP_T,GL_REPEAT);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_MIN_FILTER,GL_LINEAR_MIPMAP_LINEAR);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_WRAP_S,GL_REPEAT);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_WRAP_T,GL_REPEAT);
             BaseLogging.getInstance().info("TEXTURE "+inFileName+" ("+tTexture.getWidth()+"x"+tTexture.getWidth()+" AUTOMIPMAPS:"+tTexture.isUsingAutoMipmapGeneration()+") LOADED! ESTIMATED MEMORY SIZE: "+tTexture.getEstimatedMemorySize());
             return tTexture;
         } catch (Exception e) {
@@ -70,12 +70,12 @@ public class TextureUtils {
         return null;
     }
 
-    public static Texture loadImageAsTexture_CONVENIENT(String inFileName) {
-        Texture tTexture = TextureUtils.loadImageAsTexture_FLIPPED(inFileName);
-        tTexture.enable();
-        tTexture.bind();
+    public static Texture loadImageAsTexture_CONVENIENT(GL2 inGL,String inFileName) {
+        Texture tTexture = TextureUtils.loadImageAsTexture_FLIPPED(inGL,inFileName);
+        tTexture.enable(inGL);
+        tTexture.bind(inGL);
         if (BaseGlobalEnvironment.getInstance().preferAnisotropicFiltering()) {
-            tTexture.setTexParameterf(GL_TEXTURE_MAX_ANISOTROPY_EXT,new float[]{BaseGlobalEnvironment.getInstance().getAnisotropyLevel()}[0]);
+            tTexture.setTexParameterf(inGL,GL_TEXTURE_MAX_ANISOTROPY_EXT,new float[]{BaseGlobalEnvironment.getInstance().getAnisotropyLevel()}[0]);
         }
         return tTexture;
     }

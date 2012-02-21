@@ -104,8 +104,7 @@ public class BaseMusic {
     private SourceDataLine getLine(AudioFormat inAudioFormat) throws LineUnavailableException {
         SourceDataLine tSourceDataLine = null;
         DataLine.Info tDataLineInfo = new DataLine.Info(SourceDataLine.class,inAudioFormat,4096);
-        tSourceDataLine = (SourceDataLine) 
-        AudioSystem.getLine(tDataLineInfo);
+        tSourceDataLine = (SourceDataLine)AudioSystem.getLine(tDataLineInfo);
         tSourceDataLine.open(inAudioFormat);
         return tSourceDataLine;
     }

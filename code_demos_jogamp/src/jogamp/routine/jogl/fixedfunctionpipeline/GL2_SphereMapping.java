@@ -35,7 +35,7 @@ public class GL2_SphereMapping extends BaseRoutineAdapter implements BaseRoutine
 
     public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,360,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
-        mTexture = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Spheremap_Uffizi_Gallery_MedRes.png");
+        mTexture = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/Spheremap_Uffizi_Gallery_MedRes.png");
         mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/DiscoSphere.wobj.zip");
         inGL.glLightModelfv(GL_LIGHT_MODEL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.0f,0.0f,0.0f,0.0f}));
         inGL.glLightfv(GL_LIGHT0, GL_AMBIENT, DirectBufferUtils.createDirectFloatBuffer(new float[]{0.25f,0.25f,0.25f,1.0f}));
@@ -60,12 +60,12 @@ public class GL2_SphereMapping extends BaseRoutineAdapter implements BaseRoutine
         inGL.glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);	
         inGL.glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);
         inGL.glEnable(GL_COLOR_SUM);
-        mTexture.enable();
-        mTexture.bind();
-        mTexture.setTexParameterf(GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-        mTexture.setTexParameterf(GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-        mTexture.setTexParameterf(GL_TEXTURE_WRAP_S,GL_REPEAT);
-        mTexture.setTexParameterf(GL_TEXTURE_WRAP_T,GL_REPEAT);
+        mTexture.enable(inGL);
+        mTexture.bind(inGL);
+        mTexture.setTexParameterf(inGL,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+        mTexture.setTexParameterf(inGL,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+        mTexture.setTexParameterf(inGL,GL_TEXTURE_WRAP_S,GL_REPEAT);
+        mTexture.setTexParameterf(inGL,GL_TEXTURE_WRAP_T,GL_REPEAT);
         TextureUtils.preferAnisotropicFilteringOnTextureTarget(inGL,GL_TEXTURE_2D);
         //turn on texture coordiante generation ...
         inGL.glEnable(GL_TEXTURE_GEN_S);
@@ -79,7 +79,7 @@ public class GL2_SphereMapping extends BaseRoutineAdapter implements BaseRoutine
             inGL.glRotatef(mOffsetSinTable[(int)(inFrameNumber*1.5f)%OFFSETSINTABLE_SIZE], 0.75f, 0.3f, 0.1f);
             inGL.glCallList(mDisplayListID);
         inGL.glPopMatrix();
-        mTexture.disable();
+        mTexture.disable(inGL);
         inGL.glDisable(GL_COLOR_SUM);
         inGL.glDisable(GL_TEXTURE_GEN_S);
         inGL.glDisable(GL_TEXTURE_GEN_T);

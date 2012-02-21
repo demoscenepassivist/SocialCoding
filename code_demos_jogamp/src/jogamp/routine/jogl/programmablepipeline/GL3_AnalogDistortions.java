@@ -68,7 +68,7 @@ public class GL3_AnalogDistortions extends BaseRoutineAdapter implements BaseRou
     
     //override at least this method ... -=:-)
     public void init_FBORenderer(GL2 inGL,GLU inGLU,GLUT inGLUT) {
-        mTexture_Diffuse = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/Wallpaper_JOGAMP_MyJapanHoliday_03_1920pel.png");
+        mTexture_Diffuse = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/Wallpaper_JOGAMP_MyJapanHoliday_03_1920pel.png");
     }
 
     public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
@@ -82,8 +82,8 @@ public class GL3_AnalogDistortions extends BaseRoutineAdapter implements BaseRou
         inGL.glMatrixMode(GL_MODELVIEW);
         inGL.glLoadIdentity();
         inGL.glActiveTexture(GL_TEXTURE0);
-        mTexture_Diffuse.enable();
-        mTexture_Diffuse.bind();
+        mTexture_Diffuse.enable(inGL);
+        mTexture_Diffuse.bind(inGL);
         inGL.glBegin(GL_QUADS);
             inGL.glTexCoord2f(0.0f, 0.0f);
             inGL.glVertex2f(0.0f, 0.0f);

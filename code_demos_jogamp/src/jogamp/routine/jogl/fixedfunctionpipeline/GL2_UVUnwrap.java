@@ -35,9 +35,9 @@ public class GL2_UVUnwrap extends BaseRoutineAdapter implements BaseRoutineInter
 
     public void initRoutine(GL2 inGL,GLU inGLU,GLUT inGLUT) {
         mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,360,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
-        mTexture = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/TextureBaking_Normals.dds");
-        mTexture.enable();
-        mTexture.bind();
+        mTexture = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/TextureBaking_Normals.dds");
+        mTexture.enable(inGL);
+        mTexture.bind(inGL);
         TextureUtils.preferAnisotropicFilteringOnTextureTarget(inGL,mTexture);
         inGL.glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);	
         inGL.glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL,GL_SEPARATE_SPECULAR_COLOR);

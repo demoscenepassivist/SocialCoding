@@ -57,7 +57,7 @@ public class GL3_PlaneDeformation extends BaseRoutineAdapter implements BaseRout
             mLinkedShaders[i] = ShaderUtils.generateSimple_1xFS_ShaderProgramm(inGL,mFragmentShaders[i]);
         }
         mLinkedShader = mLinkedShaders[0];
-        mTexture = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/PlaneDeformation_Seamless.jpg");
+        mTexture = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/PlaneDeformation_Seamless.jpg");
         mOffsetSinTable = OffsetTableUtils.cosaque_SinglePrecision(OFFSETSINTABLE_SIZE,1280,true,OffsetTableUtils.TRIGONOMETRIC_FUNCTION.SIN);
         mScreenDimensionUniform2fv = DirectBufferUtils.createDirectFloatBuffer(new float[] {(float)BaseGlobalEnvironment.getInstance().getScreenWidth(), (float)BaseGlobalEnvironment.getInstance().getScreenHeight()});
         mPositionUniform3fv = DirectBufferUtils.createDirectFloatBuffer(new float[] {0.0f, 0.0f, 0.0f, 0.0f });
@@ -75,7 +75,7 @@ public class GL3_PlaneDeformation extends BaseRoutineAdapter implements BaseRout
         inGL.glMatrixMode(GL_MODELVIEW);
         inGL.glLoadIdentity();
         inGL.glActiveTexture(GL_TEXTURE0);
-        inGL.glBindTexture(GL_TEXTURE_2D, mTexture.getTextureObject());
+        inGL.glBindTexture(GL_TEXTURE_2D, mTexture.getTextureObject(inGL));
         inGL.glEnable(GL_TEXTURE_2D);
         inGL.glTexEnvi(GL_TEXTURE_ENV,GL_TEXTURE_ENV_MODE,GL_MODULATE);
         inGL.glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);

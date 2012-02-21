@@ -3,7 +3,6 @@
     <property name="destination" location="E:\Jogamp_Deployment" />
     <property name="buildfiles" location="../build/" />
     <property name="libraryfiles" location="../libraries/" />
-    <property name="nativefiles" location="../native/" />
     <property name="binaryfiles" location="../binaries/" />
     <property name="shaderfiles" location="../shaders/" />
     <target name="build jogamp" description="jogamp target">
@@ -18,12 +17,6 @@
         <copy overwrite="false" todir="${destination}/libraries">
             <fileset dir="${libraryfiles}">
                 <include name="**/*.jar"/>
-            </fileset>
-        </copy>
-        <mkdir dir="${destination}/native"/>
-        <copy overwrite="false" todir="${destination}/native">
-            <fileset dir="${nativefiles}">
-                <include name="**/*.dll"/>
             </fileset>
         </copy>
         <mkdir dir="${destination}/binaries"/>

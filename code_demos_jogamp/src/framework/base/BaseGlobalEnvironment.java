@@ -347,7 +347,7 @@ public class BaseGlobalEnvironment {
             //target rotation
             int tRotation = 0;
             //filter available ScreenModes and get the nearest one ...
-            java.util.List<?> screenModes = tScreen.getScreenModes();
+            java.util.List<ScreenMode> screenModes = tScreen.getScreenModes();
             screenModes = ScreenModeUtil.filterByRate(screenModes, tOriginalRefreshRate);
             screenModes = ScreenModeUtil.filterByRotation(screenModes, tRotation);
             screenModes = ScreenModeUtil.filterByResolution(screenModes, tResolution);

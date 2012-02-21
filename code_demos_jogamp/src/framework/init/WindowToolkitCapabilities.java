@@ -39,10 +39,6 @@ public class WindowToolkitCapabilities {
     
     public static void logBasicNEWTCapabilities() {
         BaseLogging.getInstance().info("LOGGING BASIC NEWT CAPABILITIES ...");
-        StringBuffer tStringBuffer = new StringBuffer();
-        NewtVersion.getInstance().getFullManifestInfo(tStringBuffer);
-        BaseLogging.getInstance().info("NEWT MANIFEST INFORMATION:");
-        BaseLogging.getInstance().info(tStringBuffer.toString());       
         BaseLogging.getInstance().info("ALL NEWT DISPLAYS:");
         Collection<?> tDisplays = Display.getAllDisplays();
         Iterator<?> tDisplayIterator = tDisplays.iterator();

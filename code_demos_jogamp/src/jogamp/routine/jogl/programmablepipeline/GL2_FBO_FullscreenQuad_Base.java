@@ -61,7 +61,7 @@ public abstract class GL2_FBO_FullscreenQuad_Base extends BaseRoutineAdapter imp
         inGL.glLoadIdentity();
         inGL.glOrtho(0, mBaseFrameBufferObjectRendererExecutor.getWidth(), mBaseFrameBufferObjectRendererExecutor.getHeight(), 0, -1, 1);
         inGL.glMatrixMode(GL_MODELVIEW);
-        inGL.glLoadIdentity();        
+        inGL.glLoadIdentity();
         inGL.glUseProgram(mLinkedShader);
         ShaderUtils.setUniform1f(inGL,mLinkedShader,"time",inFrameNumber/100.0f);
         ShaderUtils.setUniform2fv(inGL,mLinkedShader,"resolution",mScreenDimensionUniform2fv);

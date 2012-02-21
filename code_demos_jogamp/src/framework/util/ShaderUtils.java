@@ -191,15 +191,30 @@ public class ShaderUtils {
         }
     }
 
+    //yeah I know it's a fake :)
+    public static void setUniform1b(GL2 inGL,int inProgramID,String inName,boolean inValue) {
+        int tUniformLocation = inGL.glGetUniformLocation(inProgramID,inName);
+        if (tUniformLocation != -1) {
+            
+            if (inValue) {
+                inGL.glUniform1i(tUniformLocation, 1);
+            } else {
+                inGL.glUniform1i(tUniformLocation, 0);
+            }
+        } else {
+            BaseLogging.getInstance().warning("UNIFORM COULD NOT BE FOUND! NAME="+inName);
+        }
+    }
+
     public static void setSampler2DUniformOnTextureUnit(GL2 inGL,int inProgramID,String inSamplerUniformName,Texture inTexture,int inTextureUnit,int inTextureUnitNumber,boolean inPreferAnisotropy) {
         inGL.glActiveTexture(inTextureUnit);
-        inTexture.enable();
-        inTexture.bind();
+        inTexture.enable(inGL);
+        inTexture.bind(inGL);
         if (inPreferAnisotropy) {
             TextureUtils.preferAnisotropicFilteringOnTextureTarget(inGL,inTexture.getTarget());
         }
         ShaderUtils.setUniform1i(inGL,inProgramID,inSamplerUniformName,inTextureUnitNumber);
-        inTexture.disable();
+        inTexture.disable(inGL);
     }
 
 }

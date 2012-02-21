@@ -16,14 +16,14 @@ package jogamp.routine.jogl.programmablepipeline;
  ** to a fullscreen billboard and use super sampling to avoid aliasing artefacts. For an impression
  ** how these shaders look like see here: 
  **
- ** rastergraphomat_series_01.fs: http://www.youtube.com/watch?v=XXXXXXXXX
- ** rastergraphomat_series_02.fs: http://www.youtube.com/watch?v=XXXXXXXXX
- ** rastergraphomat_series_03.fs: http://www.youtube.com/watch?v=XXXXXXXXX
- ** rastergraphomat_series_04.fs: http://www.youtube.com/watch?v=XXXXXXXXX
- ** linegraphomat_series_01.fs: http://www.youtube.com/watch?v=XXXXXXXXX
- ** linegraphomat_series_02.fs: http://www.youtube.com/watch?v=XXXXXXXXX
- ** linegraphomat_series_03.fs: http://www.youtube.com/watch?v=XXXXXXXXX
- ** linegraphomat_series_04.fs: http://www.youtube.com/watch?v=XXXXXXXXX
+ ** rastergraphomat_series_01.fs: http://www.youtube.com/watch?v=7zAUxvRsFmg
+ ** rastergraphomat_series_02.fs: http://www.youtube.com/watch?v=nFuC6_JCdW0
+ ** rastergraphomat_series_03.fs: http://www.youtube.com/watch?v=FfBiFy4-kl4
+ ** rastergraphomat_series_04.fs: http://www.youtube.com/watch?v=DM4EpnaCsAo
+ ** linegraphomat_series_01.fs: http://www.youtube.com/watch?v=X5bXGAWX5bg
+ ** linegraphomat_series_02.fs: http://www.youtube.com/watch?v=axPHOjaT6K0
+ ** linegraphomat_series_03.fs: http://www.youtube.com/watch?v=NRCixGrpD4o
+ ** linegraphomat_series_04.fs: http://www.youtube.com/watch?v=BBIU1x9aUv4
  **/
 
 import framework.base.*;

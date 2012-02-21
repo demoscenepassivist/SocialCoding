@@ -81,8 +81,8 @@ public class GL3_EnvironmentBasedLighting_SphericalHarmonics extends BaseRoutine
         mLinkedShader = ShaderUtils.generateSimple_1xVS_1xFS_ShaderProgramm(inGL,tVertexShader,tFragmentShader);
         //mDisplayListID = WavefrontObjectLoader_DisplayList.loadWavefrontObjectAsDisplayList(inGL,"/binaries/geometry/LinkingStars.wobj.zip");
         mWavefrontObjectLoader_VertexBufferObject = new WavefrontObjectLoader_VertexBufferObject("/binaries/geometry/LinkingStars.wobj.zip");
-        mTexture_AmbientOcclusion = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/LinkingStars_BakedAmbientOcclusion.png");
-        mTexture_Background = TextureUtils.loadImageAsTexture_UNMODIFIED("/binaries/textures/GraceCathedral_Background.png");
+        mTexture_AmbientOcclusion = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/LinkingStars_BakedAmbientOcclusion.png");
+        mTexture_Background = TextureUtils.loadImageAsTexture_UNMODIFIED(inGL,"/binaries/textures/GraceCathedral_Background.png");
     }
 
     public void mainLoop_FBORenderer(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
@@ -129,8 +129,8 @@ public class GL3_EnvironmentBasedLighting_SphericalHarmonics extends BaseRoutine
         inGL.glLoadIdentity();
         inGL.glPushAttrib(GL_TEXTURE_BIT);
             inGL.glActiveTexture(GL_TEXTURE0);
-            inTexture.enable();
-            inTexture.bind();
+            inTexture.enable(inGL);
+            inTexture.bind(inGL);
             inGL.glBegin(GL_QUADS);
                 inGL.glTexCoord2f(0.0f, 0.0f);
                 inGL.glVertex2f(0.0f, 0.0f);
