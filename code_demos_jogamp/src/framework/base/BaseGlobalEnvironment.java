@@ -703,8 +703,10 @@ public class BaseGlobalEnvironment {
     private boolean     mCommandLineParameter_FrameSkip;
     private String      mCommandLineParameter_WindowToolkit;
     private String      mCommandLineParameter_MusicFileName;
+    private int         mCommandLineParameter_StartFrame;
+    private int         mCommandLineParameter_EndFrame;
     private boolean     mUsesFullScreenMode;
-
+    
 
     public String   getBaseRoutineClassName()       { return mCommandLineParameter_BaseRoutineClassName; }
     public boolean  preferMultiSampling()           { return mCommandLineParameter_MultiSampling; }
@@ -717,6 +719,8 @@ public class BaseGlobalEnvironment {
     public boolean  wantsFrameSkip()                { return mCommandLineParameter_FrameSkip; }
     public String   getWindowToolkitName()          { return mCommandLineParameter_WindowToolkit; }
     public String   getMusicFileName()              { return mCommandLineParameter_MusicFileName; }
+    public int      getStartFrame()                 { return mCommandLineParameter_StartFrame; }
+    public int      getEndFrame()                   { return mCommandLineParameter_EndFrame; }
     public boolean  usesFullScreenMode()            { return mUsesFullScreenMode; }
 
     public void configureWithUserParameters(
@@ -733,7 +737,9 @@ public class BaseGlobalEnvironment {
             boolean inVSync,
             boolean inFrameSkip,
             String inWindowToolkitName,
-            String inMusicFileName
+            String inMusicFileName,
+            int inStartFrame,
+            int inEndFrame
     ) {
         mCommandLineParameter_BaseRoutineClassName = inBaseRoutineClassName;
         mCommandLineParameter_DisplayMode = (inResolutionX!=-1 && inResolutionY!=-1) ? new DisplayMode(inResolutionX,inResolutionY,32,60) : null;
@@ -748,6 +754,8 @@ public class BaseGlobalEnvironment {
         mCommandLineParameter_FrameSkip = inFrameSkip;
         mCommandLineParameter_WindowToolkit = inWindowToolkitName;
         mCommandLineParameter_MusicFileName = inMusicFileName;
+        mCommandLineParameter_StartFrame = inStartFrame;
+        mCommandLineParameter_EndFrame = inEndFrame;
     }
 
     public int getParameterKey_INT_12() { return mParameterKey_INT_12; }

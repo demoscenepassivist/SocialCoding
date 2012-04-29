@@ -2,20 +2,35 @@
 <project default="build jogamp">
     <property name="destination" location="E:\Jogamp_Deployment" />
     <property name="buildfiles" location="../build/" />
-    <property name="libraryfiles" location="../libraries/" />
+    <property name="libraryfiles_java" location="../libraries_java/" />
+    <property name="libraryfiles_x32" location="../libraries_x32/" />
+    <property name="libraryfiles_x64" location="../libraries_x64/" />
     <property name="binaryfiles" location="../binaries/" />
     <property name="shaderfiles" location="../shaders/" />
     <target name="build jogamp" description="jogamp target">
-       <mkdir dir="${destination}/runtime"/>
-       <javac encoding="8859_1" debug="true" debuglevel="lines,vars,source" srcdir="../" listfiles="false" destdir="${destination}"/>
+       <mkdir dir="${destination}/runtime_x32"/>
+       <mkdir dir="${destination}/runtime_x64"/>
+       <javac encoding="8859_1" debug="true" debuglevel="lines,vars,source" srcdir="../src/" listfiles="false" destdir="${destination}"/>
        <copy overwrite="false" todir="${destination}">
             <fileset dir="${buildfiles}">
                 <include name="**/*.bat"/>
             </fileset>
         </copy>
-        <mkdir dir="${destination}/libraries"/>
-        <copy overwrite="false" todir="${destination}/libraries">
-            <fileset dir="${libraryfiles}">
+        <mkdir dir="${destination}/libraries_java"/>
+        <copy overwrite="false" todir="${destination}/libraries_java">
+            <fileset dir="${libraryfiles_java}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy> 
+        <mkdir dir="${destination}/libraries_x32"/>
+        <copy overwrite="false" todir="${destination}/libraries_x32">
+            <fileset dir="${libraryfiles_x32}">
+                <include name="**/*.jar"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${destination}/libraries_x64"/>
+        <copy overwrite="false" todir="${destination}/libraries_x64">
+            <fileset dir="${libraryfiles_x64}">
                 <include name="**/*.jar"/>
             </fileset>
         </copy>
@@ -32,7 +47,7 @@
             </fileset>
         </copy>
         <mkdir dir="${destination}/capture"/>
-        <jar destfile="${destination}/jogamp.jar"  basedir="${destination}">
+        <jar destfile="${destination}/jogamp_x32.jar"  basedir="${destination}">
             <include name="framework/**"/>
             <include name="jogamp/**"/>
             <include name="shaders/**"/>
@@ -41,7 +56,19 @@
                 <attribute name="Created-By" value="1.6.0_18 (Sun Microsystems Inc.)"/>
                 <attribute name="Main-Class" value="framework.init.Bootstrap"/>
                 <!-- <attribute name="Main-Class" value="framework.init.WindowToolkitCapabilities"/> -->
-                <attribute name="Class-Path" value=". .\libraries\gluegen-rt.jar .\libraries\jogl.all.jar .\libraries\nativewindow.all.jar .\libraries\jna.jar .\libraries\newt.all.jar .\libraries\jl1.0.1.jar .\libraries\mp3spi1.9.4.jar .\libraries\tritonus_share.jar .\libraries\jogg-0.0.7.jar .\libraries\jorbis-0.0.15.jar .\libraries\vorbisspi1.0.3.jar"/>
+                <attribute name="Class-Path" value=". .\libraries_x32\gluegen-rt.jar .\libraries_x32\jogl.all.jar .\libraries_java\jna.jar .\libraries_java\jl1.0.1.jar .\libraries_java\mp3spi1.9.4.jar .\libraries_java\tritonus_share.jar .\libraries_java\jogg-0.0.7.jar .\libraries_java\jorbis-0.0.15.jar .\libraries_java\vorbisspi1.0.3.jar"/>
+            </manifest>
+        </jar>
+        <jar destfile="${destination}/jogamp_x64.jar"  basedir="${destination}">
+            <include name="framework/**"/>
+            <include name="jogamp/**"/>
+            <include name="shaders/**"/>
+            <manifest>
+                <attribute name="Manifest-Version" value="1.0"/>
+                <attribute name="Created-By" value="1.6.0_18 (Sun Microsystems Inc.)"/>
+                <attribute name="Main-Class" value="framework.init.Bootstrap"/>
+                <!-- <attribute name="Main-Class" value="framework.init.WindowToolkitCapabilities"/> -->
+                <attribute name="Class-Path" value=". .\libraries_x64\gluegen-rt.jar .\libraries_x64\jogl.all.jar .\libraries_java\jna.jar .\libraries_java\jl1.0.1.jar .\libraries_java\mp3spi1.9.4.jar .\libraries_java\tritonus_share.jar .\libraries_java\jogg-0.0.7.jar .\libraries_java\jorbis-0.0.15.jar .\libraries_java\vorbisspi1.0.3.jar"/>
             </manifest>
         </jar>
         <delete dir="${destination}/framework"/>

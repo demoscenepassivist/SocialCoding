@@ -16,7 +16,7 @@ package jogamp.routine.jogl.programmablepipeline;
  ** and also makes use of ShaderUtils to ease the handling of vertex&pixel shaders. This version
  ** uses double precision (FP64) floats to zoom in even further (if ur GPU is up2date enough to 
  ** supports the GL_ARB_gpu_shader_fp64 extension). For an impression how this routine looks like
- ** see here: http://www.youtube.com/watch?v=XXXXX
+ ** see here: http://youtu.be/FjK9a6b47A8
  **
  **/
 

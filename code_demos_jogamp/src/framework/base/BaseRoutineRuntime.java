@@ -94,7 +94,7 @@ public class BaseRoutineRuntime {
         Font tFont = new Font("SansSerif", Font.PLAIN, 12);
         mTextRenderer = new TextRenderer(tFont, false, false);
         mDecimalFormat = new DecimalFormat("###,###,###,###,###.###");
-        mFrameCounter = 0;
+        mFrameCounter = BaseGlobalEnvironment.getInstance().getStartFrame();
         try {
             BaseLogging.getInstance().info("CREATING BASEROUTINE CONSTRUCTOR FOR "+mBaseGlobalEnvironment.getBaseRoutineClassName());
             Class<?> tIntermediateClass = Class.forName(mBaseGlobalEnvironment.getBaseRoutineClassName());
@@ -165,6 +165,11 @@ public class BaseRoutineRuntime {
                 mFrameCounter--;
             }
         }
+        if (mFrameCounter>BaseGlobalEnvironment.getInstance().getEndFrame()) {
+            //quite dirty ... should stop the Animator first X-)
+            BaseLogging.getInstance().info("KILLING APPLICATION ... ENDFRAME NUMBER REACHED ... mFrameCounter="+mFrameCounter+" STARTFRAME="+BaseGlobalEnvironment.getInstance().getStartFrame()+" ENDFRAME="+BaseGlobalEnvironment.getInstance().getEndFrame());
+            System.exit(0);
+        }
     }
 
     public void cleanupRuntime(GL2 inGL,GLU inGLU,GLUT inGLUT) {
@@ -178,7 +183,7 @@ public class BaseRoutineRuntime {
     }
     
     public void resetFrameCounter() {
-        mFrameCounter = 0;
+        mFrameCounter = BaseGlobalEnvironment.getInstance().getStartFrame();
     }
 
     public static void resetFrustumToDefaultState(GL2 inGL,GLU inGLU,GLUT inGLUT) {

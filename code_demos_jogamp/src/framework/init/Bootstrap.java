@@ -28,11 +28,16 @@ package framework.init;
  **   -FRAMESKIP (=TRUE/FALSE)
  **   -WINDOWTOOLKIT (=AWT/NEWT)
  **   -MUSIC=/binaries/music/Little_Bitchard-The_Code_Inside.mp3
- **
+ **   -STARTFRAME (=0)
+ **   -ENDFRAME (=Integer.MAX_VALUE)
+ **   -RESUMEFRAMECAPTURE (=TRUE/FALSE)
  **/
 
 import javax.media.opengl.*;
 import java.awt.*;
+import java.io.*;
+import java.util.Arrays;
+
 import framework.base.*;
 
 public class Bootstrap {
@@ -57,6 +62,8 @@ public class Bootstrap {
         boolean tFrameSkip = true;
         String tWindowToolkitName = null;
         String tMusicFileName = null;
+        int tStartFrame = 0;
+        int tEndFrame = Integer.MAX_VALUE;
         if (args.length>0) {
             for (int i=0; i<args.length; i++) {
                 BaseLogging.getInstance().info("PROCESSING CMDLINE PARAMETER ... ARG="+args[i]);
@@ -123,7 +130,52 @@ public class Bootstrap {
                 } else if(args[i].trim().startsWith("-MUSIC=")) {
                     String tMusicParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
                     BaseLogging.getInstance().info("MUSIC TO PLAY '"+tMusicParameter+"'");
-                    tMusicFileName = tMusicParameter;
+                    tMusicFileName = tMusicParameter;           
+                } else if(args[i].trim().startsWith("-STARTFRAME=")) {
+                    String tStartFrameParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
+                    BaseLogging.getInstance().info("CUSTOM START FRAME NUMBER SET TO '"+tStartFrameParameter+"'");
+                    tStartFrame = Integer.parseInt(tStartFrameParameter); 
+                } else if(args[i].trim().startsWith("-ENDFRAME=")) {
+                    String tEndFrameParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
+                    BaseLogging.getInstance().info("CUSTOM END FRAME NUMBER SET TO '"+tEndFrameParameter+"'");
+                    tEndFrame = Integer.parseInt(tEndFrameParameter);                    
+                } else if(args[i].trim().startsWith("-RESUMEFRAMECAPTURE=")) {
+                    //resume frame capture implicitly sets FRAMECAPTURE=TRUE and STARTFRAME
+                    String tResumeFrameCaptureParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
+                    BaseLogging.getInstance().info("RESUME FRAME CAPTURE ENABLED '"+tResumeFrameCaptureParameter+"'");
+                    boolean tResumeFrameCapture = Boolean.parseBoolean(tResumeFrameCaptureParameter);
+                    if (tResumeFrameCapture) {
+                        tFrameCapture = true;
+                        BaseLogging.getInstance().info("SEARCHING CAPTURE DIRECTORY TO FIND RESUME FRAME ...");
+                        //String tFileName = "capture\\"+BaseLogging.cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX+"_"+tDecimalFormatter.format(inFrameNumber)+BaseLogging.cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX;
+                        File tScreenCaptureDirectory = new File(BaseLogging.cLOGGING_CAPTUREOUTPUTDIRECTORYNAME);
+                        String[] tFileList = tScreenCaptureDirectory.list(new FilenameFilter() {
+                            public boolean accept(File dir, String name) {
+                                if (name.contains(BaseLogging.cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX) && 
+                                    name.endsWith(BaseLogging.cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX)) {
+                                    return true;
+                                }
+                                return false;   
+                            }                        
+                        });                      
+                        Arrays.sort(tFileList);
+                        int tResumeStartFrameNumber = tStartFrame;
+                        if (tFileList.length>2) {
+                            BaseLogging.getInstance().info("STARTFRAME FILENAME IS "+tFileList[0]);
+                            BaseLogging.getInstance().info("ENDFRAME FILENAME IS "+tFileList[tFileList.length-1]);
+                            String tEndFrameNumberString = tFileList[tFileList.length-1].substring(21,27);
+                            int tEndFrameNumber = Integer.parseInt(tEndFrameNumberString);
+                            BaseLogging.getInstance().info("PARSED ENDFRAME IS "+tEndFrameNumber);
+                            tResumeStartFrameNumber = tEndFrameNumber-2;
+                            if (tResumeStartFrameNumber<0) {
+                                tResumeStartFrameNumber = 0;
+                            }
+                            BaseLogging.getInstance().info("SETTING NEW STARTFRAME BACK -2 AND RESUME CAPTURE ... STARTFRAME="+tResumeStartFrameNumber);
+                        } else {
+                            BaseLogging.getInstance().info("NUMBER OF ALREADY CAPTURED FRAMES TO SMALL TO RESUME ... RESUME FRAME NUMBER SET TO STARTFRAME ...");
+                        }
+                        tStartFrame = tResumeStartFrameNumber;
+                    }                  
                 } else {
                     BaseLogging.getInstance().error("ERROR! ILLEGAL ARGUMENT FOUND! ARGUMENT="+args[i]);
                 }
@@ -141,7 +193,9 @@ public class Bootstrap {
                 tVSync,
                 tFrameSkip,
                 tWindowToolkitName,
-                tMusicFileName
+                tMusicFileName,
+                tStartFrame,
+                tEndFrame
         );
         EventQueue.invokeLater(new Runnable() {
             public void run() {

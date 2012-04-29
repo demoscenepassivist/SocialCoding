@@ -19,8 +19,8 @@
  **
  **/
 
-//#define supersamplingfactor 0.25
-//#define singleiteration
+//#define supersamplingfactor 0.5
+//#define singleiterationhttp://youtu.be/Zbz1JrL6quUhttp://youtu.be/Zbz1JrL6quUhttp://youtu.be/Zbz1JrL6quUhttp://youtu.be/Zbz1JrL6quUhttp://youtu.be/Zbz1JrL6quUhttp://youtu.be/Zbz1JrL6quUhttp://youtu.be/Zbz1JrL6quU
 
 uniform float time;
 uniform vec2 resolution;
@@ -98,6 +98,7 @@ vec4 render(vec2 fragcoord) {
         globalrotation = 0.0;
     } else {
         cameraposition = vec3(-0.5,0.0,2.25);
+        //cameraposition = vec3(-1.55,0.0,2.25); //settings for overview movie ...
         //globalrotation = time;
         globalrotation = 0.0;
     }    
@@ -113,6 +114,10 @@ vec4 render(vec2 fragcoord) {
        return calculateorbittrap(vec2(xcenter,ycenter)+z*zoom);
     } else if (zoomin) {
        float zoom = .72+.38*sin(.1*time);
+       //settings for overview movie ...
+       //zoom = .72+.38*sin(.1*8.0);
+       //const float xcenter = 0.3245046418497685+0.5;
+       //const float ycenter = 0.04855101129280834;
        zoom = pow(zoom,8.0);
        zoomfactor = 1.0/zoom; //~200000 at the end of single precision
        const float xcenter = 0.3245046418497685;

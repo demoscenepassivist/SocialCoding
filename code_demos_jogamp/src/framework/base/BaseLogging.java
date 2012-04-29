@@ -32,9 +32,10 @@ public final class BaseLogging {
 
     private static final String cLOGGING_OUTPUTFILENAME_PREFIX = "JOGAMP_FILELOG";
     private static final String cLOGGING_OUTPUTFILENAME_SUFFIX = ".txt";
-    private static final String cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX = "JOGAMP_SCREENCAPTURE";
-    private static final String cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX = ".png";
-
+    public static final String cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX = "JOGAMP_SCREENCAPTURE";
+    public static final String cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX = ".png";
+    public static final String cLOGGING_CAPTUREOUTPUTDIRECTORYNAME = "capture\\";
+    
     private static BaseLogging mLoggingInstance = null;
     private File mLogFile = null;
     private PrintWriter mPrintWriter;
@@ -156,7 +157,7 @@ public final class BaseLogging {
     public synchronized void logCapture(BufferedImage inBufferedImage,int inFrameNumber) {
         try {
             DecimalFormat tDecimalFormatter = new DecimalFormat("000000");
-            String tFileName = "capture\\"+cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX+"_"+tDecimalFormatter.format(inFrameNumber)+cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX;
+            String tFileName = cLOGGING_CAPTUREOUTPUTDIRECTORYNAME+cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX+"_"+tDecimalFormatter.format(inFrameNumber)+cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX;
             File tScreenCaptureImageFile = new File(tFileName);
             this.info("WRITING SCREENCAPTURE FOR FRAME NUMBER "+inFrameNumber+" TO FILE "+tFileName);
             ImageIO.write(inBufferedImage, "png", tScreenCaptureImageFile);

@@ -22,7 +22,14 @@ package jogamp.routine.jogl.programmablepipeline;
  ** Geometric orbit traps: http://www.iquilezles.org/www/articles/ftrapsgeometric/ftrapsgeometric.htm
  ** Bitmap orbit traps: http://www.iquilezles.org/www/articles/ftrapsbitmap/ftrapsbitmap.htm
  **
- ** For an impression how this routine looks like see here: http://www.youtube.com/watch?v=XXXXXXXXXXX
+ ** For an impression how this routine looks like see here: 
+ ** http://youtu.be/G79KtKOBr9Y - http://youtu.be/U_RI_hdWgTQ - http://youtu.be/xN1qlO8PW0c 
+ ** http://youtu.be/ZwdX1HFuhmQ - http://youtu.be/z0wocD_BbwM - http://youtu.be/03OD_e9cX3M 
+ ** http://youtu.be/odFATcfuDPU - http://youtu.be/FZTEmy8tec0 - http://youtu.be/jQ0UdJS8Tn0
+ ** http://youtu.be/LI3J1U_eqQA - http://youtu.be/pF66_6D5Dtc - http://youtu.be/JOlbjDOomDA
+ ** http://youtu.be/7Hf9wJ9Aa1E - http://youtu.be/0n5FbP2vMXg - http://youtu.be/tCLC6AK3Hnw
+ ** http://youtu.be/gBez1ztuPIk - http://youtu.be/UwOHe5WmGic - http://youtu.be/QL_yiqRSnJk
+ ** http://youtu.be/Zbz1JrL6quU - 
  **
  **/
 
@@ -159,6 +166,8 @@ public class GL3_FractalBitmapOrbitTrapping extends BaseRoutineAdapter implement
         //ShaderUtils.setUniform1i(inGL,mLinkedShader,"iterationslimit",256);
         inGL.glActiveTexture(GL_TEXTURE0);
         int tCurrentTexture = Math.abs(BaseGlobalEnvironment.getInstance().getParameterKey_INT_12()%mBitmapOrbitTrap.length);
+        //tCurrentTexture = inFrameNumber/600;//%mBitmapOrbitTrap.length;
+        //tCurrentTexture = 36;
         mBitmapOrbitTrap[tCurrentTexture].enable(inGL);
         mBitmapOrbitTrap[tCurrentTexture].bind(inGL);
         ShaderUtils.setUniform1i(inGL,mLinkedShader,"texture",0);
