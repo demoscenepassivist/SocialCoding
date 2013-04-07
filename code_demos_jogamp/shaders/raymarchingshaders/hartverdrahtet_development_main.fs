@@ -71,7 +71,7 @@ float dE(vec3 p) {
 
 vec4 rd(vec2 fragment_coordinates) {   
    //calculate ray direction from fragment coordinates ...
-   vec2 ray_position = (0.5*rs-fragment_coordinates)/vec2(rs.x,-rs.y);
+   vec2 ray_position = (0.5*rs-fragment_coordinates)/vec2(rs.x,-rs.y);   
    ray_position.x *= (rs.x/rs.y); //aspect_ratio
    vec3 ray_direction = normalize(cr * vec3(ray_position.x * vec3(1, 0, 0) + ray_position.y * vec3(0, 1, 0) - .9 * vec3(0, 0, 1)));
    //sphere tracing initialization ...

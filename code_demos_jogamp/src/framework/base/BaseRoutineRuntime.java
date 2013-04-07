@@ -54,7 +54,8 @@ public class BaseRoutineRuntime {
     private BaseMusic mBaseMusic;
     private TextureRenderer mTextureRenderer_ScopeAndSpectrumAnalyzer;
     boolean mMusicSyncStartTimeInitialized = false;
-
+    private float mCurrentStereoscopicEyeSeparation;
+    
     public interface dwmapi extends Library {
         dwmapi INSTANCE = (dwmapi)Native.loadLibrary("dwmapi",dwmapi.class);
         //http://msdn.microsoft.com/en-us/library/aa969510%28VS.85%29.aspx
@@ -95,6 +96,7 @@ public class BaseRoutineRuntime {
         mTextRenderer = new TextRenderer(tFont, false, false);
         mDecimalFormat = new DecimalFormat("###,###,###,###,###.###");
         mFrameCounter = BaseGlobalEnvironment.getInstance().getStartFrame();
+        //mCurrentStereoscopicEyeSeparation = BaseGlobalEnvironment.getInstance().getStereoscopicEyeSeparation();
         try {
             BaseLogging.getInstance().info("CREATING BASEROUTINE CONSTRUCTOR FOR "+mBaseGlobalEnvironment.getBaseRoutineClassName());
             Class<?> tIntermediateClass = Class.forName(mBaseGlobalEnvironment.getBaseRoutineClassName());
@@ -132,24 +134,184 @@ public class BaseRoutineRuntime {
         mCurrentFrameRenderingTimeStart = System.nanoTime();
         //allow music DSP's to synchronize with framerate ...
         mBaseMusic.synchonizeMusic();
-        //create default frustum state ...
-        resetFrustumToDefaultState(inGL,inGLU,inGLUT);
-        //clear screen and z-buffer ...
-        inGL.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        inGL.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        mBaseRoutineInterface.mainLoop(mFrameCounter,inGL,inGLU,inGLUT);
-        checkForGlError(inGL,inGLU);
-        //optional fraps/kkapture-style screencapture logging ... ->=:-)X	   
-        if (mBaseGlobalEnvironment.wantsFrameCapture()) {
-            BufferedImage tScreenshot = Screenshot.readToBufferedImage(0,0, mBaseGlobalEnvironment.getScreenWidth(), mBaseGlobalEnvironment.getScreenHeight(),false);
-            BaseLogging.getInstance().logCapture(tScreenshot, mFrameCounter);
+        
+        if (!mBaseGlobalEnvironment.wantsStereoscopic()) {
+            //non stereoscopic rendering path ...
+            //create default frustum state ...
+            resetFrustumToDefaultState(inGL,inGLU,inGLUT);
+            //clear screen and z-buffer ...
+            inGL.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            inGL.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            mBaseRoutineInterface.mainLoop(mFrameCounter,inGL,inGLU,inGLUT);            
+            checkForGlError(inGL,inGLU);
+            //optional fraps/kkapture-style screencapture logging ... ->=:-)X	   
+            if (mBaseGlobalEnvironment.wantsFrameCapture()) {
+                BufferedImage tScreenshot = Screenshot.readToBufferedImage(0,0, mBaseGlobalEnvironment.getScreenWidth(), mBaseGlobalEnvironment.getScreenHeight(),false);
+                BaseLogging.getInstance().logCapture(tScreenshot, mFrameCounter);
+            }
+        } else {
+            //stereoscopic rendering path ...
+            
+            mCurrentStereoscopicEyeSeparation = -1.0f*BaseGlobalEnvironment.getInstance().getStereoscopicEyeSeparation();
+            
+            //create default frustum state ...
+            resetFrustumToDefaultState(inGL,inGLU,inGLUT);
+            //clear screen and z-buffer ...
+            inGL.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            inGL.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            mBaseRoutineInterface.mainLoop(mFrameCounter,inGL,inGLU,inGLUT);
+            checkForGlError(inGL,inGLU);
+            //optional fraps/kkapture-style screencapture logging ... ->=:-)X      
+            BufferedImage tScreenshot_Left = Screenshot.readToBufferedImage(0,0, mBaseGlobalEnvironment.getScreenWidth(), mBaseGlobalEnvironment.getScreenHeight(),false);
+            
+            mCurrentStereoscopicEyeSeparation = +1.0f*BaseGlobalEnvironment.getInstance().getStereoscopicEyeSeparation();
+            
+            //create default frustum state ...
+            resetFrustumToDefaultState(inGL,inGLU,inGLUT);
+            //clear screen and z-buffer ...
+            inGL.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            inGL.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            mBaseRoutineInterface.mainLoop(mFrameCounter,inGL,inGLU,inGLUT);
+            checkForGlError(inGL,inGLU);
+            //optional fraps/kkapture-style screencapture logging ... ->=:-)X      
+            BufferedImage tScreenshot_Right = Screenshot.readToBufferedImage(0,0, mBaseGlobalEnvironment.getScreenWidth(), mBaseGlobalEnvironment.getScreenHeight(),false);
+            
+            if (BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("ALL")) {
+                mCurrentStereoscopicEyeSeparation = 0.0f;
+                //create default frustum state ...
+                resetFrustumToDefaultState(inGL,inGLU,inGLUT);
+                //clear screen and z-buffer ...
+                inGL.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+                inGL.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                mBaseRoutineInterface.mainLoop(mFrameCounter,inGL,inGLU,inGLUT);
+                checkForGlError(inGL,inGLU);
+                //optional fraps/kkapture-style screencapture logging ... ->=:-)X      
+                BufferedImage tScreenshot_Normal = Screenshot.readToBufferedImage(0,0, mBaseGlobalEnvironment.getScreenWidth(), mBaseGlobalEnvironment.getScreenHeight(),false);
+                //dump normal 2D image ...
+                BaseLogging.getInstance().logCapture(tScreenshot_Normal, mFrameCounter);
+            }
+            
+            int tImageWidth = tScreenshot_Left.getWidth();
+            int tImageHeight = tScreenshot_Left.getHeight();
+            
+            //dump Half-Side-By-Side (HSBS) image ...
+            if (BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("HSBS") || 
+                BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("ALL")) {
+                BufferedImage tScreenshot_Combined = new BufferedImage(tImageWidth,tImageHeight,tScreenshot_Left.getType());
+                Graphics2D tG2D = tScreenshot_Combined.createGraphics();
+                //tG2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);           
+                tG2D.drawImage(
+                        tScreenshot_Left,
+                        0,
+                        0,
+                        tImageWidth/2, 
+                        tImageHeight,
+                        null
+                );
+                tG2D.drawImage(
+                        tScreenshot_Right,
+                        tImageWidth/2, 
+                        0,
+                        tImageWidth/2, 
+                        tImageHeight,
+                        null
+                );
+                tG2D.dispose();
+                BaseLogging.getInstance().logCapture(tScreenshot_Combined, mFrameCounter,"HSBS");
+            }
+            
+            //dump Half-Over-Under (HOU) image ...
+            if (BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("HOU") || 
+                BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("ALL")) {
+                BufferedImage tScreenshot_Combined = new BufferedImage(tImageWidth,tImageHeight,tScreenshot_Left.getType());
+                Graphics2D tG2D = tScreenshot_Combined.createGraphics();
+                //tG2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);           
+                tG2D.drawImage(
+                        tScreenshot_Left,
+                        0,
+                        0,
+                        tImageWidth, 
+                        tImageHeight/2,
+                        null
+                );
+                tG2D.drawImage(
+                        tScreenshot_Right,
+                        0, 
+                        tImageHeight/2,
+                        tImageWidth, 
+                        tImageHeight/2,
+                        null
+                 );
+                 tG2D.dispose();
+                 BaseLogging.getInstance().logCapture(tScreenshot_Combined, mFrameCounter,"HOU");
+            }
+            
+            //dump Full-Over-Under (FOU) image ...
+            if (BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("FOU") || 
+                BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("ALL")) {
+                BufferedImage tScreenshot_Combined = new BufferedImage(tImageWidth,tImageHeight*2,tScreenshot_Left.getType());
+                Graphics2D tG2D = tScreenshot_Combined.createGraphics();
+                //tG2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);           
+                tG2D.drawImage(
+                        tScreenshot_Left,
+                        0,
+                        0,
+                        tImageWidth, 
+                        tImageHeight,
+                        null
+                );
+                tG2D.drawImage(
+                        tScreenshot_Right,
+                        0, 
+                        tImageHeight,
+                        tImageWidth, 
+                        tImageHeight,
+                        null
+                 );
+                 tG2D.dispose();
+                 BaseLogging.getInstance().logCapture(tScreenshot_Combined, mFrameCounter,"FOU");
+            }
+            
+            //dump Full-Side-by-Side (FSBS) image ...
+            if (BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("FSBS") || 
+                BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("ALL")) {
+                BufferedImage tScreenshot_Combined = new BufferedImage(tImageWidth*2,tImageHeight,tScreenshot_Left.getType());
+                Graphics2D tG2D = tScreenshot_Combined.createGraphics();
+                //tG2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,RenderingHints.VALUE_INTERPOLATION_BICUBIC);           
+                tG2D.drawImage(
+                        tScreenshot_Left,
+                        0,
+                        0,
+                        tImageWidth, 
+                        tImageHeight,
+                        null
+                );
+                tG2D.drawImage(
+                        tScreenshot_Right,
+                        tImageWidth, 
+                        0,
+                        tImageWidth, 
+                        tImageHeight,
+                        null
+                 );
+                 tG2D.dispose();
+                 BaseLogging.getInstance().logCapture(tScreenshot_Combined, mFrameCounter,"FSBS");
+            }
+            
+            //full frame sequential
+            if (BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("FFS") || 
+                BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode().contains("ALL")) {
+                BaseLogging.getInstance().logCapture(tScreenshot_Left, mFrameCounter*2+0,"FFS");
+                BaseLogging.getInstance().logCapture(tScreenshot_Right, mFrameCounter*2+1,"FFS"); 
+            }
+    
         }
         //---
         mCurrentFrameRenderingTimeEnd = System.nanoTime();
         renderDebugInformation(inGL,inGLU,inGLUT);
         //----
         mFrameCounter++;
-        if (BaseGlobalEnvironment.getInstance().wantsFrameSkip() && !mBaseGlobalEnvironment.wantsFrameCapture()) {
+        if (BaseGlobalEnvironment.getInstance().wantsFrameSkip() && !mBaseGlobalEnvironment.wantsFrameCapture() && !mBaseGlobalEnvironment.wantsStereoscopic()) {
             mFrameSkipAverageFramerateTimeEnd = System.nanoTime();
             double tDesiredFrameRate = (float)BaseGlobalEnvironment.getInstance().getDesiredFramerate();
             double tSingleFrameTime = 1000000000.0f/tDesiredFrameRate;
@@ -177,6 +339,10 @@ public class BaseRoutineRuntime {
     }
 
     /* --------------------------------------------------------------------------------------------------------------------------------------------------- */
+
+    public float getCurrentStereoscopicEyeSeparation() {
+        return mCurrentStereoscopicEyeSeparation;
+    }
 
     public BaseMusic getBaseMusic() {
         return mBaseMusic;
@@ -230,7 +396,7 @@ public class BaseRoutineRuntime {
             }
             long tPossibleFrameRate = (long)(1000000000.0f/(mCurrentFrameRenderingTimeEnd-mCurrentFrameRenderingTimeStart));
             long tActualFrameRate = (long)(1000000000.0f/(mLastFrameRenderingTimeEnd-mLastFrameRenderingTimeStart));
-            String[] tDebugInformation = new String[6];
+            String[] tDebugInformation = new String[7];
             tDebugInformation[0] = "JOGL: "+"GL_VENDOR:"+inGL.glGetString(GL_VENDOR)+" GL_RENDERER:"+inGL.glGetString(GL_RENDERER);
             tDebugInformation[1] = "GL_VERSION: "+inGL.glGetString(GL_VERSION)+" GLSL_VERSION: "+inGL.glGetString(GL_SHADING_LANGUAGE_VERSION); 
             tDebugInformation[2] = "VMMEM: USED: "+mDecimalFormat.format(mBaseGlobalEnvironment.getUsedMem())+" FREE: "+mDecimalFormat.format(mBaseGlobalEnvironment.getFreeMem())+" TOTAL: "+mDecimalFormat.format(mBaseGlobalEnvironment.getTotalMem())+" MAX: "+mDecimalFormat.format(mBaseGlobalEnvironment.getMaxMem());
@@ -241,6 +407,7 @@ public class BaseRoutineRuntime {
             } else {
                 tDebugInformation[5] = "FRAMESKIP: DISABLED!";
             }
+            tDebugInformation[6] = "STEREOSCOPIC="+mBaseGlobalEnvironment.wantsStereoscopic()+" EYESEPARANTION="+BaseGlobalEnvironment.getInstance().getStereoscopicEyeSeparation()+" OUTPUTMODE="+BaseGlobalEnvironment.getInstance().getStereoscopicOutputMode();          
             for (int i=0; i<tDebugInformation.length; i++) {
                 mTextRenderer.beginRendering(BaseGlobalEnvironment.getInstance().getScreenWidth(), BaseGlobalEnvironment.getInstance().getScreenHeight());
                 mTextRenderer.setColor(1.0f, 1.0f, 1.0f, 1.0f);

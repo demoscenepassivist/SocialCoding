@@ -706,8 +706,10 @@ public class BaseGlobalEnvironment {
     private int         mCommandLineParameter_StartFrame;
     private int         mCommandLineParameter_EndFrame;
     private boolean     mUsesFullScreenMode;
+    private boolean     mCommandLineParameter_Stereoscopic;
+    private float       mCommandLineParameter_StereoscopicEyeSeparation;
+    private String      mCommandLineParameter_StereoscopicOutputMode;
     
-
     public String   getBaseRoutineClassName()       { return mCommandLineParameter_BaseRoutineClassName; }
     public boolean  preferMultiSampling()           { return mCommandLineParameter_MultiSampling; }
     public int      getNumberOfSamplingBuffers()    { return mCommandLineParameter_NumberOfSampleBuffers; }
@@ -721,8 +723,11 @@ public class BaseGlobalEnvironment {
     public String   getMusicFileName()              { return mCommandLineParameter_MusicFileName; }
     public int      getStartFrame()                 { return mCommandLineParameter_StartFrame; }
     public int      getEndFrame()                   { return mCommandLineParameter_EndFrame; }
-    public boolean  usesFullScreenMode()            { return mUsesFullScreenMode; }
-
+    public boolean  usesFullScreenMode()            { return mUsesFullScreenMode; }   
+    public boolean  wantsStereoscopic()             { return mCommandLineParameter_Stereoscopic; }
+    public float    getStereoscopicEyeSeparation()  { return mCommandLineParameter_StereoscopicEyeSeparation; }
+    public String   getStereoscopicOutputMode()     { return mCommandLineParameter_StereoscopicOutputMode; }
+    
     public void configureWithUserParameters(
             String inBaseRoutineClassName,
             int inResolutionX,
@@ -739,7 +744,10 @@ public class BaseGlobalEnvironment {
             String inWindowToolkitName,
             String inMusicFileName,
             int inStartFrame,
-            int inEndFrame
+            int inEndFrame,
+            boolean inStereoscopic,
+            float inStereoscopicEyeSeparation,
+            String inStereoscopicOutputMode
     ) {
         mCommandLineParameter_BaseRoutineClassName = inBaseRoutineClassName;
         mCommandLineParameter_DisplayMode = (inResolutionX!=-1 && inResolutionY!=-1) ? new DisplayMode(inResolutionX,inResolutionY,32,60) : null;
@@ -756,6 +764,9 @@ public class BaseGlobalEnvironment {
         mCommandLineParameter_MusicFileName = inMusicFileName;
         mCommandLineParameter_StartFrame = inStartFrame;
         mCommandLineParameter_EndFrame = inEndFrame;
+        mCommandLineParameter_Stereoscopic = inStereoscopic;
+        mCommandLineParameter_StereoscopicEyeSeparation = inStereoscopicEyeSeparation;
+        mCommandLineParameter_StereoscopicOutputMode = inStereoscopicOutputMode;
     }
 
     public int getParameterKey_INT_12() { return mParameterKey_INT_12; }

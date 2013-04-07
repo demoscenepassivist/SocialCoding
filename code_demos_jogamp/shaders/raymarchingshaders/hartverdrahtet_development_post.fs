@@ -103,6 +103,7 @@ void main(void) {
     color *= 0.5 + 0.5*16.0*position.x*position.y*(1.0-position.x)*(-1.0-position.y);    
     //tvlines effect
     color *= 1.0+0.3*sin(position.y*(rs.y*1.55));
+    
     //tvflicker effect
     color *= 1.15+0.2*sin(1.75*tm);
     //crazy noise

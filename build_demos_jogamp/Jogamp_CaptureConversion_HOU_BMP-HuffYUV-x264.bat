@@ -1,0 +1,2 @@
+call Jogamp_CaptureConversion_HOU_HuffYUV.bat
+call Jogamp_CaptureConversion_HOU_x264.bat

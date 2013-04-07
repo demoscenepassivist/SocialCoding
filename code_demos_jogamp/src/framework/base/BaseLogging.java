@@ -33,7 +33,7 @@ public final class BaseLogging {
     private static final String cLOGGING_OUTPUTFILENAME_PREFIX = "JOGAMP_FILELOG";
     private static final String cLOGGING_OUTPUTFILENAME_SUFFIX = ".txt";
     public static final String cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX = "JOGAMP_SCREENCAPTURE";
-    public static final String cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX = ".png";
+    public static final String cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX = ".bmp";
     public static final String cLOGGING_CAPTUREOUTPUTDIRECTORYNAME = "capture\\";
     
     private static BaseLogging mLoggingInstance = null;
@@ -160,10 +160,24 @@ public final class BaseLogging {
             String tFileName = cLOGGING_CAPTUREOUTPUTDIRECTORYNAME+cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX+"_"+tDecimalFormatter.format(inFrameNumber)+cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX;
             File tScreenCaptureImageFile = new File(tFileName);
             this.info("WRITING SCREENCAPTURE FOR FRAME NUMBER "+inFrameNumber+" TO FILE "+tFileName);
-            ImageIO.write(inBufferedImage, "png", tScreenCaptureImageFile);
+            ImageIO.write(inBufferedImage, "bmp", tScreenCaptureImageFile);
+            //ImageIO.write(inBufferedImage, "png", tScreenCaptureImageFile);
         } catch (Exception e) {
             this.fatalerror(e);
         }
     }
 
+    public synchronized void logCapture(BufferedImage inBufferedImage,int inFrameNumber, String inCustomPrefix) {
+        try {
+            DecimalFormat tDecimalFormatter = new DecimalFormat("000000");
+            String tFileName = cLOGGING_CAPTUREOUTPUTDIRECTORYNAME+cLOGGING_CAPTUREOUTPUTFILENAME_PREFIX+"_"+inCustomPrefix+"_"+tDecimalFormatter.format(inFrameNumber)+cLOGGING_CAPTUREOUTPUTFILENAME_SUFFIX;
+            File tScreenCaptureImageFile = new File(tFileName);
+            this.info("WRITING SCREENCAPTURE FOR FRAME NUMBER "+inFrameNumber+" TO FILE "+tFileName);
+            ImageIO.write(inBufferedImage, "bmp", tScreenCaptureImageFile);
+            //ImageIO.write(inBufferedImage, "png", tScreenCaptureImageFile);
+        } catch (Exception e) {
+            this.fatalerror(e);
+        }
+    }
+    
 }

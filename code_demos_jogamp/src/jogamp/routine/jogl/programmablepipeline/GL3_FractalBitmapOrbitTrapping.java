@@ -29,7 +29,9 @@ package jogamp.routine.jogl.programmablepipeline;
  ** http://youtu.be/LI3J1U_eqQA - http://youtu.be/pF66_6D5Dtc - http://youtu.be/JOlbjDOomDA
  ** http://youtu.be/7Hf9wJ9Aa1E - http://youtu.be/0n5FbP2vMXg - http://youtu.be/tCLC6AK3Hnw
  ** http://youtu.be/gBez1ztuPIk - http://youtu.be/UwOHe5WmGic - http://youtu.be/QL_yiqRSnJk
- ** http://youtu.be/Zbz1JrL6quU - 
+ ** http://youtu.be/Zbz1JrL6quU - http://youtu.be/t-v06ZjvCdM - http://youtu.be/aky-XM0050Y
+ ** http://youtu.be/kdidwlf0wxA - http://youtu.be/d9lYwOmRNQA - http://youtu.be/7saLlbYFF0w
+ ** http://youtu.be/ksGLZkQ5CqY - http://youtu.be/nvWY94AgPxY
  **
  **/
 

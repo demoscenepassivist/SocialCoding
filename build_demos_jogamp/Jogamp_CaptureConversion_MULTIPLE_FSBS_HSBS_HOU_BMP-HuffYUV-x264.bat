@@ -1,0 +1,3 @@
+call Jogamp_CaptureConversion_HSBS_BMP-HuffYUV-x264.bat
+call Jogamp_CaptureConversion_FSBS_BMP-HuffYUV-x264.bat
+call Jogamp_CaptureConversion_HOU_BMP-HuffYUV-x264.bat

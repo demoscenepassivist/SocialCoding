@@ -2,4 +2,4 @@ echo on
 cd .
 set PATH=.;.\tools\;.\capture\;
 cd .\capture\
-del *.png
+del *.bmp

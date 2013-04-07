@@ -31,6 +31,9 @@ package framework.init;
  **   -STARTFRAME (=0)
  **   -ENDFRAME (=Integer.MAX_VALUE)
  **   -RESUMEFRAMECAPTURE (=TRUE/FALSE)
+ **   -STEREOSCOPIC (=TRUE/FALSE)
+ **   -STEREOSCOPICEYESEPARATION (=0.0-1.0)
+ **   -STEREOSCOPICOUTPUTMODE (=HSBS/HOU/FSBS/FOU/FFS)
  **/
 
 import javax.media.opengl.*;
@@ -64,6 +67,10 @@ public class Bootstrap {
         String tMusicFileName = null;
         int tStartFrame = 0;
         int tEndFrame = Integer.MAX_VALUE;
+        boolean tStereoscopic = false;
+        float tStereoscopicEyeSeparation = 0.0f;
+        String tStereoscopicOutputMode = "HSBS";
+        
         if (args.length>0) {
             for (int i=0; i<args.length; i++) {
                 BaseLogging.getInstance().info("PROCESSING CMDLINE PARAMETER ... ARG="+args[i]);
@@ -175,7 +182,19 @@ public class Bootstrap {
                             BaseLogging.getInstance().info("NUMBER OF ALREADY CAPTURED FRAMES TO SMALL TO RESUME ... RESUME FRAME NUMBER SET TO STARTFRAME ...");
                         }
                         tStartFrame = tResumeStartFrameNumber;
-                    }                  
+                    } 
+                } else if(args[i].trim().startsWith("-STEREOSCOPIC=")) {
+                    String tStereoscopicParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
+                    BaseLogging.getInstance().info("STEREOSCOPIC ENABLED '"+tStereoscopicParameter+"'");
+                    tStereoscopic = Boolean.parseBoolean(tStereoscopicParameter);    
+                } else if(args[i].trim().startsWith("-STEREOSCOPICEYESEPARATION=")) {
+                    String tStereoscopicEyeSeparationParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
+                    BaseLogging.getInstance().info("STEREOSCOPIC EYE SEPARATION SET TO '"+tStereoscopicEyeSeparationParameter+"'");
+                    tStereoscopicEyeSeparation = Float.parseFloat(tStereoscopicEyeSeparationParameter);     
+                } else if(args[i].trim().startsWith("-STEREOSCOPICOUTPUTMODE=")) {
+                    String tStereoscopicOutputModeParameter = args[i].substring(args[i].indexOf("=")+1,args[i].length());
+                    BaseLogging.getInstance().info("STEREOSCOPIC OUTPUT MODE SET TO '"+tStereoscopicOutputModeParameter+"'");
+                    tStereoscopicOutputMode = tStereoscopicOutputModeParameter;                  
                 } else {
                     BaseLogging.getInstance().error("ERROR! ILLEGAL ARGUMENT FOUND! ARGUMENT="+args[i]);
                 }
@@ -195,7 +214,10 @@ public class Bootstrap {
                 tWindowToolkitName,
                 tMusicFileName,
                 tStartFrame,
-                tEndFrame
+                tEndFrame,
+                tStereoscopic, 
+                tStereoscopicEyeSeparation,
+                tStereoscopicOutputMode
         );
         EventQueue.invokeLater(new Runnable() {
             public void run() {

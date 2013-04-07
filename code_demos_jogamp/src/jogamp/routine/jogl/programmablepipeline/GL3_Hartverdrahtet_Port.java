@@ -104,8 +104,8 @@ public class GL3_Hartverdrahtet_Port extends BaseRoutineAdapter implements BaseR
     
     public void mainLoop(int inFrameNumber,GL2 inGL,GLU inGLU,GLUT inGLUT) {
         //use this for offline rendering/capture ...
-        //int MMTime_u_ms = (int)((((double)inFrameNumber)*44100.0f)/60.0f);
-        int MMTime_u_ms = (int)(BaseRoutineRuntime.getInstance().getBaseMusic().getPositionInMilliseconds()*(44100.0f/1000.0f));  
+        int MMTime_u_ms = (int)((((double)inFrameNumber)*44100.0f)/60.0f);
+        //int MMTime_u_ms = (int)(BaseRoutineRuntime.getInstance().getBaseMusic().getPositionInMilliseconds()*(44100.0f/1000.0f));  
         if (MMTime_u_ms>=mNote60_SyncPoints[mNote60_SyncCounter]  && !mNote60_SyncPoints_Check[mNote60_SyncCounter]) { 
             mNote60_SyncPoints_Check[mNote60_SyncCounter] = true; 
             mSyncEventNumber++;
